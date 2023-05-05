@@ -26,6 +26,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
   state: () => ({
     globalConfig: <GlobalConfigCSS>{
       themeColor: "winter",
+      websiteName: "Blocktify",
       fontFamily: "Kanit",
       bgColor: "bg-base-300",
       fontSize: "md",
@@ -174,36 +175,36 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
           requires: ["CardLink", "ProductCollectionGrid"],
           cardLink: {
             type: "CardLink",
-            requires: 3,
             props: [
               {
-                title: "Title",
+                title: "Title 1",
                 subtitle: "Subtitle",
-                linkUrl: "https://example.com/",
+                bgUrl:
+                  "https://e0.pxfuel.com/wallpapers/1010/712/desktop-wallpaper-minecraft-grass-block-box-dirt-texture-minecraft-minecraft-thumbnail.jpg",
+                linkUrl: "http://localhost/image",
               },
               {
-                title: "Title",
+                title: "Title 2",
                 subtitle: "Subtitle",
-                linkUrl: "https://example.com/",
+                bgUrl:
+                  "https://t4.ftcdn.net/jpg/05/29/23/21/360_F_529232184_xllVJCuUPpBqYfMpeCtwZtw27hf9cXOM.jpg",
+                linkUrl: "http://localhost/image",
               },
               {
-                title: "Title",
+                title: "Title 3",
                 subtitle: "Subtitle",
-                linkUrl: "https://example.com/",
+                bgUrl:
+                  "https://t4.ftcdn.net/jpg/05/29/23/21/360_F_529232184_xllVJCuUPpBqYfMpeCtwZtw27hf9cXOM.jpg",
+                linkUrl: "http://localhost/image",
               },
             ],
           },
           prodCollection: {
             type: "ProductCollectionGrid",
-            requires: 2,
             props: [
               {
                 sortAction: "HIGHEST_SOLD_OFF",
                 limits: 8,
-              },
-              {
-                sortAction: "HIGHEST_PRICE",
-                limits: 4,
               },
             ],
           },
@@ -220,9 +221,8 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       boxShadow: "2px 2px 5px #ccc",
       position: "absolute",
       webInfo: {
-        websiteName: "Website Name",
-        infotext:
-          "lorem ipsum dolor sit amet, consectetur adip lorem ipsum dolor sit amet, consectetur adip lorem ipsum dolor sit amet, consectetur adip lorem ipsum dolor sit amet, consectetur adip lorem ipsum dolor sit amet, consectetur adip, lorem ipsum dolor sit amet, consectetur adip, lorem ipsum dolor sit amet, consectetur adip, lorem ipsum dolor sit amet, consectetur adip,lorem ipsum dolor sit amet, consectetur adip ",
+        aboutContent:
+          "ที่ร้านค้าออนไลน์ของเรา เราทุ่มเทเพื่อทำให้ประสบการณ์การช็อปปิ้งของคุณง่ายและสนุกที่สุดเท่าที่จะเป็นไปได้ ตั้งแต่อินเทอร์เฟซที่เรียบง่ายและใช้งานง่ายไปจนถึงการชำระเงินที่รวดเร็วและปลอดภัย เรามีทุกสิ่งที่คุณต้องการในการจับจ่ายอย่างมั่นใจ และด้วยชุมชนนักช็อปและผู้ขายที่ให้การสนับสนุน คุณสามารถเชื่อมต่อ เรียนรู้ และเติบโตในขณะที่คุณซื้อสินค้า มาสำรวจเว็บไซต์ของเราและดูว่าเหตุใดการซื้อสินค้ากับเราจึงเป็นวิธีที่สะดวกและสบายที่สุดในการซื้อสินค้าออนไลน์",
       },
       followProps: {
         requires: [
@@ -283,6 +283,52 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
             "ERROR_ACTION: Something wrong while tried to  set the new config, ACTION: " +
               setOnAction
           );
+      }
+    },
+
+    getInitializedContents(): { type: string; props: object; area: string }[] {
+      const { mainContent, subContents } = this.getMainBodyConfig.setting;
+      const mainComponents = mainContent.requires.map((type, index) => ({
+        type,
+        props: this.setProp(type),
+        area: this.setArea(type),
+      }));
+      const cardLinkComponents = subContents.cardLink.props.map((props) => ({
+        type: "CardLink",
+        props,
+        area: "col-span-1 place-self-center",
+      }));
+      const prodCollectionComponents = subContents.prodCollection.props.map(
+        (props) => ({
+          type: "ProductCollectionWidget",
+          props,
+          area: "col-span-full",
+        })
+      );
+      return [
+        ...mainComponents,
+        ...cardLinkComponents,
+        ...prodCollectionComponents,
+      ];
+    },
+
+    setProp(type: "AlertSlideMsgWidget" | "BoardNews"): any {
+      switch (type) {
+        case "AlertSlideMsgWidget":
+          return this.getMainBodyConfig.setting.mainContent.alertMsg.props;
+        default:
+          return this.getMainBodyConfig.setting.mainContent.boardNews.props
+            .news;
+      }
+    },
+
+    setArea(type: "AlertSlideMsgWidget" | "BoardNews"): string {
+      switch (type) {
+        case "AlertSlideMsgWidget":
+        case "BoardNews":
+          return "col-span-full";
+        default:
+          return "col-span-full";
       }
     },
   },

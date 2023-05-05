@@ -6,6 +6,9 @@ import AlertSlideMsgWidget from "../widgets/AlertSlideMsgWidget.vue";
 import BoardNews from "../widgets/BoardNews.vue";
 import ProductCollectionWidget from "../widgets/ProductCollectionGrid.vue";
 import CardLink from "../components/CardLink.vue";
+import { useConfigComponentStore } from "../configs/configCPNStore";
+import { MainComponent } from "../configs/configCSS";
+import { ref } from "vue";
 
 export default {
   components: {
@@ -18,41 +21,17 @@ export default {
     CardLink,
   },
 
+  setup() {
+    const store = useConfigComponentStore();
+    return {
+      config: store.getMainBodyConfig,
+      components: ref(store.getInitializedContents()),
+    };
+  },
+
   data() {
     return {
-      components: [
-        {
-          id: 1,
-          type: "AlertSlideMsgWidget",
-          props: {},
-          area: "col-span-full",
-        },
-        { id: 2, type: "BoardNews", props: {}, area: "col-span-full" },
-        {
-          id: 3,
-          type: "PlayerBadge",
-          props: {},
-          area: "col-span-1 place-self-center",
-        },
-        {
-          id: 4,
-          type: "PlayerBadge",
-          props: {},
-          area: "col-span-1 place-self-center",
-        },
-        {
-          id: 5,
-          type: "CardLink",
-          props: {},
-          area: "col-span-1 place-self-center",
-        },
-        {
-          id: 6,
-          type: "ProductCollectionWidget",
-          props: {},
-          area: "col-span-full ",
-        },
-      ],
+      tempComponents: <MainComponent[]>[],
     };
   },
   mounted() {},

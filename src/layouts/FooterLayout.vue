@@ -9,6 +9,7 @@ export default {
   setup() {
     return {
       config: useConfigComponentStore().getFooterConfig,
+      globalConfig: useConfigComponentStore().getGlobalConfig,
     };
   },
   methods: {
@@ -45,11 +46,11 @@ export default {
       <div class="md:col-span-4">
         <article class="prose-sm">
           <h1
-            class="!text-primary-focus underline underline-offset-4 font-bold"
+            class="!text-primary-focus underline underline-offset-8 font-bold"
           >
-            {{ config.webInfo.websiteName }}
+            {{ `เกี่ยวกับ ${globalConfig.websiteName}` }}
           </h1>
-          <blockquote class="">{{ config.webInfo.infotext }}</blockquote>
+          <blockquote class="">{{ config.webInfo.aboutContent }}</blockquote>
         </article>
       </div>
       <div

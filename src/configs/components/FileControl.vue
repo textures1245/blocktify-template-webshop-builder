@@ -21,7 +21,7 @@ export default {
       required: true,
     },
     storage: {
-      type: Array as PropType<string[] | string>,
+      type: [Array, String],
       required: true,
       readonly: false,
     },

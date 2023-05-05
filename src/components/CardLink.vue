@@ -1,18 +1,30 @@
 <script lang="ts">
+import { PropType } from "vue";
+import { CardLink } from "../configs/configCSS";
 export default {
   props: {
-    linkName: {
-      type: String,
-      default: "Link Name",
+    props: {
+      type: Object as PropType<CardLink>,
     },
   },
 };
 </script>
 <template>
-  <v-card class=" mc-block-dirt-bg flex h-28 w-56 cursor-pointer">
-    <v-card-text class="flex backdrop-blur-sm flex-col justify-center items-center">
-      <h1 class="animated font-semibold">{{ linkName }}</h1>
-      <p class="text-white text-base">subtitle</p>
+  <v-card
+    :style="{
+      backgroundImage: `url(${
+        props?.bgUrl
+          ? props.bgUrl
+          : 'https://e0.pxfuel.com/wallpapers/1010/712/desktop-wallpaper-minecraft-grass-block-box-dirt-texture-minecraft-minecraft-thumbnail.jpg'
+      })`,
+    }"
+    class="flex h-28 w-56 bg-cover cursor-pointer"
+  >
+    <v-card-text
+      class="flex backdrop-blur-sm flex-col justify-center items-center"
+    >
+      <h1 class="animated font-semibold">{{ props?.title }}</h1>
+      <p class="text-white text-base">{{ props?.subtitle }}</p>
     </v-card-text>
   </v-card>
 </template>

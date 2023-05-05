@@ -1,8 +1,10 @@
 <script lang="ts">
+import { PropType } from "vue";
+
 export default {
   props: {
-    message: {
-      type: String,
+    props: {
+      type: Object as PropType<{ msg: string }>,
       required: true,
     },
   },
@@ -17,11 +19,7 @@ export default {
       ></v-icon>
       <v-card-title class="text-md msg-slide-left">
         <span>
-          {{
-            message
-              ? message
-              : "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos fugiate xercitationem reprehenderit dolorem maiores nobis, recusandae lor"
-          }}
+          {{ props.msg }}
         </span>
       </v-card-title>
     </div>

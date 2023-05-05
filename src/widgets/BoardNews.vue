@@ -7,11 +7,11 @@
       hide-delimiter-background
       show-arrows="hover"
     >
-      <v-carousel-item v-for="(slide, i) in slides" :key="i">
+      <v-carousel-item v-for="(info, i) in props" :key="i">
         <v-sheet class="!glass !max-h-[920px]" height="100%">
           <div class="flex flex-col lg:grid grid-cols-2 h-full">
             <div class="duration-300 hover:h-full h-2/6 lg:h-full">
-              <v-img :src="slide.img" cover class="h-full w-full"></v-img>
+              <v-img :src="info.image" cover class="h-full w-full"></v-img>
             </div>
             <div id="text-content-container" class="h-full bg-base-100">
               <v-container>
@@ -19,15 +19,9 @@
                   class="overflow-auto !text-base prose prose-sm prose-slate"
                 >
                   <h1>
-                    {{ slide.content.punchline }}
+                    {{ info.context.title }}
                   </h1>
-                  <p class="indent-10">
-                    {{
-                      slide.content.paragraphs.length > 300
-                        ? slide.content.paragraphs.slice(0, 300) + "..."
-                        : slide.content.paragraphs
-                    }}
-                  </p>
+                  <div v-html="info.context.content" class="indent-10"></div>
                 </article>
 
                 <v-tooltip location="top" text="อ่าน">
@@ -49,37 +43,11 @@
   </v-card>
 </template>
 <script lang="ts">
+import { PropType } from "vue";
+import { BoardNews } from "../configs/configCSS";
 export default {
-  data() {
-    return {
-      colors: ["indigo", "warning", "pink darken-2"],
-      slides: [
-        {
-          content: {
-            punchline: "PunchLine",
-            paragraphs:
-              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos non culpa fugiat delectus corporis expedita provident! Magni fuga omnis nam ullam ipsa temporibus voluptates in nesciunt! Necessitatibus voluptates aliquid accusantium.F",
-          },
-          img: "https://images.unsplash.com/photo-1681649022240-851ee1fac747?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
-        },
-        {
-          content: {
-            punchline: "PunchLine",
-            paragraphs:
-              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos non culpa fugiat delectus corporis expedita provident! Magni fuga omnis nam ullam ipsa temporibus voluptates in nesciunt! Necessitatibus voluptates aliquid accusantium.F",
-          },
-          img: "https://images.unsplash.com/photo-1681649022240-851ee1fac747?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
-        },
-        {
-          content: {
-            punchline: "PunchLine",
-            paragraphs:
-              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos non culpa fugiat delectus corporis expedita provident! Magni fuga omnis nam ullam ipsa temporibus voluptates in nesciunt! Necessitatibus voluptates aliquid accusantium.F",
-          },
-          img: "https://images.unsplash.com/photo-1681649022240-851ee1fac747?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
-        },
-      ],
-    };
+  props: {
+    props: Array as PropType<BoardNews[]>,
   },
 };
 </script>

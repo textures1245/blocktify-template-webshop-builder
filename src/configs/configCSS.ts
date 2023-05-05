@@ -1,6 +1,7 @@
 //* All the CSS Configuration go here
 
 export type GlobalConfigCSS = {
+  websiteName: string;
   themeColor:
     | "light"
     | "dark"
@@ -120,7 +121,7 @@ export type MainBodyContainer = BaseConfigCSS & {
   };
 
   //- for rendering content
-  storageContents: Component[];
+  storageContents: MainComponent[];
 };
 
 export type HeaderBar = BaseConfigCSS & {
@@ -136,8 +137,7 @@ export type FooterContainer = BaseConfigCSS & {
 };
 
 export type WebInfo = {
-  websiteName: string;
-  infotext: string;
+  aboutContent: string;
 };
 
 export type FollowProps = {
@@ -188,13 +188,11 @@ export type BoardNewsProp = {
 
 export type ProductCollectionGridProp = {
   type: "ProductCollectionGrid";
-  requires: number;
   props: ProductCollectionGrid[];
 };
 
 export type CardLinkProp = {
   type: "CardLink";
-  requires: number;
   props: CardLink[];
 };
 
@@ -209,12 +207,12 @@ export type ProductCollectionGrid = {
 };
 
 export type CardLink = {
+  bgUrl: string;
   title: string;
   subtitle: string;
   linkUrl: string;
 };
-export type Component = {
-  id: number;
+export type MainComponent = {
   type: string;
   props: object;
   area: string;

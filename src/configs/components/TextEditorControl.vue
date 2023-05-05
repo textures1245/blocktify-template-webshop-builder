@@ -17,8 +17,11 @@ export default {
       type: String,
       default: "กรอกเนื้อหา",
     },
+    lengthLimits: {
+      type: Number,
+      default: 255,
+    },
   },
-
   data() {
     return {
       dialog: false,
@@ -26,35 +29,43 @@ export default {
     };
   },
 
-  mounted() {
-    this.quillContentControl = this.quillContent;
-  },
-
   methods: {
     onEmitter() {
       if (
         this.quillContentControl === "<p><br></p>" ||
-        this.quillContentControl.length > 500
+        this.quillContentControl.length > this.lengthLimits
       ) {
-        return alert("ตัวกรอกข้อมูลห้ามว้างหรือมีมากกว่า 500 ตัว");
+        return alert(
+          `ตัวกรอกข้อมูลห้ามว้างหรือมีมากกว่า ${this.lengthLimits} ตัว`
+        );
       }
 
       this.$emit("quillContentEmitter", this.quillContentControl);
+    },
+
+    onInitialContent() {
+      this.quillContentControl = this.quillContent;
     },
   },
 };
 </script>
 <template>
   <div id="text-editor-control">
-    <v-dialog v-model="dialog" width="auto">
+    <v-dialog v-model="dialog" :persistent="true" width="auto">
       <template v-slot:activator="{ props }">
         <div class="flex justify-between items-center">
-            <label for="text-editor-control" class="text-sm font-bold font-sans">{{
-              label
-            }}</label>
-            <v-btn class="!btn-secondary" v-bind="props">
-              กดเพื่อเขียนเนื้อหา
-            </v-btn>
+          <label
+            for="text-editor-control"
+            class="text-sm font-bold font-sans"
+            >{{ label }}</label
+          >
+          <v-btn
+            @click="onInitialContent"
+            class="!btn-secondary"
+            v-bind="props"
+          >
+            กดเพื่อเขียนเนื้อหา
+          </v-btn>
         </div>
       </template>
 
@@ -75,23 +86,22 @@ export default {
           <v-btn
             color="blue-darken-1"
             variant="text"
-            :disabled="
-              () =>
-                quillContentControl === '<p><br></p>' ||
-                quillContentControl.length > 500
-            "
             @click="[onEmitter(), (dialog = false)]"
           >
             บันทึก
           </v-btn>
-          <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
+          <v-btn
+            color="blue-darken-1"
+            variant="text"
+            @click="[(dialog = false), (quillContentControl = '')]"
+          >
             ปิด
           </v-btn>
           <p
             v-if="quillContentControl.length > 500"
             class="text-sm text-slate-400"
           >
-            ตัวอักษรไม่สามารถมีมากกว่า 500 ตัวได้
+            ตัวอักษรไม่สามารถมีมากกว่า {{ lengthLimits }} ตัวได้
           </p>
         </v-card-actions>
       </v-card>

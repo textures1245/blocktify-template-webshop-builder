@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Account, PurchaseInfo, Role } from "../../store/types";
+import { Account, Role } from "../../store/types";
 import {
   Timestamp,
   doc,

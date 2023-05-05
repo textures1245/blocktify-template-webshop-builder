@@ -39,6 +39,9 @@ export const useRouterStore = defineStore("useRouterStore", {
         title: "เติมเงิน",
         name: "topup",
         path: "/topup",
+        component: markRaw(
+          defineAsyncComponent(async () => import("../views/TopupView.vue"))
+        ),
       },
     ],
   }),

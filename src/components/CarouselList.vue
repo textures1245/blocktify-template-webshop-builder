@@ -7,12 +7,10 @@
       delimiter-icon="mdi-circle"
       height="300"
     >
-      <v-carousel-item
-        :src="src || tempBg"
-        cover
-        v-for="(src, i) in imageList"
-        :key="i"
-      >
+      <v-carousel-item v-for="(src, i) in imageList" :key="i">
+        <template #default>
+          <v-img :src="src || tempBg" cover class="!bg-cover"></v-img>
+        </template>
       </v-carousel-item>
     </v-carousel>
   </v-card>
