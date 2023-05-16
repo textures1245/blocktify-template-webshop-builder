@@ -6,6 +6,7 @@ import SidebarLayout from "./layouts/SidebarLayout.vue";
 import HeaderBarLayout from "./layouts/HeaderBarLayout.vue";
 import { ref } from "vue";
 import { useConfigComponentStore } from "./configs/configCPNStore";
+import ApiKeyGenerator from "./auth/ApiKeyGenerator.vue";
 import FooterLayout from "./layouts/FooterLayout.vue";
 
 import ClientLogin from "./auth/ClientLogin.vue";
@@ -18,6 +19,7 @@ export default {
     SidebarLayout,
     FooterLayout,
     ClientLogin,
+    ApiKeyGenerator,
   },
   setup() {
     return {
@@ -28,7 +30,9 @@ export default {
 </script>
 <template>
   <ClientLogin v-if="$route.name === 'clientManagementLogin'"></ClientLogin>
-
+  <ApiKeyGenerator
+    v-if="$route.name === 'apiStaffKeyGenerator'"
+  ></ApiKeyGenerator>
   <div
     v-else
     :style="`font-family: '${globalCSSConfig.fontFamily}', sans-serif;`"

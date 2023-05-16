@@ -8,6 +8,8 @@ import {
   FooterContainer,
   Banner,
   Sidebar,
+  WebsiteConfig,
+  StoreConfig,
 } from "./configCSS";
 import { limit } from "firebase/firestore";
 
@@ -24,6 +26,20 @@ export const useHelpConfigStore = defineStore("useHelpConfigStore", {
 
 export const useConfigComponentStore = defineStore("useConfigComponentStore", {
   state: () => ({
+    websiteConfig: <WebsiteConfig>{
+      storeID: "webshopTest5",
+      hostName: "localhost",
+    },
+    storeConfig: <StoreConfig>{
+      highlightProducts: {
+        title: "สินค้ายอดฮิต",
+        sortAction: "HIGHEST_SOLD_OFF",
+        limits: 10,
+      },
+      filter: {
+        requires: ["DATE", "HOT", "PRICE", "TYPE"],
+      },
+    },
     globalConfig: <GlobalConfigCSS>{
       themeColor: "winter",
       websiteName: "Blocktify",
@@ -243,6 +259,8 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
     },
   }),
   getters: {
+    getStoreConfig: (state) => state.storeConfig,
+    getWebsiteConfig: (state) => state.websiteConfig,
     getAppBarConfig: (state) => state.AppBarConfig,
     getHeaderBarConfig: (state) => state.HeaderBarConfig,
     getMainBodyConfig: (state) => state.MainBodyConfig,

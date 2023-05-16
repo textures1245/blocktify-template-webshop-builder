@@ -26,14 +26,11 @@ export default {
             >
               <h2>{{ product.name }}</h2>
               <div id="tags-group" class="flex gap-2 -my-2">
-                <v-chip size="small" density="compact"  color="primary">
-                  Primary
-                </v-chip>
                 <v-chip size="small" density="compact" color="primary">
-                  Primary
+                  {{ product.type }}
                 </v-chip>
               </div>
-              <blockquote>{{ product.desc }}</blockquote>
+              <blockquote class="text-xs" v-html="product.desc"></blockquote>
             </article>
             <div id="product-price-detail" class="row-span-1">
               <div id="price-container" class="stats shadow">

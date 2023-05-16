@@ -1,9 +1,11 @@
 import { Timestamp } from "firebase/firestore";
 import { defineStore } from "pinia";
 import { CurdDate } from "../types";
+import { useConfigComponentStore } from "../../configs/configCPNStore";
+import axios from "axios";
+import FormData from "form-data";
 
 export type Product = {
-  storeId: string;
   id: number;
   name: string;
   desc: string;
@@ -12,16 +14,16 @@ export type Product = {
   totalSales: number;
   imgSrc: string;
   quantity: number;
-  onSale?: number;
   command: string;
   actionStamp: CurdDate;
+  onSale?: number;
 };
 
 export const useProductStore = defineStore("productStore", {
   state: () => ({
+    productTypes: <string[]>[],
     products: <Product[]>[
       {
-        storeId: "store-1",
         id: 1,
         name: "Product 1",
         desc: "Description for Product 1",
@@ -38,7 +40,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-1",
         id: 2,
         name: "Product 2",
         desc: "Description for Product 2",
@@ -55,7 +56,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-1",
         id: 3,
         name: "Product 3",
         desc: "Description for Product 3",
@@ -74,7 +74,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-2",
         id: 4,
         imgSrc:
           "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
@@ -92,7 +91,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-2",
         id: 5,
         name: "Product 5",
         imgSrc:
@@ -110,7 +108,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-2",
         id: 6,
         name: "Product 6",
         desc: "Description for Product 6",
@@ -128,7 +125,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-3",
         id: 7,
         name: "Product 7",
         desc: "Description for Product 7",
@@ -141,7 +137,6 @@ export const useProductStore = defineStore("productStore", {
         totalSales: 700,
       },
       {
-        storeId: "store-3",
         id: 8,
         name: "Product 8",
         desc: "Description for Product 8",
@@ -160,7 +155,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-3",
         id: 9,
         name: "Product 9",
         desc: "Description for Product 9",
@@ -177,7 +171,6 @@ export const useProductStore = defineStore("productStore", {
         },
       },
       {
-        storeId: "store-3",
         id: 10,
         name: "Product 10",
         desc: "Description for Product 10",
@@ -197,9 +190,49 @@ export const useProductStore = defineStore("productStore", {
     ],
   }),
   getters: {
+    getProductTypes: (state) => state.productTypes,
     getProducts: (state) => state.products,
+    getDataConfig: (state) => {
+      var data = new FormData();
+
+      var config = {
+        method: "",
+        maxBodyLength: Infinity,
+        url: "",
+        headers: {
+          ...data.getHeaders,
+          "x-store-id": useConfigComponentStore().getWebsiteConfig.storeID,
+        },
+        data: data,
+      };
+      return { data, config };
+    },
   },
   actions: {
+    onInitializeUniqueProductType() {
+      const products = this.getProducts;
+      const uniqueProdTypeSets = new Set<string>();
+      for (const prod of products) {
+        uniqueProdTypeSets.add(prod.type);
+      }
+
+      this.$state.productTypes = Array.from(uniqueProdTypeSets);
+    },
+    async fetchProducts(): Promise<Product[]> {
+      let { data, config } = this.getDataConfig;
+      config.method = "get";
+      config.url = import.meta.env.VITE_GET_PRODUCT_GET_API;
+      return axios(config)
+        .then((products: { data: Product[] }) => {
+          this.products = products.data;
+          console.log(this.products);
+          return products.data;
+        })
+        .catch(function (error) {
+          console.error(error);
+          return [] as Product[];
+        });
+    },
     async getProductsWithFilters(
       price: number,
       prodType: string[],

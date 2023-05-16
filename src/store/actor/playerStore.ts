@@ -10,12 +10,31 @@ export type Player = Account & {
   regDate?: Timestamp;
   hasSession: boolean | number;
   email: string;
+  phone: string | null;
   transaction: PlayerTransaction;
   fromStoreId: string;
 };
 
 export const usePlayerStore = defineStore("playerStore", {
   state: () => ({
+    player: <Player>{
+      avatar: "https://minotar.net/helm/mhf_steve/600.png",
+      id: 1,
+      playerName: "Alex",
+      role: "Player",
+      hasSession: true,
+      email: "email@minotar.net",
+      fromStoreId: "1231",
+      transaction: {
+        topUpTotal: 1000,
+        recentTopUp: 200,
+        recentTopUpDate: new Timestamp(1647677385, 500000000),
+        wallet: 6000,
+      },
+      phone: null,
+      regDate: undefined,
+    },
+
     players: <Player[]>[
       {
         avatar: "https://minotar.net/helm/mhf_steve/600.png",
@@ -31,6 +50,7 @@ export const usePlayerStore = defineStore("playerStore", {
           recentTopUpDate: new Timestamp(1647677385, 500000000),
           wallet: 6000,
         },
+        phone: null,
         regDate: undefined,
       },
       {
@@ -47,6 +67,8 @@ export const usePlayerStore = defineStore("playerStore", {
           recentTopUpDate: new Timestamp(1647677000, 500000000),
           wallet: 6000,
         },
+        phone: null,
+
         regDate: undefined,
       },
       {
@@ -58,6 +80,7 @@ export const usePlayerStore = defineStore("playerStore", {
         email: "email@minotar.net",
         fromStoreId: "1231",
         regDate: undefined,
+        phone: null,
         transaction: {
           topUpTotal: 700,
           recentTopUp: 200,
@@ -68,6 +91,7 @@ export const usePlayerStore = defineStore("playerStore", {
     ],
   }),
   getters: {
+    getCurrentPlayer: (state) => state.player,
     getPlayers: (state) => state.players,
   },
   actions: {},

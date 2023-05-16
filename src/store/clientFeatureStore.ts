@@ -9,7 +9,11 @@ export type Action =
   | "MAIN_CONTENT_MODIFY"
   | "FOOTER_MODIFY"
   | "BANNER_MODIFY"
-  | "SIDEBAR_MODIFY";
+  | "SIDEBAR_MODIFY"
+  | "STORE_MODIFY"
+  | "PRODUCT_MODIFY"
+  | "PRODUCT_LIST_MODIFY"
+  | "FILTER_PRODUCT_MODIFY";
 
 export type FeatureAction = {
   title: string;
@@ -55,6 +59,28 @@ export const useClientFeatureStore = defineStore("useClientFeatureStore", {
             help: "อยู่ล่างสุด",
             action: "FOOTER_MODIFY",
             icon: "mdi-auto-fix",
+          },
+        ],
+      },
+      {
+        title: "แก้ไข้ร้านค้า",
+        action: "STORE_MODIFY",
+        icon: "mdi-store-cog-outline",
+        subActions: [
+          {
+            title: "จัดการสินค้า",
+            action: "PRODUCT_MODIFY",
+            help: "แก้ไขส่วนของสินค้าที่มีอยู่ ประกอบไปด้วย แก้ไข, เพิ่ม และ ลบ",
+          },
+          {
+            title: "จัดการตัวแสดงสินค้าพิเศษ",
+            action: "PRODUCT_LIST_MODIFY",
+            help: "แก้ไขส่วนของสินค้าที่แสดงโชว์อยู่ด้านบน ",
+          },
+          {
+            title: "จัดการตัวกรองสินค้า",
+            action: "FILTER_PRODUCT_MODIFY",
+            help: "จัดส่วนของตัวกรองสินค้า (Filter Product) ด้านข้างซ้าย",
           },
         ],
       },

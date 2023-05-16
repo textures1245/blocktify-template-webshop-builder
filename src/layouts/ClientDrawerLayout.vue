@@ -8,6 +8,9 @@ import HeaderBarConfigUI from "../configs/ui/HeaderBarConfigUI.vue";
 import MainBodyConfigUI from "../configs/ui/MainBodyConfigUI.vue";
 import BannerConfigUI from "../configs/ui/BannerConfigUI.vue";
 import SideBaeConfigUI from "../configs/ui/SidebaeConfigUI.vue";
+import ProductConfigUI from "../configs/ui-store/ProductConfigUI.vue";
+import FilterConfigUI from "../configs/ui-store/FilterConfigUI.vue";
+import HighlightConfigUI from "../configs/ui-store/HighlightConfigUI.vue";
 
 export default {
   components: {
@@ -18,16 +21,27 @@ export default {
     MainBodyConfigUI,
     BannerConfigUI,
     SideBaeConfigUI,
+    ProductConfigUI,
+    FilterConfigUI,
+    HighlightConfigUI,
   },
   setup() {
     return {
       actions: useClientFeatureStore().getClientFeatures,
     };
   },
+
+  mounted() {
+    this.storeConfigOpts.storeOpts = this.actions[2].subActions!.reduce(
+      (acc, obj) => ({ ...acc, [obj.action]: obj.title }),
+      {}
+    );
+  },
   data() {
     return {
       toggleSideDrawer: <Ref<Action>>ref("NONE"),
       toggleLayoutOpts: "APPBAR_MODIFY",
+      toggleStoreOpts: "PRODUCT_MODIFY",
       applySetting: {
         icon: "mdi-send-circle",
         title: "ยืนยันการตั้งค่า",
@@ -43,6 +57,9 @@ export default {
           FOOTER_MODIFY: "เลทเอาท์ส่วนด้านล่างสุด (Footer Bar)",
         },
       },
+      storeConfigOpts: {
+        storeOpts: null as any,
+      },
     };
   },
   methods: {
@@ -55,13 +72,17 @@ export default {
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
-      <v-list-item
-        v-for="a in actions"
-        :prepend-icon="a.icon || 'mdi-icon'"
-        @click="() => (toggleSideDrawer = a.action)"
-        :title="a.title"
-        :value="a.action"
-      ></v-list-item>
+      <v-tooltip v-for="a in actions" :text="a.title">
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            :prepend-icon="a.icon || 'mdi-icon'"
+            @click="() => (toggleSideDrawer = a.action)"
+            :title="a.title"
+            :value="a.action"
+          ></v-list-item>
+        </template>
+      </v-tooltip>
 
       <!--- Apply Setting -->
     </v-list>
@@ -95,7 +116,7 @@ export default {
         @click.stop="toggleSideDrawer = 'NONE'"
       ></v-btn>
     </template>
-    <v-card variant="text" class="mx-auto" max-width="500">
+    <v-card variant="text" class="mx-auto text-sm" max-width="500">
       <GlobalCSSConfigUI
         v-if="toggleSideDrawer === 'GLOBAL_CSS_CONFIGURE'"
       ></GlobalCSSConfigUI>
@@ -141,6 +162,42 @@ export default {
             v-if="toggleLayoutOpts === 'SIDEBAR_MODIFY'"
           ></SideBaeConfigUI>
         </v-list>
+      </div>
+      <div id="store-modifier" v-if="toggleSideDrawer === 'STORE_MODIFY'">
+        <v-list class="flex justify-center">
+          <v-list-subheader>
+            <div class="flex gap-2 items-center m-4">
+              <div class="">
+                <p
+                  class="text-xs badge badge-sm badge-accent text-accent-content"
+                >
+                  เลือกส่วนที่คูณต้องการปรับแต่ง
+                </p>
+                <FormKit
+                  type="select"
+                  v-model="toggleStoreOpts"
+                  label="Layout Options"
+                  placeholder="Select a Font size."
+                  name="fontSizes"
+                  :options="storeConfigOpts.storeOpts"
+                  validation="required"
+                />
+              </div>
+            </div>
+            <hr class="border-gray-200 w-full" />
+          </v-list-subheader>
+        </v-list>
+        <div>
+          <ProductConfigUI
+            v-if="toggleStoreOpts === 'PRODUCT_MODIFY'"
+          ></ProductConfigUI>
+          <HighlightConfigUI
+            v-if="toggleStoreOpts === 'PRODUCT_LIST_MODIFY'"
+          ></HighlightConfigUI>
+          <FilterConfigUI
+            v-if="toggleStoreOpts === 'FILTER_PRODUCT_MODIFY'"
+          ></FilterConfigUI>
+        </div>
       </div>
     </v-card>
   </v-navigation-drawer>

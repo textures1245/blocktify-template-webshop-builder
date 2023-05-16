@@ -1,5 +1,10 @@
 //* All the CSS Configuration go here
 
+export type WebsiteConfig = {
+  storeID: string;
+  hostName: string;
+};
+
 export type GlobalConfigCSS = {
   websiteName: string;
   themeColor:
@@ -194,6 +199,21 @@ export type ProductCollectionGridProp = {
 export type CardLinkProp = {
   type: "CardLink";
   props: CardLink[];
+};
+
+export type StoreConfig = {
+  highlightProducts: {
+    title: string;
+    sortAction:
+      | "HIGHTEST_PRICE"
+      | "HIGHEST_SOLD_OFF"
+      | "LOWEST_PRICE"
+      | "LOWEST_SOLD_OFF";
+    limits: number;
+  };
+  filter: {
+    requires: ("PRICE" | "HOT" | "TYPE" | "DATE")[];
+  };
 };
 
 export type ProductCollectionGrid = {

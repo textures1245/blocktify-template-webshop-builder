@@ -39,6 +39,12 @@ const customRoutes = [
     component: () => import("../auth/ClientLogin.vue"),
     meta: { requiresAuth: false },
   },
+  {
+    name: "apiStaffKeyGenerator",
+    path: "/api-staff-key-generator",
+    component: () => import("../auth/ApiKeyGenerator.vue"),
+    meta: { requiresAuth: false },
+  },
 ];
 
 const routes = [...viewRoutes, ...customRoutes];

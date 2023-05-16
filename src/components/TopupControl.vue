@@ -1,10 +1,49 @@
 <script lang="ts">
-import { toHandlers } from "vue";
+import Swal from "sweetalert2";
+import FormData from "form-data";
+import axios from "axios";
+import { useConfigComponentStore } from "../configs/configCPNStore";
+import { usePlayerStore } from "../store/actor/playerStore";
 
 export default {
+  setup() {
+    const configStore = useConfigComponentStore();
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+
+    const data = new FormData();
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: import.meta.env.VITE_TRUEWALLET_VOUCHER_TOUUP,
+      headers: {
+        ...data.getHeaders,
+        storeID: configStore.getWebsiteConfig.storeID,
+      },
+      data,
+    };
+    return { Toast, config, player: usePlayerStore().getCurrentPlayer, data };
+  },
+
+  mounted() {
+    let { phone, isNull } = this.validPlayerPhone();
+    this.formControl.phone = phone;
+    this.skipPhoneStep = isNull;
+  },
+
   data() {
     return {
       step: 1,
+      skipPhoneStep: false,
       formControl: {
         topupType: "TrueMoneyWallet",
         phone: "",
@@ -27,17 +66,49 @@ export default {
   },
 
   methods: {
+    validPlayerPhone() {
+      if (this.player.phone === null) {
+        return { phone: "", isNull: true };
+      }
+      return { phone: this.player.phone, isNull: false };
+    },
+
     stepValidation(step: number) {
       switch (step) {
         case 1:
           return (
-            this.formControl.phone.length > 50 &&
-            isNaN(this.formControl.phone as any)
+            this.formControl.phone.length > 10 ||
+            /^\d+$/.test(this.formControl.phone) === false
           );
       }
     },
 
-    onSubmit() {},
+    onSubmit() {
+      if (this.formControl.phone === "" || this.formControl.voucher === "") {
+        return alert("กรุณากรอกข้อมูลให้ครบ");
+      }
+
+      this.data.append("phone", this.formControl.phone);
+      this.data.append("phone", this.formControl.voucher);
+
+      axios(this.config)
+        .then((response) =>
+          this.Toast.fire("คุณได้เติมเงินเป็นที่เรียบร้อยแล้ว", "", "success")
+        )
+        .catch(
+          (err) => (
+            this.Toast.fire(
+              "ไม่สามารถทำการเติมเงินได้ ",
+              "โปรดตรวจสอบให้แน่ใจว่าคุณได้กรอกข้อมูลถูกต้อง",
+              "error"
+            ),
+            console.error(err)
+          )
+        );
+
+      //- clear data properties
+      this.data = new FormData();
+    },
   },
 };
 </script>
@@ -72,7 +143,7 @@ export default {
     <FormKit type="form" :actions="false">
       <v-window v-model="step">
         <v-window-item :value="1">
-          <v-card-text>
+          <v-card-text v-if="skipPhoneStep">
             <FormKit
               v-model="formControl.phone"
               label="โปรดกรอกเบอร์โทรศัพท์ที่ท่านต้องการเติมเงิน"
@@ -112,6 +183,10 @@ export default {
               placeholder="โปรดกรอก Voucher ของท่าน"
               help="ลักษณะคูปองจะเป็นแบบลิ้ง URL"
               validation="required|url"
+              :validation-rules="{
+                required: 'ตัวกรอกนี้ห้ามว่าง',
+                url: 'ลักษณะต้องเป็น URL เท่านั้น',
+              }"
             ></FormKit>
           </v-card-text>
         </v-window-item>

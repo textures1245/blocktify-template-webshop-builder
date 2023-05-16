@@ -1,6 +1,7 @@
 <script lang="ts">
 import axios from "axios";
 import FormData from "form-data";
+import { useConfigComponentStore } from "../configCPNStore";
 import Swal from "sweetalert2";
 import { PropType, ref } from "vue";
 
@@ -39,6 +40,7 @@ export default {
         toast.addEventListener("mouseleave", Swal.resumeTimer);
       },
     });
+    const websiteConfig = useConfigComponentStore().getWebsiteConfig;
 
     const data = new FormData();
     const config = {
@@ -47,7 +49,7 @@ export default {
       url: "",
       headers: {
         ...data.getHeaders,
-        storeID: "webshop-test",
+        storeID: websiteConfig.storeID,
       },
       data,
     };
@@ -158,6 +160,9 @@ export default {
           }
         })
         .catch(function (error) {
+          alert(
+            "มีบางอย่างขัดข้อง โปรดลองใหม่อีกครั้งในภายหลัง หรือโปรดแจ้งเจ้าหน้าที่ให้รับทราบ"
+          );
           console.error(error);
         });
       this.clearForm();
@@ -189,6 +194,8 @@ export default {
       this.fileControl = {} as File;
       this.fileUrlControl = null;
       this.imageUrlPreview = "";
+
+      this.data = new FormData();
     },
   },
 
@@ -237,6 +244,7 @@ export default {
           label="เลือกรูปภาพที่ต้องการลง"
           @change="onFileImageSelector"
           name="images-carousel"
+          help-class="w-10/12"
           :help="
             action === 'image'
               ? 'ไฟล์รูปภาพที่จะอัพโหลด ต้องเป็นประเภท jpg, jpeg หรือ png และต้องมีขนาดน้อยกว่า 2MB'
@@ -252,6 +260,7 @@ export default {
           validation="url"
           v-model="fileUrlControl"
           label="เลือก URL รูปภาพที่ต้องการ"
+          help-class="w-10/12"
           name="file-url-control"
           :help="'รูปภาพที่เอามาจาก Link URL มีโอกาสที่รูปภาพจะหมดอายุ (ไม่สามารถโหลดรูปภาพได้) ดั้งนั้นควรมั่นตรวจสอบรูปภาพของคุณ'"
         >

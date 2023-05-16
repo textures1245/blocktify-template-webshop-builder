@@ -1,16 +1,17 @@
 <script lang="ts">
+import { useConfigComponentStore } from "../configs/configCPNStore";
 import { useProductStore } from "../store/product/productStore";
 export default {
   emits: ["setProducts"],
   setup() {
     const store = useProductStore();
-    const products = store.getProducts;
-    const uniqueProdTypeSets = new Set<string>();
-    for (const prod of products) {
-      uniqueProdTypeSets.add(prod.type);
-    }
 
-    return { products, store, prodTypes: Array.from(uniqueProdTypeSets) };
+    return {
+      products: store.getProducts,
+      store,
+      filterSelectors: useConfigComponentStore().getStoreConfig.filter,
+      prodTypes: store.getProductTypes,
+    };
   },
   data() {
     return {
@@ -43,6 +44,7 @@ export default {
     <v-card class="mx-auto" max-width="500">
       <v-card-text class="flex flex-col gap-4">
         <FormKit
+          v-if="filterSelectors.requires.includes('PRICE')"
           v-model="filters.price"
           type="radio"
           label="ราคา"
@@ -54,6 +56,7 @@ export default {
           help="โปรดเลือกได้อย่างใดอย่างหนึ่ง"
         />
         <FormKit
+          v-if="filterSelectors.requires.includes('HOT')"
           v-model="filters.popular"
           type="radio"
           label="ยอดฮิต"
@@ -64,6 +67,7 @@ export default {
           help="โปรดเลือกได้อย่างใดอย่างหนึ่ง"
         />
         <FormKit
+          v-if="filterSelectors.requires.includes('TYPE')"
           v-model="filters.types"
           type="checkbox"
           help="โปรดเลือกได้ตัวกรอกที่คุณต้องการ เลือกได้มากกว่าหนึ่ง"
@@ -71,6 +75,7 @@ export default {
           :options="prodTypes"
         />
         <FormKit
+          v-if="filterSelectors.requires.includes('DATE')"
           v-model="filters.date"
           type="radio"
           label="วันที่"

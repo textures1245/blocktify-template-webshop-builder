@@ -23,12 +23,9 @@ import { MotionPlugin } from "@vueuse/motion";
 import { createAutoAnimatePlugin } from "@formkit/addons";
 
 import router from "./routers/routerApp";
+import { useProductStore } from "./store/product/productStore";
 
-import {
-  VueFire,
-  VueFireAuth,
-  VueFireFirestoreOptionsAPI,
-} from "vuefire";
+import { VueFire, VueFireAuth, VueFireFirestoreOptionsAPI } from "vuefire";
 import { firebaseApp } from "./firebase/firebase.config";
 
 const app = createApp(App);
@@ -63,4 +60,7 @@ app.use(vuetify);
 
 app.use(MotionPlugin);
 
+//- Base initialized
+// useProductStore().fetchProducts();
+useProductStore().onInitializeUniqueProductType();
 app.mount("#app");
