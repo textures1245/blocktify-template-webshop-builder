@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 import FormData from "form-data";
 import axios from "axios";
 import { useConfigComponentStore } from "../configs/configCPNStore";
-import { usePlayerStore } from "../store/actor/playerStore";
 
 export default {
   setup() {
@@ -31,7 +30,7 @@ export default {
       },
       data,
     };
-    return { Toast, config, player: usePlayerStore().getCurrentPlayer, data };
+    return { Toast, config, client: configStore.getWebsiteConfig, data };
   },
 
   mounted() {
@@ -67,10 +66,10 @@ export default {
 
   methods: {
     validPlayerPhone() {
-      if (this.player.phone === null) {
+      if (this.client.phone === null) {
         return { phone: "", isNull: true };
       }
-      return { phone: this.player.phone, isNull: false };
+      return { phone: this.client.phone, isNull: false };
     },
 
     stepValidation(step: number) {
@@ -142,7 +141,7 @@ export default {
 
     <FormKit type="form" :actions="false">
       <v-window v-model="step">
-        <v-window-item :value="1">
+        <!-- <v-window-item :value="1">
           <v-card-text v-if="skipPhoneStep">
             <FormKit
               v-model="formControl.phone"
@@ -158,9 +157,9 @@ export default {
               help="ขั้นต่ำการเติมเงิน 50 บาท"
             ></FormKit>
           </v-card-text>
-        </v-window-item>
+        </v-window-item> -->
 
-        <v-window-item :value="2">
+        <v-window-item :value="1">
           <v-card-text>
             <div class="flex flex-col gap-4 text-md mb-4">
               <h1>วิธีการแลกคูปอง (Voucher) ของ True Money Wallet</h1>
@@ -194,9 +193,9 @@ export default {
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-btn v-if="step > 1" variant="text" @click="step--"> ก่อน</v-btn>
+        <!-- <v-btn v-if="step > 1" variant="text" @click="step--"> ก่อน</v-btn> -->
         <v-spacer></v-spacer>
-        <v-btn
+        <!-- <v-btn
           v-if="step == 1"
           class="!btn-secondary"
           variant="flat"
@@ -204,8 +203,8 @@ export default {
           @click="step++"
         >
           ไปต่อ
-        </v-btn>
-        <FormKit v-else type="submit" label="ยืนยันการชำระ"></FormKit>
+        </v-btn> -->
+        <FormKit type="submit" label="ยืนยันการชำระ"></FormKit>
       </v-card-actions>
     </FormKit>
   </section>

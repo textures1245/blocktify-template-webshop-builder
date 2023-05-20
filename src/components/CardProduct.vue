@@ -13,8 +13,8 @@ export default {
 </script>
 <template>
   <v-card elevation="2">
-    <v-card-text class="grid grid-cols-3">
-      <div id="product-image" class="col-span-1">
+    <v-card-text class="grid sm:grid-cols-3">
+      <div id="product-image" class="col-span-2 sm:col-span-1">
         <v-img class="w-full h-full" :src="product.imgSrc"></v-img>
       </div>
       <div class="col-span-2">
@@ -32,7 +32,7 @@ export default {
               </div>
               <blockquote class="text-xs" v-html="product.desc"></blockquote>
             </article>
-            <div id="product-price-detail" class="row-span-1">
+            <div id="product-price-detail" class="row-span-1 lg:flex grid">
               <div id="price-container" class="stats shadow">
                 <div id="price" class="stat max-w-[100px] xl:max-w-none">
                   <div class="stat-title">ราคา</div>

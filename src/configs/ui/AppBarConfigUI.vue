@@ -1,8 +1,9 @@
 <script lang="ts">
 import { useConfigComponentStore } from "../configCPNStore";
+import FileControl from "../components/FileControl.vue";
 import CardExpand from "../../components/CardExpand.vue";
 export default {
-  components: { CardExpand },
+  components: { CardExpand, FileControl },
   setup() {
     return { config: useConfigComponentStore().getAppBarConfig };
   },
@@ -38,19 +39,21 @@ export default {
     <template #item-preview>
       <div class="avatar h-16 border-2">
         <v-img
-          src="https://www.nine10.ca/wp-content/uploads/2012/07/the-meaning-of-colours.jpg"
+          :src="
+            config.brandImg
+              ? config.brandImg
+              : 'https://www.nine10.ca/wp-content/uploads/2012/07/the-meaning-of-colours.jpg'
+          "
           :class="config.avatar"
         ></v-img>
       </div>
     </template>
     <template #content>
-      <FormKit
-        type="file"
-        label="Logo Image"
-        name="logoImg"
-        placeholder="Select a Logo Image."
-        validation="required"
-      ></FormKit>
+      <FileControl
+        @file-emitter="(imageUrl: string) => (config.brandImg = imageUrl)"
+        action="image"
+        :storage="config.brandImg"
+      ></FileControl>
       <FormKit
         type="select"
         label="รูปแบบ"
@@ -85,18 +88,19 @@ export default {
         :options="configOpts.bgOpts.isHave"
       />
       <FormKit
-        v-if="config.bgImg.isHave === 'true'"
-        label="โปรดเลือกรูปภาพ Background"
-        type="file"
-        name="bgImgSrc"
-      />
-      <FormKit
         v-if="config.bgImg.isHave === 'false'"
         label="รูปแบบ Glass"
         type="checkbox"
         name="glass-navbar"
         v-model="config.glass"
       />
+      <FileControl
+        v-if="config.bgImg.isHave === 'true'"
+        @file-emitter="(imageUrl: string) => (config.bgImg.src = imageUrl)"
+        action="image"
+        name="bgImgSrc"
+        :storage="config.bgImg.src"
+      ></FileControl>
     </template>
   </CardExpand>
 </template>

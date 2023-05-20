@@ -3,6 +3,7 @@
 export type WebsiteConfig = {
   storeID: string;
   hostName: string;
+  phone: string;
 };
 
 export type GlobalConfigCSS = {

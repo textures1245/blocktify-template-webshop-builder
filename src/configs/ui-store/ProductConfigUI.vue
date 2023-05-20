@@ -4,15 +4,52 @@ import { Product, useProductStore } from "../../store/product/productStore";
 import CardExpand from "../../components/CardExpand.vue";
 import PaginationControl from "../components/PaginationControl.vue";
 import ProductControl from "../components/ProductControl.vue";
+import Swal from "sweetalert2";
 export default {
   components: { CardExpand, PaginationControl, ProductControl },
   setup() {
     const store = useProductStore();
-    return { products: store.getProducts, productTypes: store.getProductTypes };
+    return {
+      products: store.getProducts,
+      productTypes: store.getProductTypes,
+      store,
+    };
   },
 
   data() {
     return { itemRenderers: <Product[]>[] };
+  },
+
+  methods: {
+    onRemoveProduct(prodId: number) {
+      Swal.fire({
+        title: "คุณแน่ใจใช่ไหมว่าต้องการลบสินค้านี้",
+        text: "เมื่อทำการลบแล้วคุณจะไม่สามารถกู้คืนสินค้านี้ได้อีก",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "ยกเลิกแอคชั่น",
+        confirmButtonText: "ลบสินค้านี้",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.store
+            .deleteProductById(prodId)
+            .then(() => {
+              Swal.fire({
+                icon: "success",
+                text: "สินค้าถูกลบออกเรียบร้อยแล้ว",
+              });
+            })
+            .catch(() => {
+              Swal.fire({
+                icon: "error",
+                text: "มีบางอย่างขัดข้องทำให้ไม่สามารถลบข้อมูล โปรดติดต่อเจ้าหน้าที่",
+              });
+            });
+        }
+      });
+    },
   },
 };
 </script>
@@ -64,17 +101,27 @@ export default {
                 <div class="flex gap-2" id="btn-actions">
                   <v-tooltip location="bottom" text="ลายละเอียด">
                     <template v-slot:activator="{ props }">
-                      <v-btn
-                        v-bind="props"
-                        class="!btn-info"
-                        size="small"
-                        icon="mdi-eye-arrow-right-outline"
-                      ></v-btn>
+                      <ProductControl
+                        :mode="'EDIT'"
+                        :prod-editor="prod"
+                        label-btn=""
+                        :custom-btn="true"
+                      >
+                        <template #custom-btn>
+                          <v-btn
+                            v-bind="props"
+                            class="!btn-info"
+                            size="small"
+                            icon="mdi-eye-arrow-right-outline"
+                          ></v-btn>
+                        </template>
+                      </ProductControl>
                     </template>
                   </v-tooltip>
                   <v-tooltip location="bottom" text="ลบ">
                     <template v-slot:activator="{ props }">
                       <v-btn
+                        @click="onRemoveProduct(prod.id)"
                         size="small"
                         v-bind="props"
                         class="!btn-error"
@@ -89,7 +136,7 @@ export default {
           <PaginationControl
             @on-page-changed="(items: Product[]) => itemRenderers = items"
             :items="products"
-            items-per-page="5"
+            :items-per-page="5"
           ></PaginationControl>
         </section>
       </template>

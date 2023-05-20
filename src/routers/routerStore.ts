@@ -20,7 +20,7 @@ export const useRouterStore = defineStore("useRouterStore", {
         icon: "mdi-home",
         title: "หน้าหลัก",
         name: "overview",
-        path: "/overview",
+        path: "overview",
         component: markRaw(
           defineAsyncComponent(async () => import("../views/MainView.vue"))
         ),
@@ -29,7 +29,7 @@ export const useRouterStore = defineStore("useRouterStore", {
         icon: "mdi-store",
         title: "ร้านค้า",
         name: "store",
-        path: "/store",
+        path: "store",
         component: markRaw(
           defineAsyncComponent(async () => import("../views/StoreView.vue"))
         ),
@@ -38,7 +38,7 @@ export const useRouterStore = defineStore("useRouterStore", {
         icon: "mdi-cash-fast",
         title: "เติมเงิน",
         name: "topup",
-        path: "/topup",
+        path: "topup",
         component: markRaw(
           defineAsyncComponent(async () => import("../views/TopupView.vue"))
         ),

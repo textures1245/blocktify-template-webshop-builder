@@ -1,6 +1,6 @@
 <script lang="ts">
 import Swal from "sweetalert2";
-import { useClientStore } from "./store/clientStore";
+import { useClientStore } from "./store/authClientStore";
 
 export default {
   setup() {

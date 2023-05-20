@@ -35,8 +35,8 @@ export const useProductStore = defineStore("productStore", {
         onSale: 5,
         quantity: 10,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -51,8 +51,8 @@ export const useProductStore = defineStore("productStore", {
         totalSales: 200,
         quantity: 10,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -69,8 +69,8 @@ export const useProductStore = defineStore("productStore", {
 
         onSale: 10,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -86,8 +86,8 @@ export const useProductStore = defineStore("productStore", {
         price: 40,
         totalSales: 400,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -103,8 +103,8 @@ export const useProductStore = defineStore("productStore", {
         price: 50,
         totalSales: 500,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -120,8 +120,8 @@ export const useProductStore = defineStore("productStore", {
         price: 60,
         totalSales: 600,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -150,8 +150,8 @@ export const useProductStore = defineStore("productStore", {
 
         onSale: 15,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -166,8 +166,8 @@ export const useProductStore = defineStore("productStore", {
         imgSrc:
           "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
       {
@@ -183,8 +183,8 @@ export const useProductStore = defineStore("productStore", {
           "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
         onSale: 20,
         actionStamp: {
-          created: new Timestamp(1647677385, 500000000),
-          updated: new Timestamp(1647677385, 500000000),
+          created: new Date(1647677385),
+          updated: new Date(1647677385),
         },
       },
     ],
@@ -218,16 +218,80 @@ export const useProductStore = defineStore("productStore", {
 
       this.$state.productTypes = Array.from(uniqueProdTypeSets);
     },
-    async fetchProducts(): Promise<Product[]> {
+    async deleteProductById(prodId: number | string) {
       let { data, config } = this.getDataConfig;
-      config.method = "get";
-      config.url = import.meta.env.VITE_GET_PRODUCT_GET_API;
+      config.method = "post";
+      config.url = import.meta.env.VITE_DELETE_PRODUCT_API;
+      data.append("productId", prodId);
       return axios(config)
-        .then((products: { data: Product[] }) => {
-          this.products = products.data;
-          console.log(this.products);
-          return products.data;
+        .then((response) => {
+          this.products = this.products.reduce(
+            (accumulator: Product[], prod) => {
+              if (prod.id != prodId) {
+                accumulator.push(prod);
+              }
+              return accumulator;
+            },
+            []
+          );
+          return true;
         })
+        .catch(function (error) {
+          console.error(error);
+          return false;
+        });
+    },
+
+    async fetchProducts(): Promise<Product[]> {
+      let { config } = this.getDataConfig;
+      config.method = "get";
+      config.url = import.meta.env.VITE_GET_PRODUCT_API;
+      return axios(config)
+        .then(
+          (fetch: {
+            data: {
+              itemsCount: number;
+              products: {
+                created_at: string;
+                deleted_at: string;
+                product_description: string;
+                product_id: string;
+                product_image_url: string;
+                product_name: string;
+                product_command: string;
+                product_price: string;
+                product_quantity: string;
+                product_type: string;
+                total_sales: string;
+                updated_at: string;
+              }[];
+            };
+          }) => {
+            this.products = fetch.data.products.map((obj) => ({
+              id: parseInt(obj.product_id),
+              name: obj.product_name,
+              desc: obj.product_description,
+              type: obj.product_type,
+              price: parseFloat(obj.product_price),
+              totalSales: parseInt(obj.total_sales),
+              imgSrc: obj.product_image_url,
+              command: obj.product_command,
+              quantity: parseInt(obj.product_quantity),
+              actionStamp: {
+                created: new Date(+obj.created_at * 1000),
+                updated: obj.updated_at
+                  ? new Date(+obj.updated_at * 1000)
+                  : null,
+                deleted: obj.deleted_at
+                  ? new Date(+obj.deleted_at * 1000)
+                  : null,
+              },
+              onSale: 0,
+            }));
+            console.log(this.products);
+            return this.products;
+          }
+        )
         .catch(function (error) {
           console.error(error);
           return [] as Product[];
@@ -257,13 +321,13 @@ export const useProductStore = defineStore("productStore", {
       } else if (sortByDate && !sortByPopular) {
         filteredProds.sort(
           (a, b) =>
-            b.actionStamp.created.seconds - a.actionStamp.created.seconds
+            b.actionStamp.created.getTime() - a.actionStamp.created.getTime()
         );
       } else if (sortByDate && sortByPopular) {
         filteredProds.sort((a, b) => {
           if (a.totalSales === b.totalSales) {
             return (
-              b.actionStamp.created.seconds - a.actionStamp.created.seconds
+              b.actionStamp.created.getTime() - a.actionStamp.created.getTime()
             );
           }
           return b.totalSales - a.totalSales;

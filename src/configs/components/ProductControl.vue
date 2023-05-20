@@ -14,18 +14,22 @@ import Swal from "sweetalert2";
 
 type ProductResponse = {
   data: {
-    status: 201 | 401 | 500;
+    status: "201" | "401" | "500";
     message: string;
   };
 };
 
 export default {
   props: {
+    customBtn: {
+      type: Boolean,
+      default: false,
+    },
     mode: {
       type: String as PropType<"ADD" | "EDIT">,
       required: true,
     },
-    productToEdit: {
+    prodEditor: {
       type: Object as PropType<Product>,
     },
     labelBtn: {
@@ -35,7 +39,6 @@ export default {
   },
   components: { FileControl, QuillEditor },
   setup() {
-    console.log("started");
     const websiteConfig = useConfigComponentStore().getWebsiteConfig;
 
     const data = new FormData();
@@ -55,6 +58,10 @@ export default {
       config,
       data,
     };
+  },
+
+  mounted() {
+    this.productData = { ...this.onInitializedProduct() };
   },
 
   data() {
@@ -99,8 +106,8 @@ export default {
 
       this.config.url =
         this.mode === "ADD"
-          ? import.meta.env.VITE_ADD_PRODUCT_POST_API
-          : import.meta.env.VITE_UPDATE_PRODUCT_POST_API;
+          ? import.meta.env.VITE_ADD_PRODUCT_API
+          : import.meta.env.VITE_UPDATE_PRODUCT_API;
 
       //- append key\value to formData
       for (const [key, value] of Object.entries(this.productData)) {
@@ -116,13 +123,13 @@ export default {
           console.log(response);
           if (response.data) {
             switch (response.data.status) {
-              case 201:
+              case "201":
                 Swal.fire({
                   icon: "success",
                   title: "สินค้าถูกเพิ่มเสร็จสิ้นเรียบร้อยแล้ว",
                 });
                 break;
-              case 401:
+              case "401":
                 alert(
                   "เกิดข้อผิดผลาด คุณไม่มีสิทธ์ในการกระทำแอคชั่นนี้ โปรดตรวจสอบว่าคุณได้ทำการเข้าสู่ระบบแบบถูกต้อง หรือถ้าไม่ โปรดติดต่อเจ้าหน้าที่"
                 );
@@ -158,10 +165,37 @@ export default {
     },
 
     onInitializedProduct() {
-      if (this.mode === "ADD") {
-      } else {
-        // this.formControl = {};
+      if (this.mode === "EDIT") {
+        let cmdWords = this.prodEditor!.command.slice(
+          this.prodEditor!.command.indexOf(" ") + 1
+        )
+          .trim()
+          .split(" ");
+        if (cmdWords) {
+          this.formCommand.itemNameCommand = cmdWords[1];
+          this.formCommand.itemQuantityCommand = +cmdWords[2];
+        }
+        return {
+          productId: this.prodEditor!.id,
+          productName: this.prodEditor!.name,
+          productDescription: this.prodEditor!.desc,
+          productType: this.prodEditor!.type,
+          productPrice: this.prodEditor!.price,
+          productImageUrl: this.prodEditor!.imgSrc,
+          productQuantity: this.prodEditor!.quantity,
+          productCommand: this.prodEditor!.command,
+        };
       }
+      return {
+        productId: -1,
+        productName: "",
+        productDescription: "",
+        productType: "",
+        productPrice: 0,
+        productImageUrl: "",
+        productQuantity: 0,
+        productCommand: "",
+      };
     },
 
     clearFormControl() {
@@ -196,13 +230,18 @@ export default {
 <template>
   <v-dialog v-model="dialog" class="w-full xl:w-10/12">
     <template v-slot:activator="{ props }">
-      <v-btn class="!btn-primary" v-bind="props"> {{ labelBtn }} </v-btn>
+      <v-btn v-if="!customBtn" class="!btn-primary" v-bind="props">
+        {{ labelBtn }}
+      </v-btn>
+      <div v-bind="props" v-else>
+        <slot name="custom-btn"> </slot>
+      </div>
     </template>
 
     <v-card>
       <FormKit type="form" @submit="onSubmit" :actions="false">
         <v-card-text>
-          <div class="grid grid-rows-2 place-self-center mx-auto">
+          <div class="p-5 grid grid-rows-2 place-self-center mx-auto">
             <div class="grid md:grid-cols-2 place-items-center">
               <div class=" " id="image-control">
                 <figure class="mb-5">

@@ -4,10 +4,9 @@ import { Timestamp } from "firebase/firestore";
 export type Account = {
   username: string;
   password: string;
-  lastLogin: Timestamp;
 };
 
-export type Role = "Player" | "Client" | "Admin";
+export type Role = "Player" | "Client";
 
 //- product types
 // export type PurchaseInfo = {
@@ -18,14 +17,14 @@ export type Role = "Player" | "Client" | "Admin";
 // };
 
 export type PlayerTransaction = {
-  topUpTotal: number;
-  recentTopUp: number;
-  recentTopUpDate: Timestamp;
   wallet: number;
+  topUpTotal?: number;
+  recentTopUp?: number;
+  recentTopUpDate?: Date;
 };
 
 export type CurdDate = {
-  created: Timestamp;
-  updated?: Timestamp;
-  deleted?: Timestamp;
+  created: Date;
+  updated: Date | null;
+  deleted: Date | null;
 };

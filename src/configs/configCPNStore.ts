@@ -11,7 +11,6 @@ import {
   WebsiteConfig,
   StoreConfig,
 } from "./configCSS";
-import { limit } from "firebase/firestore";
 
 export const useHelpConfigStore = defineStore("useHelpConfigStore", {
   state: () => ({}),
@@ -27,8 +26,9 @@ export const useHelpConfigStore = defineStore("useHelpConfigStore", {
 export const useConfigComponentStore = defineStore("useConfigComponentStore", {
   state: () => ({
     websiteConfig: <WebsiteConfig>{
-      storeID: "webshopTest5",
+      storeID: "webshopTest6",
       hostName: "localhost",
+      phone: "0654209589",
     },
     storeConfig: <StoreConfig>{
       highlightProducts: {

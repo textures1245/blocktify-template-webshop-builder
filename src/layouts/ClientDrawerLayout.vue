@@ -7,7 +7,7 @@ import GlobalCSSConfigUI from "../configs/ui/GlobalCSSConfigUI.vue";
 import HeaderBarConfigUI from "../configs/ui/HeaderBarConfigUI.vue";
 import MainBodyConfigUI from "../configs/ui/MainBodyConfigUI.vue";
 import BannerConfigUI from "../configs/ui/BannerConfigUI.vue";
-import SideBaeConfigUI from "../configs/ui/SidebaeConfigUI.vue";
+import SideBarConfigUI from "../configs/ui/SidebarConfigUI.vue";
 import ProductConfigUI from "../configs/ui-store/ProductConfigUI.vue";
 import FilterConfigUI from "../configs/ui-store/FilterConfigUI.vue";
 import HighlightConfigUI from "../configs/ui-store/HighlightConfigUI.vue";
@@ -20,7 +20,7 @@ export default {
     HeaderBarConfigUI,
     MainBodyConfigUI,
     BannerConfigUI,
-    SideBaeConfigUI,
+    SideBarConfigUI,
     ProductConfigUI,
     FilterConfigUI,
     HighlightConfigUI,
@@ -158,9 +158,9 @@ export default {
           <FooterConfigUI
             v-if="toggleLayoutOpts === 'FOOTER_MODIFY'"
           ></FooterConfigUI>
-          <SideBaeConfigUI
+          <SideBarConfigUI
             v-if="toggleLayoutOpts === 'SIDEBAR_MODIFY'"
-          ></SideBaeConfigUI>
+          ></SideBarConfigUI>
         </v-list>
       </div>
       <div id="store-modifier" v-if="toggleSideDrawer === 'STORE_MODIFY'">

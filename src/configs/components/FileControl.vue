@@ -49,7 +49,7 @@ export default {
       url: "",
       headers: {
         ...data.getHeaders,
-        storeID: websiteConfig.storeID,
+        "x-store-id": websiteConfig.storeID,
       },
       data,
     };
@@ -95,6 +95,19 @@ export default {
       }
     },
 
+    validateFileSize(file: File, action: "file" | "image") {
+      if (action === "image" && file.size > this.rule.MAX_FILE_SIZE) {
+        this.Toast.fire({
+          icon: "warning",
+          title: `กรุณาใส่ไฟล์รูปภาพที่มีขนาดไม่เกิน 2MB (รูปภาพปัจจุบันขนาด ${this.formatBytes(
+            file.size
+          )})`,
+        });
+        return false;
+      }
+      return true;
+    },
+
     onChangedImageUrlInput() {
       this.imageUrlPreview = this.fileUrlControl!;
     },
@@ -108,17 +121,7 @@ export default {
       }
 
       //- validation for image file's size
-      if (
-        action === "image" &&
-        this.fileControl.size > this.rule.MAX_FILE_SIZE
-      ) {
-        return this.Toast.fire({
-          icon: "warning",
-          title: `กรุณาใส่ไฟล์รูปภาพที่มีขนาดไม่เกิน 2MB (รูปภาพปัจจุบันขนาด ${this.formatBytes(
-            this.fileControl.size
-          )})`,
-        });
-      }
+      if (!this.validateFileSize(this.fileControl, action)) return;
 
       this.data.append(action, this.fileControl);
 

@@ -3,9 +3,16 @@ import { useConfigComponentStore, useHelpConfigStore } from "../configCPNStore";
 import CardExpand from "../../components/CardExpand.vue";
 import CardExpandPanel from "../../components/CardExpandPanel.vue";
 import BadgeWidget from "../../widgets/BadgeWidget.vue";
+import FileControl from "../components/FileControl.vue";
 import HeroContent from "../../widgets/HeroContent.vue";
 export default {
-  components: { CardExpand, CardExpandPanel, BadgeWidget, HeroContent },
+  components: {
+    CardExpand,
+    CardExpandPanel,
+    BadgeWidget,
+    HeroContent,
+    FileControl,
+  },
   setup() {
     const configStore = useConfigComponentStore();
     return {
@@ -27,35 +34,11 @@ export default {
 <template>
   <CardExpand headline="พื้นหลังแบนเนอร์ (Banner Background)">
     <template #content>
-      <FormKit
-        type="select"
-        label="เลือกชนิดพื้นหลัง"
-        v-model="config.background.selected"
-        name="banner-bg"
-        :options="configOpts.bannerBgOpts"
-        placeholder="Select a Banner Background Image."
-        validation="required"
-      ></FormKit>
-      <div v-if="config.background.selected !== 'none'">
-        <FormKit
-          type="file"
-          label="เลือก File"
-          name="banner-bg"
-          placeholder="Select a Banner Background Opacity."
-          validation="required"
-        ></FormKit>
-        <FormKit
-          type="range"
-          min="0"
-          step="10"
-          max="100"
-          validation-visibility="live"
-          label="ปรับระดับความใส"
-          name="banner-bg-opacity"
-          placeholder="Adjust opacity."
-          validation="required"
-        ></FormKit>
-      </div>
+      <FileControl
+        @file-emitter="(imageUrl: string) => (config.background.value = imageUrl)"
+        action="image"
+        :storage="config.background.value"
+      ></FileControl>
     </template>
   </CardExpand>
 
@@ -89,13 +72,11 @@ export default {
         ></BadgeWidget>
       </template>
       <template #content>
-        <FormKit
-          type="file"
-          label="เลือกรูปภาพที่ต้องการใส่ในกรอบไอคอน"
-          name="widget-one-logo"
-          validation="required"
-          help=""
-        ></FormKit>
+        <FileControl
+          @file-emitter="(imageUrl: string) => (config.contents.widgetOne.iconSrc = imageUrl)"
+          action="image"
+          :storage="config.contents.widgetOne.iconSrc"
+        ></FileControl>
         <FormKit
           v-model="config.contents.widgetOne.axis"
           type="select"
@@ -140,12 +121,11 @@ export default {
         ></BadgeWidget>
       </template>
       <template #content>
-        <FormKit
-          type="file"
-          label="เลือกรูปภาพที่ต้องการใส่ในกรอบไอคอน"
-          name="widget-two-logo"
-          validation="required"
-        ></FormKit>
+        <FileControl
+          @file-emitter="(imageUrl: string) => (config.contents.widgetTwo.iconSrc = imageUrl)"
+          action="image"
+          :storage="config.contents.widgetTwo.iconSrc"
+        ></FileControl>
         <FormKit
           v-model="config.contents.widgetTwo.axis"
           type="select"
@@ -190,11 +170,9 @@ export default {
       </template>
       <template #content>
         <FormKit
-          type="file"
-          label="เลือกรูปภาพที่ต้องการใส่ในกรอบไอคอน"
-          name="banner-logo"
-          validation="required"
-          help=""
+          label="แสดงโลโก้"
+          type="checkbox"
+          v-model="config.contents.bannerText.isShowLogo"
         ></FormKit>
         <FormKit
           type="text"

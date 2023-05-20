@@ -9,32 +9,60 @@
         src: config.contents.playerBadge.bg.src,
       }"
     ></PlayerBadge>
-    <DonateListWidget
-      v-if="config.contents.required.includes('topDonate')"
-      :limit="config.contents.recentDonate.limit"
-      sort-action="RECENT"
-      :players="players"
-    ></DonateListWidget>
-    <DonateListWidget
-      v-if="config.contents.required.includes('recentDonate')"
-      :limit="config.contents.topDonate.limit"
-      sort-action="TOP_DONATE"
-      :players="players"
-    ></DonateListWidget>
+    <Suspense>
+      <DonateListWidget
+        v-if="config.contents.required.includes('topDonate')"
+        sort-action="RECENT"
+        :players="topUpRanks"
+      ></DonateListWidget>
+    </Suspense>
+    <Suspense>
+      <DonateListWidget
+        v-if="config.contents.required.includes('recentDonate')"
+        sort-action="TOP_DONATE"
+        :players="recentTopUpRanks"
+      ></DonateListWidget>
+    </Suspense>
   </div>
 </template>
 <script lang="ts">
 import PlayerBadge from "../components/PlayerBadge.vue";
 import DonateListWidget from "../widgets/DonateListWidget.vue";
 import { useConfigComponentStore } from "../configs/configCPNStore";
-import { usePlayerStore } from "../store/actor/playerStore";
+import { TopUpRanK, usePlayerStore } from "../store/actor/playerStore";
 export default {
   components: { PlayerBadge, DonateListWidget },
   setup() {
     return {
-      players: usePlayerStore().getPlayers,
       config: useConfigComponentStore().getSidebarConfig,
     };
+  },
+  data() {
+    return {
+      recentTopUpRanks: [] as TopUpRanK[],
+      topUpRanks: [] as TopUpRanK[],
+    };
+  },
+
+  async mounted() {
+    this.recentTopUpRanks = await this.getTopUpRanks(
+      "RECENT",
+      this.config.contents.recentDonate.limit
+    );
+    this.topUpRanks = await this.getTopUpRanks(
+      "TOP_DONATE",
+      this.config.contents.recentDonate.limit
+    );
+  },
+
+  methods: {
+    async getTopUpRanks(action: "RECENT" | "TOP_DONATE", limit: number) {
+      const ranks = await usePlayerStore().fetchTopUpPlayersRanking(
+        action,
+        limit
+      );
+      return ranks;
+    },
   },
 };
 </script>

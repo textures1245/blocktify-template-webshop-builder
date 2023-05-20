@@ -16,7 +16,6 @@ export default {
     <v-tabs v-model="currentTab" class="!bg-primary text-primary-content">
       <v-tab v-for="tab in tabs" :value="tab.value">{{ tab.label }}</v-tab>
     </v-tabs>
-
     <v-card-text>
       <v-window v-model="currentTab">
         <v-window-item value="topup">
@@ -26,4 +25,4 @@ export default {
     </v-card-text>
   </v-card>
 </template>
-<style lang=""></style>
+<style lang="scss"></style>

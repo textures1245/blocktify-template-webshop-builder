@@ -39,7 +39,7 @@ export default {
   <div
     :style="bgImg ? { backgroundImage: 'url(' + bgImg + ') !important' } : ''"
     :class="[
-      !bgCustom && !bgImg ? 'bg-accent' : bgCustom,
+      !bgCustom && !bgImg ? '!bg-secondary ' : bgCustom,
 
       ' w-56 h-28 !card bg-cover ',
       'rounded-md',
@@ -65,7 +65,7 @@ export default {
       </div>
       <v-card-item
         :class="[
-          !textColorCustom ? '!text-accent-content' : textColorCustom,
+          !textColorCustom ? '!text-secondary-content' : textColorCustom,
           'text-center ',
         ]"
       >

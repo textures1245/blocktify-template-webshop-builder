@@ -8,6 +8,7 @@ export default {
   data() {
     return {
       products: <Product[]>[],
+      dialog: false,
     };
   },
   methods: {},
@@ -37,6 +38,27 @@ export default {
       <ProductFilter
         @set-products="(prods: Product[]) => (products = prods)"
       ></ProductFilter>
+    </div>
+    <div
+      v-motion
+      :initial="{ opacity: 0, y: 100 }"
+      :enter="{ opacity: 1, y: 0, scale: 1 }"
+      :variants="{ custom: { scale: 1.1 } }"
+      :delay="200"
+      class="col-span-1 absolute right-5 bottom-5 block z-10 lg:hidden"
+    >
+      <v-dialog v-model="dialog" width="auto">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            icon="mdi-filter-cog-outline"
+            class="!btn-secondary"
+            v-bind="props"
+          ></v-btn>
+        </template>
+        <ProductFilter
+          @set-products="(prods: Product[]) => (products = prods)"
+        ></ProductFilter>
+      </v-dialog>
     </div>
     <div
       v-motion

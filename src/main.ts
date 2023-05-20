@@ -61,6 +61,6 @@ app.use(vuetify);
 app.use(MotionPlugin);
 
 //- Base initialized
-// useProductStore().fetchProducts();
+useProductStore().fetchProducts();
 useProductStore().onInitializeUniqueProductType();
 app.mount("#app");

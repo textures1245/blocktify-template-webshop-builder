@@ -1,98 +1,151 @@
 import { Timestamp } from "firebase/firestore";
 import { defineStore } from "pinia";
 import { Account, PlayerTransaction, Role } from "../types";
+import axios from "axios";
+import FormData from "form-data";
+import { useConfigComponentStore } from "../../configs/configCPNStore";
 
 export type Player = Account & {
   avatar: string;
-  id: number;
   playerName: string;
   role: Role;
-  regDate?: Timestamp;
-  hasSession: boolean | number;
-  email: string;
-  phone: string | null;
   transaction: PlayerTransaction;
   fromStoreId: string;
 };
 
+export type TopUpRanK = {
+  player_name: string;
+  amount: string;
+  created_at?: string;
+};
+
 export const usePlayerStore = defineStore("playerStore", {
   state: () => ({
-    player: <Player>{
-      avatar: "https://minotar.net/helm/mhf_steve/600.png",
-      id: 1,
-      playerName: "Alex",
-      role: "Player",
-      hasSession: true,
-      email: "email@minotar.net",
-      fromStoreId: "1231",
-      transaction: {
-        topUpTotal: 1000,
-        recentTopUp: 200,
-        recentTopUpDate: new Timestamp(1647677385, 500000000),
-        wallet: 6000,
-      },
-      phone: null,
-      regDate: undefined,
-    },
+    player: <Player>{},
 
-    players: <Player[]>[
-      {
-        avatar: "https://minotar.net/helm/mhf_steve/600.png",
-        id: 1,
-        playerName: "Alex",
-        role: "Player",
-        hasSession: true,
-        email: "email@minotar.net",
-        fromStoreId: "1231",
-        transaction: {
-          topUpTotal: 1000,
-          recentTopUp: 200,
-          recentTopUpDate: new Timestamp(1647677385, 500000000),
-          wallet: 6000,
-        },
-        phone: null,
-        regDate: undefined,
-      },
-      {
-        avatar: "https://minotar.net/helm/mhf_steve/600.png",
-        id: 1,
-        playerName: "Alex",
-        role: "Player",
-        hasSession: true,
-        email: "email@minotar.net",
-        fromStoreId: "1231",
-        transaction: {
-          topUpTotal: 800,
-          recentTopUp: 422,
-          recentTopUpDate: new Timestamp(1647677000, 500000000),
-          wallet: 6000,
-        },
-        phone: null,
-
-        regDate: undefined,
-      },
-      {
-        avatar: "https://minotar.net/helm/mhf_steve/600.png",
-        id: 1,
-        playerName: "Alex",
-        role: "Player",
-        hasSession: true,
-        email: "email@minotar.net",
-        fromStoreId: "1231",
-        regDate: undefined,
-        phone: null,
-        transaction: {
-          topUpTotal: 700,
-          recentTopUp: 200,
-          recentTopUpDate: new Timestamp(1647679012, 500000000),
-          wallet: 6000,
-        },
-      },
-    ],
+    // player: <Player>{
+    //   avatar: "https://minotar.net/helm/mhf_steve/600.png",
+    //   playerName: "Alex",
+    //   role: "Player",
+    //   hasSession: true,
+    //   email: "email@minotar.net",
+    //   fromStoreId: "1231",
+    //   transaction: {
+    //     topUpTotal: 1000,
+    //     recentTopUp: 200,
+    //     recentTopUpDate: new Timestamp(1647677385, 500000000),
+    //     wallet: 6000,
+    //   },
+    //   phone: null,
+    //   regDate: undefined,
+    // },
+    // players: <Player[]>[
+    //   {
+    //     avatar: "https://minotar.net/helm/mhf_steve/600.png",
+    //     id: 1,
+    //     playerName: "Alex",
+    //     role: "Player",
+    //     hasSession: true,
+    //     email: "email@minotar.net",
+    //     fromStoreId: "1231",
+    //     transaction: {
+    //       topUpTotal: 1000,
+    //       recentTopUp: 200,
+    //       recentTopUpDate: new Timestamp(1647677385, 500000000),
+    //       wallet: 6000,
+    //     },
+    //     phone: null,
+    //     regDate: undefined,
+    //   },
+    //   {
+    //     avatar: "https://minotar.net/helm/mhf_steve/600.png",
+    //     id: 1,
+    //     playerName: "Alex",
+    //     role: "Player",
+    //     hasSession: true,
+    //     email: "email@minotar.net",
+    //     fromStoreId: "1231",
+    //     transaction: {
+    //       topUpTotal: 800,
+    //       recentTopUp: 422,
+    //       recentTopUpDate: new Timestamp(1647677000, 500000000),
+    //       wallet: 6000,
+    //     },
+    //     phone: null,
+    //     regDate: undefined,
+    //   },
+    //   {
+    //     avatar: "https://minotar.net/helm/mhf_steve/600.png",
+    //     id: 1,
+    //     playerName: "Alex",
+    //     role: "Player",
+    //     hasSession: true,
+    //     email: "email@minotar.net",
+    //     fromStoreId: "1231",
+    //     regDate: undefined,
+    //     phone: null,
+    //     transaction: {
+    //       topUpTotal: 700,
+    //       recentTopUp: 200,
+    //       recentTopUpDate: new Timestamp(1647679012, 500000000),
+    //       wallet: 6000,
+    //     },
+    //   },
+    // ],
   }),
   getters: {
     getCurrentPlayer: (state) => state.player,
-    getPlayers: (state) => state.players,
+    // getPlayers: (state) => state.players,
+    getDataConfig: (state) => {
+      var data = new FormData();
+
+      var config = {
+        method: "",
+        maxBodyLength: Infinity,
+        url: "",
+        headers: {
+          ...data.getHeaders,
+          "x-store-id": useConfigComponentStore().getWebsiteConfig.storeID,
+        },
+        data: data,
+      };
+      return { data, config };
+    },
   },
-  actions: {},
+  actions: {
+    setPlayer(player: Player) {
+      this.player = player;
+    },
+
+    async fetchTopUpPlayersRanking(
+      action: "RECENT" | "TOP_DONATE",
+      limit: number
+    ): Promise<TopUpRanK[]> {
+      const { config } = this.getDataConfig;
+      config.method = "get";
+      config.url =
+        action === "TOP_DONATE"
+          ? import.meta.env.VITE_GET_TOPUP_RANKING
+          : import.meta.env.VITE_GET_LASTEST_TOPUP;
+
+      if (limit > 0) config.url = `${config.url}?limit=${limit}`;
+
+      return axios(config)
+        .then((res: { data: TopUpRanK[] }) => {
+          // console.log(res)
+          if (action === "TOP_DONATE")
+            return res.data.map((player) => {
+              return {
+                player_name: player.player_name,
+                amount: player.amount,
+              };
+            });
+          return [...res.data];
+        })
+        .catch(function (error) {
+          console.error(error);
+          return [] as TopUpRanK[];
+        });
+    },
+  },
 });

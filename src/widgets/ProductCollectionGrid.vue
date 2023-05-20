@@ -14,7 +14,12 @@
           v-for="prod in products.slice(0, props?.limits)"
           class="glass max-h-52 col-span-1"
         >
-          <v-img :src="prod.imgSrc" :alt="prod.name"></v-img>
+          <v-img
+            cover
+            class="!h-5/6"
+            :src="prod.imgSrc"
+            :alt="prod.name"
+          ></v-img>
           <div
             class="glass mix-blend-color-burn text-sm lg:text-lg font-bold h-[20%] flex w-full justify-around absolute bottom-0 items-center"
           >
