@@ -11,7 +11,7 @@
         <v-sheet class="!glass !max-h-[920px]" height="100%">
           <div class="flex flex-col lg:grid grid-cols-2 h-full">
             <div class="duration-300 hover:h-full h-2/6 lg:h-full">
-              <v-img :src="info.image" cover class="h-full w-full"></v-img>
+              <v-img :src="info.image!" cover class="h-full w-full"></v-img>
             </div>
             <div id="text-content-container" class="h-full bg-base-100">
               <v-container>

@@ -6,7 +6,9 @@
       v-if="config.contents.required.includes('playerBadge')"
       :bgImg="{
         isCustom: config.contents.playerBadge.bg.custom,
-        src: config.contents.playerBadge.bg.src,
+        src:
+          config.contents.playerBadge.bg.src ||
+          'https://minotar.net/helm/mhf_steve/600.png',
       }"
     ></PlayerBadge>
     <Suspense>

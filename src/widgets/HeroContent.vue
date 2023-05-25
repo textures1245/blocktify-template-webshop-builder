@@ -22,11 +22,14 @@ export default {
       <v-img
         :src="appBarConfig.brandImg"
         :class="['w-24', appBarConfig.avatar]"
-        alt=""
+        alt="logo"
       />
     </div>
     <div id="text-content" class="text-white text-center">
-      <h1 class="text-4xl light-keyframes font-bold">
+      <h1
+        style="text-shadow: 2px black"
+        class="text-xl sm:text-2xl md:text-4xl lg:text-6xl text-shadow-lg font-extrabold"
+      >
         {{ title || "Title" }}
       </h1>
       <p class="text-md light-keyframes">{{ subtitle || "" }}</p>

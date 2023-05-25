@@ -18,12 +18,11 @@ import { createPinia } from "pinia";
 
 //* necessary lib stuff
 import { draggable } from "vuedraggable";
-
+import LoadScript from "vue-plugin-load-script";
 import { MotionPlugin } from "@vueuse/motion";
 import { createAutoAnimatePlugin } from "@formkit/addons";
 
 import router from "./routers/routerApp";
-import { useProductStore } from "./store/product/productStore";
 
 import { VueFire, VueFireAuth, VueFireFirestoreOptionsAPI } from "vuefire";
 import { firebaseApp } from "./firebase/firebase.config";
@@ -57,10 +56,8 @@ app.use(
   })
 );
 app.use(vuetify);
-
+app.use(LoadScript);
 app.use(MotionPlugin);
 
 //- Base initialized
-useProductStore().fetchProducts();
-useProductStore().onInitializeUniqueProductType();
 app.mount("#app");

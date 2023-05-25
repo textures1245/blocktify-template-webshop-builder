@@ -1,13 +1,14 @@
 <script lang="ts">
 import { useConfigComponentStore } from "../configs/configCPNStore";
 import { useProductStore } from "../store/product/productStore";
+import { storeToRefs } from "pinia";
 export default {
   emits: ["setProducts"],
   setup() {
     const store = useProductStore();
-
+    let { products } = storeToRefs(store);
     return {
-      products: store.getProducts,
+      products,
       store,
       filterSelectors: useConfigComponentStore().getStoreConfig.filter,
       prodTypes: store.getProductTypes,
@@ -23,6 +24,13 @@ export default {
       },
     };
   },
+  watch: {
+    products() {
+      this.$emit("setProducts", this.products);
+      this.store.onInitializeUniqueProductType();
+    },
+  },
+
   mounted() {
     this.$emit("setProducts", this.products);
   },

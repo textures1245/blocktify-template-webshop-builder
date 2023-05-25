@@ -5,6 +5,10 @@
 //- sweert alert theme
 @import "@sweetalert2/theme-minimal/minimal.scss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 .grid-parent {
   display: grid;
 
@@ -26,4 +30,18 @@ h2.hr span.hr-text {
 
 .swal2-container {
   z-index: 20000 !important;
+}
+
+/* Overwrite the default to keep the scrollbar always visible */
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }

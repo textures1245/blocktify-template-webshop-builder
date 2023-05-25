@@ -21,77 +21,15 @@ export type TopUpRanK = {
 
 export const usePlayerStore = defineStore("playerStore", {
   state: () => ({
-    player: <Player>{},
-
-    // player: <Player>{
-    //   avatar: "https://minotar.net/helm/mhf_steve/600.png",
-    //   playerName: "Alex",
-    //   role: "Player",
-    //   hasSession: true,
-    //   email: "email@minotar.net",
-    //   fromStoreId: "1231",
-    //   transaction: {
-    //     topUpTotal: 1000,
-    //     recentTopUp: 200,
-    //     recentTopUpDate: new Timestamp(1647677385, 500000000),
-    //     wallet: 6000,
-    //   },
-    //   phone: null,
-    //   regDate: undefined,
-    // },
-    // players: <Player[]>[
-    //   {
-    //     avatar: "https://minotar.net/helm/mhf_steve/600.png",
-    //     id: 1,
-    //     playerName: "Alex",
-    //     role: "Player",
-    //     hasSession: true,
-    //     email: "email@minotar.net",
-    //     fromStoreId: "1231",
-    //     transaction: {
-    //       topUpTotal: 1000,
-    //       recentTopUp: 200,
-    //       recentTopUpDate: new Timestamp(1647677385, 500000000),
-    //       wallet: 6000,
-    //     },
-    //     phone: null,
-    //     regDate: undefined,
-    //   },
-    //   {
-    //     avatar: "https://minotar.net/helm/mhf_steve/600.png",
-    //     id: 1,
-    //     playerName: "Alex",
-    //     role: "Player",
-    //     hasSession: true,
-    //     email: "email@minotar.net",
-    //     fromStoreId: "1231",
-    //     transaction: {
-    //       topUpTotal: 800,
-    //       recentTopUp: 422,
-    //       recentTopUpDate: new Timestamp(1647677000, 500000000),
-    //       wallet: 6000,
-    //     },
-    //     phone: null,
-    //     regDate: undefined,
-    //   },
-    //   {
-    //     avatar: "https://minotar.net/helm/mhf_steve/600.png",
-    //     id: 1,
-    //     playerName: "Alex",
-    //     role: "Player",
-    //     hasSession: true,
-    //     email: "email@minotar.net",
-    //     fromStoreId: "1231",
-    //     regDate: undefined,
-    //     phone: null,
-    //     transaction: {
-    //       topUpTotal: 700,
-    //       recentTopUp: 200,
-    //       recentTopUpDate: new Timestamp(1647679012, 500000000),
-    //       wallet: 6000,
-    //     },
-    //   },
-    // ],
+    player: <Player>{
+      avatar: "https://minotar.net/helm/mhf_steve/600.png",
+      playerName: "codename_t",
+      role: "Player",
+      transaction: {
+        wallet: 3600,
+      },
+      fromStoreId: "test",
+    },
   }),
   getters: {
     getCurrentPlayer: (state) => state.player,

@@ -15,10 +15,10 @@ export default {
     class="w-full !h-[50vh] !absolute"
     :src="config.background.value"
   ></v-parallax>
-  <section id="main-content" class="relative !h-[50vh]  min-w-full shadow-2xl">
+  <section id="main-content" class="relative !h-[50vh] min-w-full shadow-2xl">
     <div class="flex h-full justify-center items-center">
       <div
-        class="items-center grid gap-x-6 gap-y-4 grid-cols-2 lg:grid-cols-3"
+        class="items-center place-items-center grid gap-x-10 xl:gap-x-28 gap-y-4 grid-cols-2 lg:grid-cols-3"
       >
         <div class="col-span-1">
           <BadgeWidget
@@ -28,7 +28,7 @@ export default {
             :subtitle="config.contents.widgetOne.subtitle"
           ></BadgeWidget>
         </div>
-        <div class="flex items-center row-span-2 lg:row-span-1">
+        <div class="grid items-center row-span-2 lg:row-span-1">
           <HeroContent
             :show-logo="config.contents.bannerText.isShowLogo"
             :subtitle="config.contents.bannerText.subtitle"

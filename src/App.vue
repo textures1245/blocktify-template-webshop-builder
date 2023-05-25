@@ -1,35 +1,35 @@
 <script lang="ts">
-import { computed, reactive, ref } from "vue";
 import { useConfigComponentStore } from "./configs/configCPNStore";
-import router from "./routers/routerApp";
+import { useProductStore } from "./store/product/productStore";
 export default {
   components: {},
   setup() {
-    /* ... */
-    const keepAliveExcludes = reactive(new Set());
-
-    const keepAliveExcluder = {
-      add: (name: any) => keepAliveExcludes.add(name),
-      remove: (name: any) => keepAliveExcludes.delete(name),
-    };
-
-    router.beforeEach((to, from, next) => {
-      if (to.meta?.excludeKeepAlive === true) {
-        keepAliveExcluder.add(to.name);
-      }
-      next();
-    });
-    /* ... */
-
     return {
-      keepAliveExcludes: computed(() => Array.from(keepAliveExcludes)),
       globalCSSConfig: useConfigComponentStore().getGlobalConfig,
+      productStore: useProductStore(),
     };
+  },
+
+  data() {
+    return {
+      isLoaded: false,
+    };
+  },
+
+  async mounted() {
+    useProductStore().onInitializeUniqueProductType();
+    await this.productStore.fetchProducts().then(() => {
+      this.isLoaded = true;
+    });
   },
 };
 </script>
 <template>
-  <v-app :data-theme="globalCSSConfig.themeColor" class="!scroll-smooth">
+  <v-app
+    v-if="isLoaded"
+    :data-theme="globalCSSConfig.themeColor"
+    class="!scroll-smooth"
+  >
     <div
       :style="`font-family: '${globalCSSConfig.fontFamily}', sans-serif;`"
       :class="`!text-${globalCSSConfig.fontSize} `"

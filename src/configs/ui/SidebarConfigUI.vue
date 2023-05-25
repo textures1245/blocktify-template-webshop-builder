@@ -52,7 +52,7 @@ export default {
           v-if="config.contents.required.includes('playerBadge')"
           :bgImg="{
             isCustom: config.contents.playerBadge.bg.custom,
-            src: config.contents.playerBadge.bg.src,
+            src: config.contents.playerBadge.bg.src!,
           }"
         ></PlayerBadge>
       </template>
@@ -66,6 +66,7 @@ export default {
             validation="required"
           ></FormKit>
           <FileControl
+            :storage="config.contents.playerBadge.bg.src!"
             v-if="config.contents.playerBadge.bg.custom"
             action="image"
           ></FileControl>

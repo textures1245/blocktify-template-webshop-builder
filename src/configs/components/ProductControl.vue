@@ -94,10 +94,6 @@ export default {
 
   methods: {
     onSubmit() {
-      console.log(this.productData);
-      if (this.validateFormControl(this.formCommand)) {
-        this.productData.productCommand = `give <player_name> ${this.formCommand.itemNameCommand} ${this.formCommand.itemQuantityCommand}`;
-      }
       if (!this.validateFormControl(this.productData)) {
         return alert(
           "ได้โปรดตรวจสอบข้อมูลว่า ได้ทำการกรอกข้อมูลครบ หรือข้อมูลถูกตามเงื่อนไขที่กล่าวมาหรือไม่"
@@ -209,11 +205,7 @@ export default {
         productQuantity: 0,
         productCommand: "",
       };
-      (this.formCommand = {
-        itemQuantityCommand: 0,
-        itemNameCommand: "",
-      }),
-        (this.config.url = "");
+      this.config.url = "";
       this.data = new FormData();
     },
 
@@ -259,10 +251,14 @@ export default {
                   action="image"
                 ></FileControl>
               </div>
-              <div id="context" class="flex flex-shrink-0 flex-col">
+              <div
+                id="context"
+                class="flex items-center flex-shrink-0 flex-col"
+              >
                 <FormKit
-                  input-class="w-full"
+                  outer-class="grid  place-self-center"
                   type="text"
+                  input-class="w-screen h-full"
                   v-model="productData.productName"
                   name="product-name"
                   validation="required"
@@ -273,6 +269,8 @@ export default {
                   v-model="productTypeConfig.value"
                   :options="productTypeConfig.opts"
                   label="ประเภทสินค้า"
+                  select-class="w-screen h-full"
+                  input-class="w-screen h-full"
                 >
                 </FormKit>
                 <FormKit
@@ -280,7 +278,7 @@ export default {
                   type="select"
                   name="product-type-selected"
                   v-model="productData.productType"
-                  input-class="w-full"
+                  input-class="w-screen h-full"
                   :options="productStore.getProductTypes"
                   label="ประเภทสินค้า"
                   help="คุณสามารถเพิ่มประเภทสินค้าได้จากเลือก 'สร้างประเภทสินค้าใหม่'"
@@ -291,6 +289,7 @@ export default {
                   v-else
                   v-model="productData.productType"
                   name="new-product-type"
+                  input-class="w-screen h-full"
                   type="text"
                   validation="required|alpha_spaces:default"
                   label="กรอกประเภทสินค้า"
@@ -298,9 +297,9 @@ export default {
                 <FormKit
                   type="number"
                   name="product-price"
+                  input-class="w-screen h-full"
                   label="ราคาของสินค้า"
                   v-model="productData.productPrice"
-                  input-class="w-full"
                   validation="required"
                 ></FormKit>
                 <FormKit
@@ -308,33 +307,26 @@ export default {
                   v-model="productData.productQuantity"
                   label="จำนวนของสินค้า"
                   min="0"
-                  input-class="w-full"
+                  input-class="w-screen h-full"
                   name="product-quantity"
                   validation="required|min:0"
                 >
                 </FormKit>
                 <FormKit
-                  v-model="formCommand.itemNameCommand"
-                  type="text"
-                  name="item-name-command"
+                  v-model="productData.productCommand"
+                  help="ชุดค่ำสั่งที่จะถูกรันในเกมส์ โปรดตั้งชื่อให้ตรง และถูกวัตถุประสงค์ของผู้ใช้เพื่อป้องกันความผิดพลาด"
                   validation="required"
-                  label="ชื่อไอเทมคอมแมนของสินค้า"
-                  input-class="w-full"
-                  help-class="w-9/12"
-                  help="ชุดค่ำสั่งที่จะถูกรัน ในฐานะ 'ชื่อไอเทม' ในเกมส์ โปรดตั้งชื่อให้ตรงเพื่อป้องกันความผิดพลาด"
+                  name="product-command"
+                  outer-class="flex flex-col items-center justify-center"
+                  input-class="w-screen px-auto h-full mx-auto"
+                  help-class="w-8/12"
+                  placeholder="give <player_name> diamond 64"
+                  label="ตอมแมนของสินค้า (Command)"
                 ></FormKit>
-                <FormKit
-                  v-model="formCommand.itemQuantityCommand"
-                  type="number"
-                  name="item-quantity-command"
-                  validation="required|max:64|min:0"
-                  max="64"
-                  min="0"
-                  label="ชื่อไอเทมคอมแมนของสินค้า"
-                  input-class="!w-full"
-                  help-class="w-9/12"
-                  help="ชุดค่ำสั่งที่จะถูกรัน ในฐานะ 'จำนวนไอเทม' ในเกมส์ โปรดตั้งจำวนวนให้ตรงเพื่อป้องกันความผิดพลาด"
-                ></FormKit>
+                <p class="text-xs font-semibold mb-2">
+                  โดยที่ &lt;player_name&gt; คือ parameter ที่ใช้ในการ target
+                  ผุ้เล่น
+                </p>
               </div>
             </div>
             <div id="product-description">
@@ -365,3 +357,27 @@ export default {
   </v-dialog>
 </template>
 <style lang="scss"></style>
+
+<!--! unused command input -->
+<!-- <FormKit
+                  v-model="formCommand.itemNameCommand"
+                  type="text"
+                  name="item-name-command"
+                  validation="required"
+                  label="ชื่อไอเทมคอมแมนของสินค้า"
+                  input-class="w-full"
+                  help-class="w-9/12"
+                  help="ชุดค่ำสั่งที่จะถูกรัน ในฐานะ 'ชื่อไอเทม' ในเกมส์ โปรดตั้งชื่อให้ตรงเพื่อป้องกันความผิดพลาด"
+                ></FormKit>
+                <FormKit
+                  v-model="formCommand.itemQuantityCommand"
+                  type="number"
+                  name="item-quantity-command"
+                  validation="required|max:64|min:0"
+                  max="64"
+                  min="0"
+                  label="ชื่อไอเทมคอมแมนของสินค้า"
+                  input-class="!w-full"
+                  help-class="w-9/12"
+                  help="ชุดค่ำสั่งที่จะถูกรัน ในฐานะ 'จำนวนไอเทม' ในเกมส์ โปรดตั้งจำวนวนให้ตรงเพื่อป้องกันความผิดพลาด"
+                ></FormKit> -->

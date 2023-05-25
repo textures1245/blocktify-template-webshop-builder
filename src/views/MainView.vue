@@ -7,8 +7,9 @@ import BoardNews from "../widgets/BoardNews.vue";
 import ProductCollectionWidget from "../widgets/ProductCollectionGrid.vue";
 import CardLink from "../components/CardLink.vue";
 import { useConfigComponentStore } from "../configs/configCPNStore";
-import { MainComponent } from "../configs/configCSS";
-import { ref } from "vue";
+import { loadScript } from "vue-plugin-load-script";
+import { storeToRefs } from "pinia";
+import IconAnimation from "../components/IconAnimation.vue";
 
 export default {
   components: {
@@ -19,27 +20,61 @@ export default {
     AlertSlideMsgWidget,
     ProductCollectionWidget,
     CardLink,
+    IconAnimation,
   },
 
   setup() {
     const store = useConfigComponentStore();
+    let { storageContents } = storeToRefs(store).getMainBodyConfig.value;
     return {
       config: store.getMainBodyConfig,
-      components: ref(store.getInitializedContents()),
+      storageContents,
     };
   },
 
-  data() {
-    return {
-      tempComponents: <MainComponent[]>[],
-    };
+  computed: {
+    loadedScript() {
+      if (this.storageContents.length < 1) {
+        return loadScript(import.meta.env.VITE_LOTTIE_API).then(() => true);
+      }
+    },
   },
-  mounted() {},
+
+  watch: {
+    storageContents() {
+      console.log("Watching");
+      this.storageContents = this.storageContents;
+    },
+  },
+
+  data() {
+    return {};
+  },
 };
 </script>
 <template>
+  <div
+    class="grid h-full place-content-center"
+    v-if="storageContents.length < 1 && loadedScript"
+  >
+    <IconAnimation
+      title="Componnent ว่างอยู่"
+      subtitle="ลองเข้าไปแก้ไขส่วนของ แก้ไข้เว็บไซต์ -> Main Content เพื่อจัดการส่วนของ Components ดูสิ"
+    >
+      <template #icon>
+        <lottie-player
+          src="https://assets1.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"
+          background="transparent"
+          speed="1"
+          style="width: 300px; height: 300px"
+          loop
+          autoplay
+        ></lottie-player> </template
+    ></IconAnimation>
+  </div>
   <draggable
-    :list="components"
+    v-else
+    :list="storageContents"
     :group="{ group: { name: 'people' } }"
     itemKey="id"
     class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 self-center"

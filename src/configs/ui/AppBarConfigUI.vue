@@ -8,6 +8,8 @@ export default {
     return { config: useConfigComponentStore().getAppBarConfig };
   },
 
+ 
+
   data() {
     return {
       configOpts: {
@@ -99,7 +101,7 @@ export default {
         @file-emitter="(imageUrl: string) => (config.bgImg.src = imageUrl)"
         action="image"
         name="bgImgSrc"
-        :storage="config.bgImg.src"
+        :storage="config.bgImg.src!"
       ></FileControl>
     </template>
   </CardExpand>

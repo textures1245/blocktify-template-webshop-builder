@@ -12,6 +12,8 @@ import {
   StoreConfig,
 } from "./configCSS";
 
+import { reactive } from "vue";
+
 export const useHelpConfigStore = defineStore("useHelpConfigStore", {
   state: () => ({}),
   getters: {},
@@ -41,7 +43,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       },
     },
     globalConfig: <GlobalConfigCSS>{
-      themeColor: "winter",
+      themeColor: "pastel",
       websiteName: "Blocktify",
       fontFamily: "Kanit",
       bgColor: "bg-base-300",
@@ -141,7 +143,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
         },
       },
     },
-    MainBodyConfig: <MainBodyContainer>{
+    MainBodyConfig: <MainBodyContainer>reactive({
       display: "grid",
       avatar: "rounded",
       background: {
@@ -168,6 +170,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
             props: {
               news: [
                 {
+                  id: 0,
                   image:
                     "https://images.unsplash.com/photo-1681649022240-851ee1fac747?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
                   context: {
@@ -176,6 +179,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
                   },
                 },
                 {
+                  id: 1,
                   image:
                     "https://images.unsplash.com/photo-1681238337874-c65010a35603?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1399&q=80",
                   context: {
@@ -193,6 +197,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
             type: "CardLink",
             props: [
               {
+                id: 0,
                 title: "Title 1",
                 subtitle: "Subtitle",
                 bgUrl:
@@ -200,6 +205,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
                 linkUrl: "http://localhost/image",
               },
               {
+                id: 1,
                 title: "Title 2",
                 subtitle: "Subtitle",
                 bgUrl:
@@ -207,6 +213,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
                 linkUrl: "http://localhost/image",
               },
               {
+                id: 2,
                 title: "Title 3",
                 subtitle: "Subtitle",
                 bgUrl:
@@ -219,6 +226,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
             type: "ProductCollectionGrid",
             props: [
               {
+                id: 0,
                 sortAction: "HIGHEST_SOLD_OFF",
                 limits: 8,
               },
@@ -227,7 +235,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
         },
       },
       storageContents: [],
-    },
+    }),
     FooterConfig: <FooterContainer>{
       avatar: "rounded",
       background: {

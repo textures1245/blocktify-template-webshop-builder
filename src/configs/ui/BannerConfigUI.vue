@@ -37,7 +37,7 @@ export default {
       <FileControl
         @file-emitter="(imageUrl: string) => (config.background.value = imageUrl)"
         action="image"
-        :storage="config.background.value"
+        :storage="config.background.value!"
       ></FileControl>
     </template>
   </CardExpand>
@@ -75,7 +75,7 @@ export default {
         <FileControl
           @file-emitter="(imageUrl: string) => (config.contents.widgetOne.iconSrc = imageUrl)"
           action="image"
-          :storage="config.contents.widgetOne.iconSrc"
+          :storage="config.contents.widgetOne.iconSrc!"
         ></FileControl>
         <FormKit
           v-model="config.contents.widgetOne.axis"
@@ -92,8 +92,7 @@ export default {
           name="widget-one-title"
           v-model="config.contents.widgetOne.title"
           placeholder="โปรดกรอกข้อมูล"
-          :help="helpConfig.lengthLabel(8)"
-          validation="required|length:0,8"
+          validation="required"
         ></FormKit>
         <FormKit
           type="text"
@@ -102,8 +101,7 @@ export default {
           name="widget-one-subtile"
           v-model="config.contents.widgetOne.subtitle"
           placeholder="โปรดกรอกข้อมูล"
-          :help="helpConfig.lengthLabel(16)"
-          validation="required|length:0,16"
+          validation="required"
         ></FormKit>
       </template>
     </CardExpandPanel>
@@ -124,7 +122,7 @@ export default {
         <FileControl
           @file-emitter="(imageUrl: string) => (config.contents.widgetTwo.iconSrc = imageUrl)"
           action="image"
-          :storage="config.contents.widgetTwo.iconSrc"
+          :storage="config.contents.widgetTwo.iconSrc!"
         ></FileControl>
         <FormKit
           v-model="config.contents.widgetTwo.axis"
@@ -141,8 +139,7 @@ export default {
           name="widget-two-title"
           v-model="config.contents.widgetTwo.title"
           placeholder="โปรดกรอกข้อมูล"
-          :help="helpConfig.lengthLabel(8)"
-          validation="required|length:0,8"
+          validation="required"
         ></FormKit>
         <FormKit
           type="text"
@@ -151,8 +148,7 @@ export default {
           name="widget-two-subtile"
           v-model="config.contents.widgetTwo.subtitle"
           placeholder="โปรดกรอกข้อมูล"
-          validation="required|length:0,14"
-          :help="helpConfig.lengthLabel(14)"
+          validation="required"
         ></FormKit>
       </template>
     </CardExpandPanel>
@@ -180,9 +176,9 @@ export default {
           name="banner-text-title"
           v-model="config.contents.bannerText.title"
           placeholder="โปรดกรอกข้อมูล"
-          :help="helpConfig.lengthLabel(8)"
+          :help="helpConfig.lengthLabel(15)"
           validation-visibility="live"
-          validation="required|length:0,8"
+          validation="required|length:0,15"
         ></FormKit>
         <FormKit
           type="text"
@@ -191,8 +187,7 @@ export default {
           v-model="config.contents.bannerText.subtitle"
           placeholder="โปรดกรอกข้อมูล"
           validation-visibility="live"
-          validation="required|length:0,10"
-          :help="helpConfig.lengthLabel(10)"
+          validation="required"
         ></FormKit>
       </template>
     </CardExpandPanel>

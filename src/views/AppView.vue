@@ -21,35 +21,48 @@ export default {
       globalCSSConfig: useConfigComponentStore().getGlobalConfig,
     };
   },
+
+  data: () => ({
+    offsetTop: 0,
+  }),
+  methods: {
+    onScroll() {
+      this.offsetTop++;
+      console.log(this.offsetTop);
+    },
+  },
 };
 </script>
 <template>
+  <ClientDrawerLayout></ClientDrawerLayout>
+
   <v-layout>
-    <AppBarLayout></AppBarLayout>
+    <AppBarLayout :offset-top="offsetTop"></AppBarLayout>
     <v-main>
-      <ClientDrawerLayout></ClientDrawerLayout>
-      <BannerLayout></BannerLayout>
-      <div
-        :class="[
-          '!h-auto w-full thai-font eng-font pt-5 pb-15',
-          globalCSSConfig.bgColor,
-        ]"
-      >
-        <v-container>
-          <div class="grid-parent gap-6">
-            <div class="col-span-full">
-              <HeaderBarLayout></HeaderBarLayout>
+      <div>
+        <BannerLayout></BannerLayout>
+        <v-card
+          :class="[
+            '!h-auto w-full thai-font eng-font pt-5 pb-15',
+            globalCSSConfig.bgColor,
+          ]"
+        >
+          <v-container>
+            <div class="grid-parent gap-6">
+              <div class="col-span-full">
+                <HeaderBarLayout></HeaderBarLayout>
+              </div>
+              <div
+                class="col-span-full md:col-span-5 row-span-4 card bg-gray-100 glass"
+              >
+                <v-container>
+                  <router-view></router-view>
+                </v-container>
+              </div>
+              <SidebarLayout></SidebarLayout>
             </div>
-            <div
-              class="col-span-full md:col-span-5 row-span-4 card bg-gray-100 glass"
-            >
-              <v-container>
-                <router-view></router-view>
-              </v-container>
-            </div>
-            <SidebarLayout></SidebarLayout>
-          </div>
-        </v-container>
+          </v-container>
+        </v-card>
       </div>
     </v-main>
   </v-layout>

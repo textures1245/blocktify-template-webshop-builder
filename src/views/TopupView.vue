@@ -1,7 +1,9 @@
 <script lang="ts">
-import TopupControl from "../components/TopupControl.vue";
+import TopupControl from "../configs/components/TopupControl.vue";
+import TopupHistoryControl from "../configs/components/TopupHistoryControl.vue";
+import { useTransactionStore } from "../store/product/transationStore";
 export default {
-  components: { TopupControl },
+  components: { TopupControl, TopupHistoryControl },
   data: () => ({
     currentTab: null,
     tabs: [
@@ -9,6 +11,10 @@ export default {
       { value: "topupHistory", label: "ประวัติการเติมเงิน" },
     ],
   }),
+
+  async mounted() {
+    await useTransactionStore().onFetchTopUpTransactionList();
+  },
 };
 </script>
 <template>
@@ -20,6 +26,9 @@ export default {
       <v-window v-model="currentTab">
         <v-window-item value="topup">
           <TopupControl></TopupControl>
+        </v-window-item>
+        <v-window-item value="topupHistory">
+          <TopupHistoryControl></TopupHistoryControl>
         </v-window-item>
       </v-window>
     </v-card-text>

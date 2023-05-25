@@ -131,38 +131,42 @@ export default {
           : import.meta.env.VITE_UPLOAD_FILE_API;
 
       axios(this.config)
-        .then((response: FileResponse) => {
-          if (response.data && action === "image") {
-            switch (response.data.status) {
-              case 200:
-                if (Array.isArray(this.storage)) {
-                  this.storage.push(response.data.message!.url);
-                } else {
-                  this.$emit("fileEmitter", response.data.message!.url);
-                }
-                this.Toast.fire({
-                  icon: "success",
-                  title: "อัปโหลดเสร็จสิ้นเรียบร้อยแล้ว",
-                });
-                break;
-              case 400:
-                this.Toast.fire({
-                  icon: "error",
-                  title: "ประเภทไฟล์ที่ส่งไม่ถูกต้อง",
-                });
-                break;
-              default:
-                this.Toast.fire({
-                  icon: "error",
-                  title: "อินเทอร์เน็ตมีปัญหา โปรดลองใหม่อีกครั้งในภายหลัง",
-                });
-                break;
+        .then((response) => {
+          if (response.data) {
+            const { data, status } = response.data;
+            const isImageAction = action === "image";
+            const isFileAction = action === "file";
+
+            if (isImageAction && status === 200) {
+              if (Array.isArray(this.storage)) {
+                this.storage.push(data.message.url);
+              } else {
+                this.$emit("fileEmitter", data.message.url);
+              }
+              this.Toast.fire({
+                icon: "success",
+                title: "อัปโหลดเสร็จสิ้นเรียบร้อยแล้ว",
+              });
+            } else if (isFileAction && status === 200) {
+              this.$emit("fileEmitter", data.message.url);
+              this.Toast.fire({
+                icon: "success",
+                title: "อัปโหลดเสร็จสิ้นเรียบร้อยแล้ว",
+              });
+            } else if (status === 400) {
+              this.Toast.fire({
+                icon: "error",
+                title: "ประเภทไฟล์ที่ส่งไม่ถูกต้อง",
+              });
+            } else {
+              this.Toast.fire({
+                icon: "error",
+                title: "อินเทอร์เน็ตมีปัญหา โปรดลองใหม่อีกครั้งในภายหลัง",
+              });
             }
-          } else if (response.data && action === "file") {
-            //- TODO
           }
         })
-        .catch(function (error) {
+        .catch((error) => {
           alert(
             "มีบางอย่างขัดข้อง โปรดลองใหม่อีกครั้งในภายหลัง หรือโปรดแจ้งเจ้าหน้าที่ให้รับทราบ"
           );
@@ -219,62 +223,71 @@ export default {
       "
       :actions="false"
     >
-      <FormKit
-        v-if="action === 'image'"
-        type="select"
-        label="เลือกแนวทางในการอัปโหลดไฟล์"
-        name="file-selector-options"
-        :options="{
-          file: 'อัปโหลดโดยการเลือกไฟล์',
-          url: 'อัปโหลดโดยการใส่ลิ้ง URL',
-        }"
-        v-model="uploadMethod"
-      />
-      <section v-if="imageUrlPreview" id="img-preview" class="my-4">
-        <v-img :src="imageUrlPreview" sizes="32" />
-      </section>
+      <div id="form-wrapper">
+        <FormKit
+          v-if="action === 'image'"
+          type="select"
+          label="เลือกแนวทางในการอัปโหลดไฟล์"
+          name="file-selector-options"
+          :options="{
+            file: 'อัปโหลดโดยการเลือกไฟล์',
+            url: 'อัปโหลดโดยการใส่ลิ้ง URL',
+          }"
+          v-model="uploadMethod"
+          input-class="w-screen h-full"
+        />
+        <section v-if="imageUrlPreview" id="img-preview" class="my-4">
+          <v-img :src="imageUrlPreview" sizes="32"></v-img>
+        </section>
 
-      <div id="file-upload-control">
-        <FormKit
-          v-if="uploadMethod === 'file'"
-          if="file-uploader-control"
-          type="file"
-          :accept="
-            action === 'image'
-              ? '.jpg,.jpeg,.png'
-              : '.pdf,.doc,.docx,.xml,.md,.csv'
-          "
-          label="เลือกรูปภาพที่ต้องการลง"
-          @change="onFileImageSelector"
-          name="images-carousel"
-          help-class="w-10/12"
-          :help="
-            action === 'image'
-              ? 'ไฟล์รูปภาพที่จะอัพโหลด ต้องเป็นประเภท jpg, jpeg หรือ png และต้องมีขนาดน้อยกว่า 2MB'
-              : ''
-          "
-        >
-          <template #fileRemove> </template>
-        </FormKit>
-        <FormKit
-          @blur="onChangedImageUrlInput()"
-          type="text"
-          v-if="uploadMethod === 'url'"
-          validation="url"
-          v-model="fileUrlControl"
-          label="เลือก URL รูปภาพที่ต้องการ"
-          help-class="w-10/12"
-          name="file-url-control"
-          :help="'รูปภาพที่เอามาจาก Link URL มีโอกาสที่รูปภาพจะหมดอายุ (ไม่สามารถโหลดรูปภาพได้) ดั้งนั้นควรมั่นตรวจสอบรูปภาพของคุณ'"
-        >
-        </FormKit>
-      </div>
-      <div class="flex justify-center">
-        <FormKit
-          type="submit"
-          label="อัปโหลด"
-          name="file-upload-submit"
-        ></FormKit>
+        <div id="file-upload-control">
+          <FormKit
+            v-if="uploadMethod === 'file'"
+            if="file-uploader-control"
+            type="file"
+            input-class="w-full h-full"
+            :accept="
+              action === 'image'
+                ? '.jpg,.jpeg,.png'
+                : '.pdf,.doc,.docx,.xml,.md,.csv'
+            "
+            :label="
+              action === 'image'
+                ? 'เลือกรูปภาพที่ต้องการลง'
+                : 'เลือกไฟล์ที่ต้องการลง'
+            "
+            @change="onFileImageSelector"
+            name="images-carousel"
+            help-class="w-9/12"
+            :help="
+              action === 'image'
+                ? 'ไฟล์รูปภาพที่จะอัพโหลด ต้องเป็นประเภท jpg, jpeg หรือ png และต้องมีขนาดน้อยกว่า 2MB'
+                : ''
+            "
+          >
+            <template #fileRemove> </template>
+          </FormKit>
+          <FormKit
+            @blur="onChangedImageUrlInput()"
+            type="text"
+            v-if="uploadMethod === 'url'"
+            validation="url"
+            input-class="w-screen h-full"
+            v-model="fileUrlControl"
+            label="เลือก URL รูปภาพที่ต้องการ"
+            help-class="w-8/12"
+            name="file-url-control"
+            :help="'รูปภาพที่เอามาจาก Link URL มีโอกาสที่รูปภาพจะหมดอายุ (ไม่สามารถโหลดรูปภาพได้) ดั้งนั้นควรมั่นตรวจสอบรูปภาพของคุณ'"
+          >
+          </FormKit>
+        </div>
+        <div class="flex justify-center">
+          <FormKit
+            type="submit"
+            label="อัปโหลด"
+            name="file-upload-submit"
+          ></FormKit>
+        </div>
       </div>
     </FormKit>
   </div>

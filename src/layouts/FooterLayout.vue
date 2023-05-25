@@ -37,11 +37,11 @@ export default {
 <template>
   <v-footer
     color="transparent"
-    :class="[`h-48  bg-gradient-to-b to-gray-300 !from-${background}`]"
+    :class="[`h-auto bg-gradient-to-b to-gray-300 !from-${background}`]"
   >
     <div
       id="footer-grid"
-      class="container mx-auto w-full !max-h-44 grid py-6 gap-3 overflow-auto md:grid-cols-5 place-self-center"
+      class="container mx-auto w-full  grid py-6 gap-3 overflow-auto md:grid-cols-5 place-self-center"
     >
       <div class="md:col-span-4">
         <article class="prose-sm">

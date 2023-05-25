@@ -1,23 +1,33 @@
 <script lang="ts">
 import CardExpandPanel from "../../components/CardExpandPanel.vue";
+import { storeToRefs } from "pinia";
+
 import { Product, useProductStore } from "../../store/product/productStore";
 import CardExpand from "../../components/CardExpand.vue";
 import PaginationControl from "../components/PaginationControl.vue";
 import ProductControl from "../components/ProductControl.vue";
 import Swal from "sweetalert2";
+import { Ref, ref, watch } from "vue";
 export default {
   components: { CardExpand, PaginationControl, ProductControl },
   setup() {
     const store = useProductStore();
+    let { products } = storeToRefs(store);
     return {
-      products: store.getProducts,
       productTypes: store.getProductTypes,
+      products,
       store,
     };
   },
 
+  watch: {
+    products() {
+      this.itemRenderers = this.products;
+    },
+  },
+
   data() {
-    return { itemRenderers: <Product[]>[] };
+    return { itemRenderers: <Ref<Product[]>>ref([]) };
   },
 
   methods: {
@@ -78,12 +88,11 @@ export default {
           </h2>
 
           <v-card
-            height="160"
             class="grid grid-cols-2"
             id="product-preview"
             v-for="prod in itemRenderers"
           >
-            <div id="image-preview">
+            <div id="image-preview" class="p-4">
               <v-img class="h-40" :src="prod.imgSrc"> </v-img>
             </div>
             <v-card-text class="m-auto">

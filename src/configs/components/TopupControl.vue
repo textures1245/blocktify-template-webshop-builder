@@ -2,7 +2,8 @@
 import Swal from "sweetalert2";
 import FormData from "form-data";
 import axios from "axios";
-import { useConfigComponentStore } from "../configs/configCPNStore";
+import { useConfigComponentStore } from "../configCPNStore";
+import { useTransactionStore } from "../../store/product/transationStore";
 
 export default {
   setup() {
@@ -30,7 +31,13 @@ export default {
       },
       data,
     };
-    return { Toast, config, client: configStore.getWebsiteConfig, data };
+    return {
+      Toast,
+      config,
+      client: configStore.getWebsiteConfig,
+      data,
+      transactionStore: useTransactionStore(),
+    };
   },
 
   mounted() {
@@ -91,9 +98,10 @@ export default {
       this.data.append("phone", this.formControl.voucher);
 
       axios(this.config)
-        .then((response) =>
-          this.Toast.fire("คุณได้เติมเงินเป็นที่เรียบร้อยแล้ว", "", "success")
-        )
+        .then(async (response) => {
+          this.Toast.fire("คุณได้เติมเงินเป็นที่เรียบร้อยแล้ว", "", "success");
+          await this.transactionStore.onFetchTopUpTransactionList();
+        })
         .catch(
           (err) => (
             this.Toast.fire(
@@ -141,6 +149,7 @@ export default {
 
     <FormKit type="form" :actions="false">
       <v-window v-model="step">
+        <!--! unused code -->
         <!-- <v-window-item :value="1">
           <v-card-text v-if="skipPhoneStep">
             <FormKit
@@ -164,7 +173,7 @@ export default {
             <div class="flex flex-col gap-4 text-md mb-4">
               <h1>วิธีการแลกคูปอง (Voucher) ของ True Money Wallet</h1>
               <hr />
-              <img src="../assets/images/trueMoney_voucher.png" class="" />
+              <img src="./../../assets/images/trueMoney_voucher.png" class="" />
               <p class="text-caption text-sm">
                 อ้างอิง:
                 <a
@@ -182,7 +191,7 @@ export default {
               placeholder="โปรดกรอก Voucher ของท่าน"
               help="ลักษณะคูปองจะเป็นแบบลิ้ง URL"
               validation="required|url"
-              :validation-rules="{
+              :validation-messages="{
                 required: 'ตัวกรอกนี้ห้ามว่าง',
                 url: 'ลักษณะต้องเป็น URL เท่านั้น',
               }"

@@ -178,6 +178,7 @@ export type PlayerBadge = {
 };
 
 export type BoardNews = {
+  id: number;
   image: string | null;
   context: {
     title: string;
@@ -218,6 +219,7 @@ export type StoreConfig = {
 };
 
 export type ProductCollectionGrid = {
+  id: number;
   sortAction:
     | "HIGHTEST_PRICE"
     | "HIGHEST_SOLD_OFF"
@@ -228,6 +230,7 @@ export type ProductCollectionGrid = {
 };
 
 export type CardLink = {
+  id: number;
   bgUrl: string;
   title: string;
   subtitle: string;

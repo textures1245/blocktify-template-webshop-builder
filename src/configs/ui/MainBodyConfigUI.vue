@@ -6,17 +6,14 @@ import AlertSlideMsgWidget from "../../widgets/AlertSlideMsgWidget.vue";
 import FileControl from "../components/FileControl.vue";
 import TextEditorControl from "../components/TextEditorControl.vue";
 import PaginationControl from "../components/PaginationControl.vue";
-import {
-  BoardNews,
-  BoardNewsProp,
-  CardLink,
-  CardLinkProp,
-  ProductCollectionGrid,
-  ProductCollectionGridProp,
-} from "../configCSS";
+import { BoardNews, CardLink, ProductCollectionGrid } from "../configCSS";
 import Swal from "sweetalert2";
 import { config } from "dotenv";
-import { Ref, ref } from "vue";
+import { Ref, ref, nextTick, reactive } from "vue";
+import ControlSlot from "../components/ControlSlot.vue";
+import ActionGroupControl from "../components/ActionGroupControl.vue";
+import { storeToRefs } from "pinia";
+
 export default {
   components: {
     CardExpand,
@@ -25,9 +22,12 @@ export default {
     FileControl,
     TextEditorControl,
     PaginationControl,
+    ControlSlot,
+    ActionGroupControl,
   },
   setup() {
     const store = useConfigComponentStore();
+    const { getMainBodyConfig } = storeToRefs(store);
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
@@ -41,12 +41,13 @@ export default {
     });
 
     return {
-      config: store.getMainBodyConfig,
+      config: getMainBodyConfig,
       store,
       helpConfig: useHelpConfigStore(),
       Toast,
     };
   },
+
   data() {
     return {
       configOpts: {
@@ -67,6 +68,7 @@ export default {
         },
       },
       formControls: {
+        formEditorsTag: <"BOARD" | "COLLECTION" | "CARD" | "NONE">"NONE",
         boardNews: {
           control: <BoardNews>{
             image: "",
@@ -75,14 +77,14 @@ export default {
               content: "",
             },
           },
-          items: ref(<BoardNews[]>[]),
+          items: reactive(<BoardNews[]>[]),
         },
         prodCollection: {
           control: <ProductCollectionGrid>{
             sortAction: "HIGHEST_SOLD_OFF",
             limits: 8,
           },
-          items: ref(<ProductCollectionGrid[]>[]),
+          items: reactive(<ProductCollectionGrid[]>[]),
         },
         cardLink: {
           control: <CardLink>{
@@ -91,7 +93,7 @@ export default {
             subtitle: "",
             linkUrl: "",
           },
-          items: ref(<CardLink[]>[]),
+          items: reactive(<CardLink[]>[]),
         },
       },
       currentPage: 1,
@@ -103,8 +105,39 @@ export default {
       this.config.setting.mainContent.boardNews.props.news;
   },
 
+  computed: {
+    generateId() {
+      return (arr: any) => {
+        return Math.max(...arr.map((item: any) => item.id), 0) + 1;
+      };
+    },
+  },
+
   methods: {
-    onAddNews() {
+    onTakeCURDAction(
+      action: "EDIT" | "DELETE",
+      itemId: number,
+      componentItems: { id: number; [key: string]: any }[],
+      formControl: { [key: string]: any }
+    ) {
+      if (action === "EDIT") {
+        const findItem = componentItems.find((item) => item.id === itemId);
+        if (findItem) {
+          Object.assign(formControl, findItem);
+        }
+      } else {
+        const index = componentItems.findIndex((item) => item.id === itemId);
+        if (index !== -1) {
+          componentItems.splice(index, 1);
+        }
+        this.Toast.fire({
+          icon: "success",
+          text: "ข้อมูลถูกลบออกเรียบร้อยแล้ว",
+        });
+      }
+    },
+
+    onSubmitFormNews() {
       if (
         !this.formControls.boardNews.control.context.content ||
         !this.formControls.boardNews.control.context.title ||
@@ -116,11 +149,31 @@ export default {
           text: "กรุณากรอกข้อมูลให้ครบ",
         });
       }
-      let newsProp: BoardNews = this.formControls.boardNews.control;
-      this.config.setting.mainContent.boardNews.props.news.push(newsProp);
+      let isEdit = this.formControls.formEditorsTag === "BOARD";
+      let formData: BoardNews = {
+        ...this.formControls.boardNews.control,
+        id: isEdit
+          ? this.formControls.boardNews.control.id
+          : this.generateId(
+              this.config.setting.mainContent.boardNews.props.news
+            ),
+      };
+      if (!isEdit) {
+        this.config.setting.mainContent.boardNews.props.news.push(formData);
+      } else {
+        let dataIndex =
+          this.config.setting.mainContent.boardNews.props.news.findIndex(
+            (item) => item.id === formData.id
+          )!;
+        this.config.setting.mainContent.boardNews.props.news[dataIndex] =
+          formData;
+      }
+
       this.Toast.fire({
         icon: "success",
-        text: "ข้อมูลที่เพิ่มเรียบร้อยแล้ว",
+        text: !isEdit
+          ? "ข้อมูลที่เพิ่มเรียบร้อยแล้ว"
+          : "ข้อมูลถูกอัปเดตเรียบร้อยแล้ว",
       });
       //- clear input control
       this.formControls.boardNews.control = {
@@ -130,21 +183,40 @@ export default {
           content: "",
         },
       } as BoardNews;
+      this.formControls.formEditorsTag = "NONE";
     },
 
-    onAddNewCardLink() {
+    onSubmitFormCardLink() {
+      const isEdit = this.formControls.formEditorsTag === "CARD";
+
       const defaultBgUrl =
         "https://e0.pxfuel.com/wallpapers/1010/712/desktop-wallpaper-minecraft-grass-block-box-dirt-texture-minecraft-minecraft-thumbnail.jpg";
       if (!this.formControls.cardLink.control.bgUrl) {
         this.formControls.cardLink.control.bgUrl = defaultBgUrl;
       }
-      this.config.setting.subContents.cardLink.props.push(
-        this.formControls.cardLink.control
-      );
+
+      let formData = {
+        ...this.formControls.cardLink.control,
+        id: isEdit
+          ? this.formControls.cardLink.control.id
+          : this.generateId(this.config.setting.subContents.cardLink.props),
+      };
+
+      if (!isEdit) {
+        this.config.setting.subContents.cardLink.props.push(formData);
+      } else {
+        let dataIndex =
+          this.config.setting.subContents.cardLink.props.findIndex(
+            (item) => item.id === formData.id
+          )!;
+        this.config.setting.subContents.cardLink.props[dataIndex] = formData;
+      }
 
       this.Toast.fire({
         icon: "success",
-        text: "ข้อมูลที่เพิ่มเรียบร้อยแล้ว",
+        text: !isEdit
+          ? "ข้อมูลที่เพิ่มเรียบร้อยแล้ว"
+          : "ข้อมูลถูกอัปเดตเรียบร้อยแล้ว",
       });
 
       this.formControls.cardLink.control = {
@@ -153,29 +225,49 @@ export default {
         subtitle: "",
         linkUrl: "",
       } as CardLink;
+      this.formControls.formEditorsTag = "NONE";
     },
 
-    onAddNewCollection() {
-      this.config.setting.subContents.prodCollection.props.push({
+    onSubmitFormCollection() {
+      const isEdit = this.formControls.formEditorsTag === "COLLECTION";
+      let formData = {
+        id: isEdit
+          ? this.formControls.prodCollection.control.id
+          : this.generateId(
+              this.config.setting.subContents.prodCollection.props
+            ),
         sortAction: this.formControls.prodCollection.control.sortAction,
         limits: +this.formControls.prodCollection.control.limits,
-      });
+      };
+      if (!isEdit) {
+        this.config.setting.subContents.prodCollection.props.push(formData);
+      } else {
+        let dataIndex =
+          this.config.setting.subContents.prodCollection.props.findIndex(
+            (item) => item.id === formData.id
+          )!;
+        this.config.setting.subContents.prodCollection.props[dataIndex] =
+          formData;
+      }
 
       this.Toast.fire({
         icon: "success",
-        text: "ข้อมูลที่เพิ่มเรียบร้อยแล้ว",
+        text: !isEdit
+          ? "ข้อมูลที่เพิ่มเรียบร้อยแล้ว"
+          : "ข้อมูลถูกอัปเดตเรียบร้อยแล้ว",
       });
 
       this.formControls.prodCollection.control = {
         sortAction: "HIGHEST_SOLD_OFF",
         limits: 4,
       } as ProductCollectionGrid;
+      this.formControls.formEditorsTag = "NONE";
     },
 
     onInitialConfig() {
       Swal.fire({
         title: "ยืนยันส่วนของ Main content Setup",
-        text: "กดยืนยันเพื่อทำการเรนเดอร์ UI Config ",
+        html: "กดยืนยันเพื่อทำการเรนเดอร์ UI Config, (หลังจากยืนยันเสร็จโปรดทำการสลับหน้า (ถ้าอยู่ในหน้าหลัก) เพื่อทำการ rerender contents) <p class='text-error font-semibold'>ห้ามรีเฟชเด็ดขาด เพื่อป้องกันการสูญเสียข้อมูลในกรณีที่คุณยังไม่ได้เซฟข้อมูลทั้งหมด</p>  ",
         icon: "info",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -185,8 +277,11 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           this.config.storageContents = this.store.getInitializedContents();
-          console.log(this.config.storageContents);
-          Swal.fire("ยืนยันการเซตอัปเรียบร้อย", "", "success");
+          Swal.fire({
+            title: "ยืนยันการเซตอัปเรียบร้อย",
+            html: "โปรดทำการสลับหน้า (ถ้าอยุ่ในหน้าหลัก) เพื่อทำการ rerender contents <p class='text-error font-semibold'>ห้ามรีเฟชเด็ดขาด เพื่อป้องกันการสูญเสียข้อมูลในกรณที่คุณยังไม่ได้เซฟมูลทั้งหมด</p>",
+            icon: "success",
+          });
         }
       });
     },
@@ -248,7 +343,7 @@ export default {
             <div id="news-img-uploader-control">
               <FileControl
                 @file-emitter="(imgUrl: string) => formControls.boardNews.control.image = imgUrl"
-                :storage="formControls.boardNews.control.image"
+                :storage="formControls.boardNews.control.image!"
                 action="image"
               ></FileControl>
             </div>
@@ -271,7 +366,7 @@ export default {
             <FormKit
               type="form"
               id="news-content-control"
-              @submit="onAddNews()"
+              @submit="onSubmitFormNews()"
               :actions="false"
             >
               <FormKit
@@ -290,87 +385,100 @@ export default {
               ></TextEditorControl>
 
               <div class="flex justify-center my-4 mt-6">
-                <FormKit type="submit" label="เพิ่มข้อมูล"></FormKit>
+                <FormKit
+                  type="submit"
+                  :label="
+                    formControls.formEditorsTag === 'BOARD' ? 'อัปเดต' : 'เพิ่ม'
+                  "
+                ></FormKit>
               </div>
             </FormKit>
           </section>
           <v-card class="my-5">
             <v-divider></v-divider>
           </v-card>
-          <section id="news-props-group">
-            <p class="text-sm font-semibold text-end">
-              ทั้งหมด
-              {{ config.setting.mainContent.boardNews.props.news?.length }}
-              รายการ
-            </p>
-            <div
-              v-for="newProp in formControls.boardNews.items"
-              id="news-prop"
-              class="flex flex-col gap-4"
-            >
-              <section name="news-img-preview-readonly">
-                <label
-                  for="text-editor-control"
-                  class="text-sm font-bold font-sans"
-                  >รูปภาพ</label
-                >
-                <v-img
-                  :src="newProp.image"
-                  sizes="32"
-                  class="object-cover max-h-64 mt-3"
-                ></v-img>
-              </section>
-              <FormKit
-                disabled
-                v-model="newProp.context.title"
-                type="text"
-                label="หัวเรื่อง"
-                name="news-title-readonly"
-              ></FormKit>
-              <FormKit
-                disabled
-                v-model="newProp.context.content"
-                type="textarea"
-                label="เนื้อเรื่อง"
-                class="!text-xs"
-                name="news-content-readonly"
-              ></FormKit>
-            </div>
-            <PaginationControl
-              :items-per-page="2"
-              @on-page-changed="
-              (items: any[]) =>
-              formControls.boardNews.items =
-                items
+
+          <ControlSlot
+            :item-length="
+              config.setting.mainContent.boardNews.props.news?.length
             "
-              :items="config.setting.mainContent.boardNews.props.news"
-            ></PaginationControl>
-            <v-card>
-              <v-divider></v-divider>
-            </v-card>
-          </section>
+          >
+            <template #form-controls>
+              <section id="news-props-group">
+                <div
+                  v-for="(newProp, i) in config.setting.mainContent.boardNews
+                    .props.news"
+                  id="news-prop"
+                  class="flex flex-col gap-4"
+                >
+                  <h2 class="hr">
+                    <span class="hr-text">{{ i + 1 }}</span>
+                  </h2>
+                  <section name="news-img-preview-readonly">
+                    <label
+                      for="text-editor-control"
+                      class="text-sm font-bold font-sans"
+                      >รูปภาพ</label
+                    >
+                    <v-img
+                      :src="newProp.image!"
+                      sizes="32"
+                      class="object-cover max-h-64 mt-3"
+                    ></v-img>
+                  </section>
+                  <FormKit
+                    disabled
+                    v-model="newProp.context.title"
+                    type="text"
+                    label="หัวเรื่อง"
+                    name="news-title-readonly"
+                  ></FormKit>
+                  <FormKit
+                    disabled
+                    v-model="newProp.context.content"
+                    type="textarea"
+                    label="เนื้อเรื่อง"
+                    class="!text-xs"
+                    name="news-content-readonly"
+                  ></FormKit>
+                  <ActionGroupControl
+                    scrollToId="news-props-form-control"
+                    :item-id="newProp.id"
+                    @emit-action="(emitter: any) => [onTakeCURDAction(emitter.action, emitter.itemId, config.setting.mainContent.boardNews.props.news, formControls.boardNews.control), emitter.action === 'EDIT' ? formControls.formEditorsTag = 'CARD' : null]"
+                  ></ActionGroupControl>
+                </div>
+                <!--! unused for unexpected behavior between array  -->
+
+                <!-- <PaginationControl
+                  :items-per-page="2"
+                  @on-page-changed="
+                (items: any[]) =>
+                formControls.boardNews.items =
+                  items
+              "
+                  :items="config.setting.mainContent.boardNews.props.news"
+                ></PaginationControl> -->
+                <v-card> </v-card>
+              </section>
+            </template>
+          </ControlSlot>
         </template>
       </CardExpandPanel>
     </v-expansion-panels>
 
     <!--- Sub Components -->
-    <CardExpand headline="คอนเทนต์หลัก (Highligh Contents)">
-      <template #content>
-        <FormKit
-          type="checkbox"
-          label="เลือกคอนเทนต์หลักที่คุณต้องการโชว์"
-          name="main-content-selector"
-          v-model="config.setting.subContents.requires"
-          :options="configOpts.subContentSelectors"
-          placeholder="Adjust opacity."
-        ></FormKit>
-      </template>
+    <CardExpand :item-preview="false" headline="คอนเทนต์รอง (Sub Contents)">
+      <template #content> </template>
     </CardExpand>
     <v-expansion-panels>
       <CardExpandPanel title="คอเลคชั่นสินค้าโชว์เคส">
         <template #content>
           <section id="product-collection-form-control">
-            <FormKit type="form" @submit="onAddNewCollection" :actions="false">
+            <FormKit
+              type="form"
+              @submit="onSubmitFormCollection"
+              :actions="false"
+            >
               <FormKit
                 v-model="formControls.prodCollection.control.sortAction"
                 type="select"
@@ -391,56 +499,71 @@ export default {
                 <FormKit
                   type="submit"
                   :disabled="
-                    config.setting.subContents.prodCollection.props.length >= 2
+                    config.setting.subContents.prodCollection.props.length >=
+                      2 && formControls.formEditorsTag !== 'COLLECTION'
                   "
                   help="สามารถเพิ่มได้มากสุด 2 อันเพื่อคง Performance ของเว็บไซต์ไว้"
-                  label="เพิ่ม"
+                  :label="
+                    formControls.formEditorsTag === 'COLLECTION'
+                      ? 'อัปเดต'
+                      : 'เพิ่ม'
+                  "
                 ></FormKit>
               </div>
             </FormKit>
           </section>
           <section id="product-collection-preview">
-            <p class="text-sm font-semibold text-end">
-              ทั้งหมด
-              {{ config.setting.subContents.prodCollection.props.length }}
-              รายการ
-            </p>
-            <div id="product-collection-group">
-              <div
-                id="product"
-                v-for="(prod, i) in formControls.prodCollection.items"
-              >
-                <h2 class="hr">
-                  <span class="hr-text">{{ i + 1 }}</span>
-                </h2>
+            <ControlSlot
+              :item-length="
+                config.setting.subContents.prodCollection.props.length
+              "
+            >
+              <template #form-controls>
+                <div id="product-collection-group">
+                  <div
+                    id="product"
+                    v-for="(prod, i) in config.setting.subContents
+                      .prodCollection.props"
+                  >
+                    <h2 class="hr">
+                      <span class="hr-text">{{ i + 1 }}</span>
+                    </h2>
 
-                <FormKit
-                  disabled
-                  v-model="prod.sortAction"
-                  type="select"
-                  :options="configOpts.productSortActions"
-                  label="ตัวการจัดเรียง"
-                  name="sort-action"
-                ></FormKit>
-                <FormKit
-                  disabled
-                  v-model="prod.limits"
-                  type="select"
-                  :options="[4, 8, 12]"
-                  label="ลิมิตที่โชว์สินค้า"
-                  name="sort-action"
-                ></FormKit>
-              </div>
-              <PaginationControl
-                :items-per-page="1"
-                @on-page-changed="
-              (items: any[]) =>
-              [formControls.prodCollection.items =
-                items]
-            "
-                :items="config.setting.subContents.prodCollection.props"
-              ></PaginationControl>
-            </div>
+                    <FormKit
+                      disabled
+                      v-model="prod.sortAction"
+                      type="select"
+                      :options="configOpts.productSortActions"
+                      label="ตัวการจัดเรียง"
+                      name="sort-action"
+                    ></FormKit>
+                    <FormKit
+                      disabled
+                      v-model="prod.limits"
+                      type="select"
+                      :options="[4, 8, 12]"
+                      label="ลิมิตที่โชว์สินค้า"
+                      name="sort-action"
+                    ></FormKit>
+                    <ActionGroupControl
+                      scrollToId="product-collection-form-control"
+                      :item-id="prod.id"
+                      @emit-action="(emitter: any) => [onTakeCURDAction(emitter.action, emitter.itemId, config.setting.subContents.prodCollection.props, formControls.prodCollection.control), emitter.action === 'EDIT' ? formControls.formEditorsTag = 'COLLECTION' : null]"
+                    ></ActionGroupControl>
+                  </div>
+                  <!--! unused for unexpected behavior between array  -->
+                  <!-- <PaginationControl
+                    :items-per-page="1"
+                    @on-page-changed="
+                  (items: any[]) =>
+                  [formControls.prodCollection.items =
+                    items]
+                "
+                    :items="config.setting.subContents.prodCollection.props"
+                  ></PaginationControl> -->
+                </div>
+              </template>
+            </ControlSlot>
           </section>
         </template>
       </CardExpandPanel>
@@ -468,7 +591,11 @@ export default {
                 *ถ้ารูปภาพถูกของคุณถูกอัปโหลดแล้วจะแสดงขึ้นในตรง*
               </p>
             </section>
-            <FormKit @submit="onAddNewCardLink" type="form" :actions="false">
+            <FormKit
+              @submit="onSubmitFormCardLink"
+              type="form"
+              :actions="false"
+            >
               <FormKit
                 v-model="formControls.cardLink.control.title"
                 type="text"
@@ -495,9 +622,12 @@ export default {
               <div class="flex w-auto mx-auto justify-center">
                 <FormKit
                   type="submit"
-                  label="เพิ่ม"
+                  :label="
+                    formControls.formEditorsTag === 'CARD' ? 'อัปเดต' : 'เพิ่ม'
+                  "
                   :disabled="
-                    config.setting.subContents.cardLink.props.length >= 6
+                    config.setting.subContents.cardLink.props.length >= 6 &&
+                    formControls.formEditorsTag !== 'CARD'
                   "
                   help="สามารถเพิ่มได้มากสุด 6 อันเพื่อคง Performance ของเว็บไซต์ไว้"
                 ></FormKit>
@@ -505,64 +635,73 @@ export default {
             </FormKit>
           </section>
           <section id="card-link-preview">
-            <p class="text-sm font-semibold text-end">
-              ทั้งหมด
-              {{ config.setting.subContents.cardLink.props.length }} รายการ
-            </p>
-            <div id="card-link-group">
-              <div
-                :key="i"
-                id="card-link"
-                v-for="(link, i) in formControls.cardLink.items"
-              >
-                <h2 class="hr">
-                  <span class="hr-text">{{ i + 1 }}</span>
-                </h2>
-
-                <div name="card-link-img-preview-readonly" class="mb-4">
-                  <label
-                    for="text-editor-control"
-                    class="text-sm font-bold font-sans"
-                    >รูปภาพ</label
+            <ControlSlot
+              :item-length="config.setting.subContents.cardLink.props.length"
+            >
+              <template #form-controls>
+                <div id="card-link-group">
+                  <div
+                    :key="i"
+                    id="card-link"
+                    v-for="(link, i) in config.setting.subContents.cardLink
+                      .props"
                   >
-                  <v-img
-                    :src="link.bgUrl"
-                    sizes="32"
-                    class="object-cover max-h-64 mt-3"
-                  ></v-img>
+                    <h2 class="hr">
+                      <span class="hr-text">{{ i + 1 }}</span>
+                    </h2>
+                    <div name="card-link-img-preview-readonly" class="mb-4">
+                      <label
+                        for="text-editor-control"
+                        class="text-sm font-bold font-sans"
+                        >รูปภาพ</label
+                      >
+                      <v-img
+                        :src="link.bgUrl"
+                        sizes="32"
+                        class="object-cover max-h-64 mt-3"
+                      ></v-img>
+                    </div>
+                    <FormKit
+                      v-model="link.title"
+                      type="text"
+                      label="หัวข้อ"
+                      name="title"
+                    ></FormKit>
+                    <FormKit
+                      v-model="link.subtitle"
+                      type="text"
+                      label="หัวข้อย่อย"
+                      name="subtitle"
+                      validation="required|length:10,0"
+                      :help="helpConfig.lengthLabel(10)"
+                    ></FormKit>
+                    <FormKit
+                      v-model="link.linkUrl"
+                      type="text"
+                      label="Link Url"
+                      name="linkUrl"
+                      validation="required|url"
+                    ></FormKit>
+                    <ActionGroupControl
+                      scroll-to-id="card-link-from-controls"
+                      @emit-action="(emitter: any) => [onTakeCURDAction(emitter.action, emitter.itemId, config.setting.subContents.cardLink.props, formControls.cardLink.control ), emitter.action === 'EDIT' ? formControls.formEditorsTag = 'CARD' : null]"
+                      :item-id="link.id"
+                    ></ActionGroupControl>
+                  </div>
+                  <!--! unused for unexpected behavior between array  -->
+
+                  <!-- <PaginationControl
+                    :items-per-page="2"
+                    @on-page-changed="
+                      (controls: any[]) =>
+                        (formControls.cardLink.items = controls)
+                    "
+                    :items="config.setting.subContents.cardLink.props"
+                  >
+                  </PaginationControl> -->
                 </div>
-                <FormKit
-                  v-model="link.title"
-                  type="text"
-                  label="หัวข้อ"
-                  name="title"
-                ></FormKit>
-                <FormKit
-                  v-model="link.subtitle"
-                  type="text"
-                  label="หัวข้อย่อย"
-                  name="subtitle"
-                  validation="required|length:10,0"
-                  :help="helpConfig.lengthLabel(10)"
-                ></FormKit>
-                <FormKit
-                  v-model="link.linkUrl"
-                  type="text"
-                  label="Link Url"
-                  name="linkUrl"
-                  validation="required|url"
-                ></FormKit>
-              </div>
-              <PaginationControl
-                :items-per-page="1"
-                @on-page-changed="
-            (items: any[]) =>
-            formControls.cardLink.items =
-              items
-          "
-                :items="config.setting.subContents.cardLink.props"
-              ></PaginationControl>
-            </div>
+              </template>
+            </ControlSlot>
           </section>
         </template>
       </CardExpandPanel>
@@ -584,4 +723,4 @@ export default {
     </CardExpand>
   </div>
 </template>
-<style scoped lang="sass"></style>
+<style scoped lang="scss"></style>
