@@ -10,6 +10,7 @@ import {
   Sidebar,
   WebsiteConfig,
   StoreConfig,
+  PlayerLogin,
 } from "./configCSS";
 
 import { reactive } from "vue";
@@ -28,8 +29,10 @@ export const useHelpConfigStore = defineStore("useHelpConfigStore", {
 export const useConfigComponentStore = defineStore("useConfigComponentStore", {
   state: () => ({
     websiteConfig: <WebsiteConfig>{
+      firebaseUID: "asds",
       storeID: "webshopTest6",
       hostName: "localhost",
+      domainExpiredDate: new Date(1685204222000),
       phone: "0654209589",
     },
     storeConfig: <StoreConfig>{
@@ -53,19 +56,16 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
         extraClass: [],
       },
     },
+    playerLoginConfig: <PlayerLogin>{
+      sideImageUrl:
+        "https://cdn.dribbble.com/users/966188/screenshots/15283925/media/8b8663dc8f6e6a2fd80a201aec1ffbb6.jpg?compress=1&resize=400x300",
+      extraClass: {
+        loginPosition: "order-0",
+        colorTheme: "from-primary",
+      },
+    },
     AppBarConfig: <AppBar>{
-      display: "flex",
       avatar: "rounded",
-      background: {
-        selected: "color",
-        value: "#f0f0f0",
-      },
-      boxShadow: "2px 2px 5px #ccc",
-      position: "prepend",
-      gridOpts: {
-        cols: 1,
-        rows: 1,
-      },
       brandImg:
         "https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg",
       bgImg: {
@@ -76,15 +76,12 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
     },
 
     BannerConfig: <Banner>{
-      avatar: "rounded",
       background: {
         selected: "img",
         value:
           "https://images.unsplash.com/photo-1629459322097-a190793bd00b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
         opacity: 100,
       },
-      boxShadow: "2px 2px 5px #ccc",
-      position: "relative",
       contents: {
         required: ["widgetOne", "widgetTwo", "bannerText"],
         widgetOne: {
@@ -126,13 +123,6 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       },
     },
     HeaderBarConfig: <HeaderBar>{
-      avatar: "rounded",
-      background: {
-        selected: "color",
-        value: "#f0f0f0",
-      },
-      boxShadow: "2px 2px 5px #ccc",
-      position: "relative",
       contents: {
         carousel: {
           images: [
@@ -144,18 +134,6 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       },
     },
     MainBodyConfig: <MainBodyContainer>reactive({
-      display: "grid",
-      avatar: "rounded",
-      background: {
-        selected: "color",
-        value: "#f0f0f0",
-      },
-      boxShadow: "2px 2px 5px #ccc",
-      gridOpts: {
-        cols: 2,
-        rows: 2,
-      },
-
       setting: {
         mainContent: {
           requires: ["BoardNews", "AlertSlideMsgWidget"],
@@ -237,13 +215,10 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       storageContents: [],
     }),
     FooterConfig: <FooterContainer>{
-      avatar: "rounded",
-      background: {
-        selected: "color",
-        value: "#f0f0f0",
+      bg: {
+        isImage: false,
+        src: "https://wallpapercave.com/wp/wp2586787.jpg",
       },
-      boxShadow: "2px 2px 5px #ccc",
-      position: "absolute",
       webInfo: {
         aboutContent:
           "ที่ร้านค้าออนไลน์ของเรา เราทุ่มเทเพื่อทำให้ประสบการณ์การช็อปปิ้งของคุณง่ายและสนุกที่สุดเท่าที่จะเป็นไปได้ ตั้งแต่อินเทอร์เฟซที่เรียบง่ายและใช้งานง่ายไปจนถึงการชำระเงินที่รวดเร็วและปลอดภัย เรามีทุกสิ่งที่คุณต้องการในการจับจ่ายอย่างมั่นใจ และด้วยชุมชนนักช็อปและผู้ขายที่ให้การสนับสนุน คุณสามารถเชื่อมต่อ เรียนรู้ และเติบโตในขณะที่คุณซื้อสินค้า มาสำรวจเว็บไซต์ของเราและดูว่าเหตุใดการซื้อสินค้ากับเราจึงเป็นวิธีที่สะดวกและสบายที่สุดในการซื้อสินค้าออนไลน์",
@@ -276,6 +251,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
     getGlobalConfig: (state) => state.globalConfig,
     getBannerConfig: (state) => state.BannerConfig,
     getSidebarConfig: (state) => state.SideBarConfig,
+    getPlayerLoginConfig: (state) => state.playerLoginConfig,
   },
   actions: {
     setNewModifyConfig(
@@ -310,6 +286,10 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
               setOnAction
           );
       }
+    },
+
+    setWebsiteConfig(config: WebsiteConfig) {
+      this.websiteConfig = config;
     },
 
     getInitializedContents(): { type: string; props: object; area: string }[] {

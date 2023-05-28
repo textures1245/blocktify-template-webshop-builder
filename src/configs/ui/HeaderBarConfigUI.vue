@@ -16,19 +16,16 @@ export default {
 };
 </script>
 <template>
-  <CardExpand headline="คอนเทนต์ (Header Contents)"> </CardExpand>
-  <v-expansion-panels multiple>
-    <CardExpandPanel :item-preview="false" title="ภาพสไลด์ (Image Carousel)">
-      <template #content>
-        <FileControl
-          :storage="config.contents.carousel.images"
-          action="image"
-        ></FileControl>
-        <ImageFileList
-          :img-list="config.contents.carousel.images"
-        ></ImageFileList>
-      </template>
-    </CardExpandPanel>
-  </v-expansion-panels>
+  <CardExpand headline="รูปภาพสไลด์">
+    <template #content>
+      <FileControl
+        :storage="config.contents.carousel.images"
+        action="image"
+      ></FileControl>
+      <ImageFileList
+        :img-list="config.contents.carousel.images"
+      ></ImageFileList>
+    </template>
+  </CardExpand>
 </template>
 <style lang="scss"></style>

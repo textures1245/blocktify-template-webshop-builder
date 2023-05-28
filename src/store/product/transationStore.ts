@@ -28,45 +28,40 @@ type TopUpTransactionRespond = {
 export const useTransactionStore = defineStore("useTransactionStore", {
   state: () => ({
     topUpTransactionList: <TopUpTransaction[]>[
-      {
-        topup_id: "1",
-        method: "TrueMoneyWallet",
-        amount: 900,
-        created: new Date(1684436006000),
-      },
-      {
-        topup_id: "1",
-
-        method: "Tsd",
-        amount: 900,
-        created: new Date(1684436006000),
-      },
-      {
-        topup_id: "1",
-
-        method: "TrueMoneyWallet",
-        amount: 900,
-        created: new Date(1684436006000),
-      },
-      {
-        topup_id: "1",
-
-        method: "TrueMoneyWallet",
-        amount: 900,
-        created: new Date(1684436006000),
-      },
-      {
-        topup_id: "1",
-
-        method: "TrueMoneyWallet",
-        amount: 900,
-        created: new Date(1684436006000),
-      },
+      // {
+      //   topup_id: "1",
+      //   method: "TrueMoneyWallet",
+      //   amount: 900,
+      //   created: new Date(1684436006000),
+      // },
+      // {
+      //   topup_id: "1",
+      //   method: "Tsd",
+      //   amount: 900,
+      //   created: new Date(1684436006000),
+      // },
+      // {
+      //   topup_id: "1",
+      //   method: "TrueMoneyWallet",
+      //   amount: 900,
+      //   created: new Date(1684436006000),
+      // },
+      // {
+      //   topup_id: "1",
+      //   method: "TrueMoneyWallet",
+      //   amount: 900,
+      //   created: new Date(1684436006000),
+      // },
+      // {
+      //   topup_id: "1",
+      //   method: "TrueMoneyWallet",
+      //   amount: 900,
+      //   created: new Date(1684436006000),
+      // },
     ],
   }),
   getters: {
     getTopUpTransactionList: (state) => state.topUpTransactionList,
-    // getPlayers: (state) => state.players,
     getDataConfig: (state) => {
       var config = {
         method: "",
@@ -81,23 +76,26 @@ export const useTransactionStore = defineStore("useTransactionStore", {
     },
   },
   actions: {
-    async onFetchTopUpTransactionList() {
+    async onFetchTopUpTransactionList(
+      playerName: string
+    ): Promise<TopUpTransaction[]> {
       const config = this.getDataConfig;
       config.url =
-        import.meta.env.VITE_GET_TRANSACTION_LIST_BY_USERNAME + usePlayerStore().getCurrentPlayer.playerName;
-      axios(config)
+        import.meta.env.VITE_GET_TRANSACTION_LIST_BY_USERNAME + playerName;
+      return axios(config)
         .then((res: AxiosResponse<TopUpTransactionRespond[]>) => {
-          this.topUpTransactionList = res.data.map((t) => {
+          return (this.topUpTransactionList = res.data.map((t) => {
             return {
               topup_id: t.topup_id,
               method: t.method,
               amount: +t.amount,
               created: new Date(+t.created_at * 1000),
             };
-          });
+          }));
         })
         .catch(function (error) {
           console.error(error);
+          return [];
         });
     },
   },

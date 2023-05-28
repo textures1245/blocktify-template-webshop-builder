@@ -1,8 +1,11 @@
 <script lang="ts">
 import { useConfigComponentStore } from "./configs/configCPNStore";
 import { useProductStore } from "./store/product/productStore";
+import onLoading from "./components/onLoading.vue";
+import { useTransactionStore } from "./store/product/transationStore";
+import { usePlayerStore } from "./store/actor/playerStore";
 export default {
-  components: {},
+  components: { onLoading },
   setup() {
     return {
       globalCSSConfig: useConfigComponentStore().getGlobalConfig,
@@ -12,25 +15,37 @@ export default {
 
   data() {
     return {
-      isLoaded: false,
+      isLoading: true,
     };
   },
 
   async mounted() {
     useProductStore().onInitializeUniqueProductType();
+    // await usePlayerStore().setPlayer({
+    //   avatar: "https://minotar.net/helm/mhf_steve/600.png",
+    //   playerName: "codename_t",
+    //   role: "Player",
+    //   transaction: {
+    //     wallet: 3600,
+    //     topUpTotal: null,
+    //     recentTopUp: null,
+    //     recentTopUpDate: null,
+    //   },
+    //   fromStoreId: "test",
+    //   username: "",
+    //   password: "",
+    // });
     await this.productStore.fetchProducts().then(() => {
-      this.isLoaded = true;
+      this.isLoading = false;
     });
   },
 };
 </script>
 <template>
-  <v-app
-    v-if="isLoaded"
-    :data-theme="globalCSSConfig.themeColor"
-    class="!scroll-smooth"
-  >
+  <v-app :data-theme="globalCSSConfig.themeColor" class="!scroll-smooth">
+    <onLoading v-if="isLoading"></onLoading>
     <div
+      v-else
       :style="`font-family: '${globalCSSConfig.fontFamily}', sans-serif;`"
       :class="`!text-${globalCSSConfig.fontSize} `"
     >

@@ -13,7 +13,9 @@ export type Action =
   | "STORE_MODIFY"
   | "PRODUCT_MODIFY"
   | "PRODUCT_LIST_MODIFY"
-  | "FILTER_PRODUCT_MODIFY";
+  | "FILTER_PRODUCT_MODIFY"
+  | "PLAYER_LOGIN_MODIFY"
+  | "CLIENT_ACCOUNT_MODIFY";
 
 export type FeatureAction = {
   title: string;
@@ -32,7 +34,7 @@ export const useClientFeatureStore = defineStore("useClientFeatureStore", {
         icon: "mdi-auto-fix",
       },
       {
-        title: "แก้ไข้เว็บไซต์",
+        title: "แก้ไขเว็บไซต์",
         action: "LAYOUT_MODIFY",
         icon: "mdi-application-cog-outline",
         subActions: [
@@ -63,7 +65,12 @@ export const useClientFeatureStore = defineStore("useClientFeatureStore", {
         ],
       },
       {
-        title: "แก้ไข้ร้านค้า",
+        title: "แก้ไขหน้าล็อกอิน",
+        action: "PLAYER_LOGIN_MODIFY",
+        icon: "mdi-account-key",
+      },
+      {
+        title: "แก้ไขร้านค้า",
         action: "STORE_MODIFY",
         icon: "mdi-store-cog-outline",
         subActions: [
@@ -83,6 +90,11 @@ export const useClientFeatureStore = defineStore("useClientFeatureStore", {
             help: "จัดส่วนของตัวกรองสินค้า (Filter Product) ด้านข้างซ้าย",
           },
         ],
+      },
+      {
+        title: "ลายละเอียดบัญชีและโดเมน",
+        action: "CLIENT_ACCOUNT_MODIFY",
+        icon: "mdi-account-cog-outline",
       },
     ],
   }),

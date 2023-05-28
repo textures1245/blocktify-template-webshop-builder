@@ -10,6 +10,7 @@ import { useConfigComponentStore } from "../configs/configCPNStore";
 import { loadScript } from "vue-plugin-load-script";
 import { storeToRefs } from "pinia";
 import IconAnimation from "../components/IconAnimation.vue";
+import { useClientStore } from "../auth/store/authClientStore";
 
 export default {
   components: {
@@ -25,10 +26,12 @@ export default {
 
   setup() {
     const store = useConfigComponentStore();
+
     let { storageContents } = storeToRefs(store).getMainBodyConfig.value;
     return {
       config: store.getMainBodyConfig,
       storageContents,
+      onClientView: useClientStore().getIsClientAuth,
     };
   },
 
@@ -54,7 +57,7 @@ export default {
 </script>
 <template>
   <div
-    class="grid h-full place-content-center"
+    class="grid w-full h-full place-content-center"
     v-if="storageContents.length < 1 && loadedScript"
   >
     <IconAnimation
@@ -73,11 +76,12 @@ export default {
     ></IconAnimation>
   </div>
   <draggable
+    :disabled="onClientView"
     v-else
     :list="storageContents"
     :group="{ group: { name: 'people' } }"
     itemKey="id"
-    class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 self-center"
+    class="grid sm:grid-cols-1 lg:grid-cols-3 gap-5"
   >
     <template #item="{ element, index }">
       <div
@@ -87,7 +91,7 @@ export default {
         :variants="{ custom: { scale: 1.1 } }"
         :hovered="{ scale: 1.05 }"
         :delay="200"
-        :class="element.area"
+        :class="[element.area]"
       >
         <component
           :is="element.type"

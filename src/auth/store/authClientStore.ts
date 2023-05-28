@@ -17,39 +17,42 @@ import {
 } from "firebase/auth";
 
 import { collection, addDoc } from "firebase/firestore";
-import {
-  getCurrentUser,
-  useCollection,
-  useCurrentUser,
-  useDocument,
-} from "vuefire";
+import { useCollection, useDocument } from "vuefire";
 import router from "../../routers/routerApp";
+import { ref } from "vue";
+import { WebsiteConfig } from "../../configs/configCSS";
+import { useConfigComponentStore } from "../../configs/configCPNStore";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export type ClientStore = {
-  uId: string;
-  storeID: string;
-  expireDate: string;
-  hostname: string;
-};
-
 export const useClientStore = defineStore("clientStore", {
   state: () => ({
-    clientStore: <ClientStore>{},
+    isClientAuth: ref(false),
   }),
-  getters: {},
+  getters: {
+    getIsClientAuth: (state) => state.isClientAuth,
+  },
   actions: {
     async onClientSignIn(storeID: string) {
-      return useDocument<ClientStore>(
+      return useDocument<WebsiteConfig>(
         doc(collection(db, "ClientWebshops"), storeID)
       )
         .promise.value.then((store) => {
           console.log(store);
           if (store) {
-            this.clientStore = store;
+            let data = <WebsiteConfig>{
+              firebaseUID: store.id,
+              storeID: store.storeID,
+              hostName: store.hostName,
+              domainExpiredDate: new Date(
+                +(store.domainExpiredDate as any as number) * 1000
+              ),
+              phone: null,
+            };
+            useConfigComponentStore().setWebsiteConfig(data);
+            this.isClientAuth = true;
             return true;
           }
           return false;
@@ -59,44 +62,45 @@ export const useClientStore = defineStore("clientStore", {
         });
     },
 
-    async onSignIn(email: string, password: string) {
-      return signInWithEmailAndPassword(auth, email, password)
-        .then(async (userCredential) => {
-          if (!userCredential) {
-            console.error("user credentials not found");
-            return false;
-          }
-          const storeUid = userCredential.user.uid;
-          const res = await useCollection<ClientStore>(
-            collection(db, "Clients"),
-            {
-              wait: true,
-            }
-          ).promise.value.then((userDocs) => {
-            let userData = userDocs.find((s) => s.uId === storeUid);
-            if (userData) {
-              this.clientStore = userData;
-              router.push("/overview");
-              return true;
-            } else return false;
-          });
-          return res;
-        })
-        .catch((err) => {
-          console.error(err);
-          return false;
-        });
-    },
+    //- unused
+    // async onSignIn(email: string, password: string) {
+    //   return signInWithEmailAndPassword(auth, email, password)
+    //     .then(async (userCredential) => {
+    //       if (!userCredential) {
+    //         console.error("user credentials not found");
+    //         return false;
+    //       }
+    //       const storeUid = userCredential.user.uid;
+    //       const res = await useCollection<ClientStore>(
+    //         collection(db, "Clients"),
+    //         {
+    //           wait: true,
+    //         }
+    //       ).promise.value.then((userDocs) => {
+    //         let userData = userDocs.find((s) => s.uId === storeUid);
+    //         if (userData) {
+    //           this.clientStore = userData;
+    //           router.push("/overview");
+    //           return true;
+    //         } else return false;
+    //       });
+    //       return res;
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //       return false;
+    //     });
+    // },
 
-    async onSignOut() {
-      return signOut(auth)
-        .then(() => {
-          this.clientStore = {} as ClientStore;
-          return true;
-        })
-        .catch((error) => {
-          throw new Error(error);
-        });
-    },
+    // async onSignOut() {
+    //   return signOut(auth)
+    //     .then(() => {
+    //       this.clientStore = {} as ClientStore;
+    //       return true;
+    //     })
+    //     .catch((error) => {
+    //       throw new Error(error);
+    //     });
+    // },
   },
 });

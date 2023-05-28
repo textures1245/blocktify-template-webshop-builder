@@ -28,7 +28,7 @@ export default {
     <div id="text-content" class="text-white text-center">
       <h1
         style="text-shadow: 2px black"
-        class="text-xl sm:text-2xl md:text-4xl lg:text-6xl text-shadow-lg font-extrabold"
+        class="text-4xl sm:text-5xl md:text-6xl lg:text-6xl text-shadow-lg font-extrabold"
       >
         {{ title || "Title" }}
       </h1>

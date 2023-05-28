@@ -24,14 +24,29 @@ export default {
   <div class="flex justify-end">
     <v-btn-group density="comfortable" divided variant="outlined">
       <a :href="`#${scrollToId}`">
-        <v-btn
-          @click="() => onEmitAction('EDIT')"
-          icon="mdi-circle-edit-outline"
-          class="h-full"
-        >
-        </v-btn>
+        <v-tooltip text="แก้ไข" location="top">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              @click="() => onEmitAction('EDIT')"
+              icon="mdi-circle-edit-outline"
+              class="h-full text-info"
+            >
+            </v-btn>
+          </template>
+        </v-tooltip>
       </a>
-      <v-btn icon="mdi-delete" @click="() => onEmitAction('DELETE')"></v-btn>
+      <v-tooltip text="ลบ" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            class="text-error"
+            icon="mdi-delete"
+            @click="() => onEmitAction('DELETE')"
+          >
+          </v-btn>
+        </template>
+      </v-tooltip>
     </v-btn-group>
   </div>
 </template>

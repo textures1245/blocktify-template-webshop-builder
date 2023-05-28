@@ -6,6 +6,8 @@ import BannerLayout from "../layouts/BannerLayout.vue";
 import HeaderBarLayout from "../layouts/HeaderBarLayout.vue";
 import SidebarLayout from "../layouts/SidebarLayout.vue";
 import { useConfigComponentStore } from "../configs/configCPNStore";
+import { useClientStore } from "../auth/store/authClientStore";
+import CurveCanvas from "../components/CurveCanvas.vue";
 
 export default {
   components: {
@@ -15,57 +17,57 @@ export default {
     BannerLayout,
     SidebarLayout,
     HeaderBarLayout,
+    CurveCanvas,
   },
   setup() {
+    const store = useConfigComponentStore();
     return {
-      globalCSSConfig: useConfigComponentStore().getGlobalConfig,
+      globalCSSConfig: store.getGlobalConfig,
+      footerConfig: store.getFooterConfig,
+      onClientView: useClientStore().getIsClientAuth,
     };
-  },
-
-  data: () => ({
-    offsetTop: 0,
-  }),
-  methods: {
-    onScroll() {
-      this.offsetTop++;
-      console.log(this.offsetTop);
-    },
   },
 };
 </script>
 <template>
-  <ClientDrawerLayout></ClientDrawerLayout>
-
+  <ClientDrawerLayout v-if="!onClientView"></ClientDrawerLayout>
   <v-layout>
-    <AppBarLayout :offset-top="offsetTop"></AppBarLayout>
+    <AppBarLayout></AppBarLayout>
     <v-main>
       <div>
         <BannerLayout></BannerLayout>
+
         <v-card
           :class="[
-            '!h-auto w-full thai-font eng-font pt-5 pb-15',
+            '!h-auto w-full thai-font eng-font pt-5 pb-[15rem]',
             globalCSSConfig.bgColor,
           ]"
         >
+          <CurveCanvas position="top"></CurveCanvas>
           <v-container>
             <div class="grid-parent gap-6">
               <div class="col-span-full">
                 <HeaderBarLayout></HeaderBarLayout>
               </div>
-              <div
-                class="col-span-full md:col-span-5 row-span-4 card bg-gray-100 glass"
+              <v-card
+              elevation="6"
+                class="col-span-full w-full md:col-span-5 row-span-4 text-base-content card bg-base-100 "
               >
                 <v-container>
                   <router-view></router-view>
                 </v-container>
-              </div>
+              </v-card>
               <SidebarLayout></SidebarLayout>
             </div>
           </v-container>
         </v-card>
       </div>
     </v-main>
+    <CurveCanvas
+      v-if="!footerConfig.bg.isImage"
+      position="bottom"
+    ></CurveCanvas>
   </v-layout>
-  <FooterLayout :background="globalCSSConfig.bgColor.slice(3)"></FooterLayout>
+  <FooterLayout></FooterLayout>
 </template>
 <style lang="scss"></style>

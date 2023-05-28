@@ -1,6 +1,9 @@
 <script lang="ts">
 import { Product } from "../store/product/productStore";
 import { PropType } from "vue";
+import { useProductStore } from "../store/product/productStore";
+
+import Swal from "sweetalert2";
 
 export default {
   props: {
@@ -8,14 +11,36 @@ export default {
       type: Object as PropType<Product>,
       required: true,
     },
+
+    player: Object as PropType<{ playerName: string | null }>,
+  },
+
+  setup() {
+    return {
+      store: useProductStore(),
+    };
+  },
+
+  methods: {
+    async onBuyProduct(productID: string) {
+      this.store.buyProduct(this.player?.playerName!, productID).then((res) => {
+        Swal.fire({
+          icon: res.status,
+          titleText: res.msg,
+        });
+      });
+    },
   },
 };
 </script>
 <template>
-  <v-card elevation="2">
+  <v-card class="bg-base-200  text-base-content" :id="product.id" elevation="2">
     <v-card-text class="grid sm:grid-cols-3">
-      <div id="product-image" class="col-span-2 sm:col-span-1">
-        <v-img class="w-full h-full" :src="product.imgSrc"></v-img>
+      <div
+        id="product-image"
+        class="col-span-2 place-self-center sm:col-span-1"
+      >
+        <img class="w-full h-full" :src="product.imgSrc" />
       </div>
       <div class="col-span-2">
         <v-container>
@@ -26,20 +51,25 @@ export default {
             >
               <h2>{{ product.name }}</h2>
               <div id="tags-group" class="flex gap-2 -my-2">
-                <v-chip size="small" density="compact" color="primary">
+                <v-chip size="small" density="compact" class="!btn-secondary">
                   {{ product.type }}
                 </v-chip>
               </div>
               <blockquote class="text-xs" v-html="product.desc"></blockquote>
             </article>
             <div id="product-price-detail" class="row-span-1 lg:flex grid">
-              <div id="price-container" class="stats shadow">
+              <div id="price-container" class="stats w-full shadow">
                 <div id="price" class="stat max-w-[100px] xl:max-w-none">
                   <div class="stat-title">ราคา</div>
                   <div class="stat-value">{{ product.price }}</div>
                   <div class="stat-desc">21% more than last month</div>
                 </div>
-                <v-btn id="buy-action" size="large" class="!btn-success"
+                <v-btn
+                  @click="onBuyProduct(product.id.toString())"
+                  v-if="player?.playerName !== null"
+                  id="buy-action"
+                  size="large"
+                  class="!btn-success"
                   >ซื้อ</v-btn
                 >
               </div>

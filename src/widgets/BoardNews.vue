@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="bg-base-200 text-base-content">
     <v-carousel
       cycle
       height="400"
@@ -13,10 +13,10 @@
             <div class="duration-300 hover:h-full h-2/6 lg:h-full">
               <v-img :src="info.image!" cover class="h-full w-full"></v-img>
             </div>
-            <div id="text-content-container" class="h-full bg-base-100">
+            <div id="text-content-container" class="h-full">
               <v-container>
                 <article
-                  class="overflow-auto !text-base prose prose-sm prose-slate"
+                  class="overflow-auto !text-base-content prose prose-sm prose-slate"
                 >
                   <h1>
                     {{ info.context.title }}

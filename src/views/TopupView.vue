@@ -1,7 +1,6 @@
 <script lang="ts">
 import TopupControl from "../configs/components/TopupControl.vue";
 import TopupHistoryControl from "../configs/components/TopupHistoryControl.vue";
-import { useTransactionStore } from "../store/product/transationStore";
 export default {
   components: { TopupControl, TopupHistoryControl },
   data: () => ({
@@ -11,10 +10,6 @@ export default {
       { value: "topupHistory", label: "ประวัติการเติมเงิน" },
     ],
   }),
-
-  async mounted() {
-    await useTransactionStore().onFetchTopUpTransactionList();
-  },
 };
 </script>
 <template>

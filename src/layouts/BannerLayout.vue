@@ -12,37 +12,44 @@ export default {
 </script>
 <template>
   <v-parallax
-    class="w-full !h-[50vh] !absolute"
+    class="w-full !h-[70vh] lg:!h-[60vh] !absolute"
     :src="config.background.value"
   ></v-parallax>
-  <section id="main-content" class="relative !h-[50vh] min-w-full shadow-2xl">
-    <div class="flex h-full justify-center items-center">
+  <section
+    id="main-content"
+    class="relative !h-[70vh] lg:!h-[60vh] w-full shadow-2xl"
+  >
+    <div
+      class="flex justify-center flex-col lg:flex-row items-center w-full h-full gap-10"
+    >
       <div
-        class="items-center place-items-center grid gap-x-10 xl:gap-x-28 gap-y-4 grid-cols-2 lg:grid-cols-3"
+        v-if="config.contents.required.includes('widgetOne')"
+        class="col-span-1"
       >
-        <div class="col-span-1">
-          <BadgeWidget
-            :avatar-src="config.contents.widgetOne.iconSrc"
-            :axis="config.contents.widgetOne.axis"
-            :title="config.contents.widgetOne.title"
-            :subtitle="config.contents.widgetOne.subtitle"
-          ></BadgeWidget>
-        </div>
-        <div class="grid items-center row-span-2 lg:row-span-1">
-          <HeroContent
-            :show-logo="config.contents.bannerText.isShowLogo"
-            :subtitle="config.contents.bannerText.subtitle"
-            :title="config.contents.bannerText.title"
-          ></HeroContent>
-        </div>
-        <div class="col-span-1">
-          <BadgeWidget
-            :avatar-src="config.contents.widgetTwo.iconSrc"
-            :title="config.contents.widgetTwo.title"
-            :subtitle="config.contents.widgetTwo.subtitle"
-            :axis="config.contents.widgetTwo.axis"
-          ></BadgeWidget>
-        </div>
+        <BadgeWidget
+          :avatar-src="config.contents.widgetOne.iconSrc"
+          :axis="config.contents.widgetOne.axis"
+          :title="config.contents.widgetOne.title"
+          :subtitle="config.contents.widgetOne.subtitle"
+        ></BadgeWidget>
+      </div>
+      <div class="grid px-10 items-center row-span-2 lg:row-span-1 order-0">
+        <HeroContent
+          :show-logo="config.contents.bannerText.isShowLogo"
+          :subtitle="config.contents.bannerText.subtitle"
+          :title="config.contents.bannerText.title"
+        ></HeroContent>
+      </div>
+      <div
+        v-if="config.contents.required.includes('widgetTwo')"
+        class="col-span-1"
+      >
+        <BadgeWidget
+          :avatar-src="config.contents.widgetTwo.iconSrc"
+          :title="config.contents.widgetTwo.title"
+          :subtitle="config.contents.widgetTwo.subtitle"
+          :axis="config.contents.widgetTwo.axis"
+        ></BadgeWidget>
       </div>
     </div>
   </section>

@@ -2,8 +2,9 @@ import { Timestamp } from "firebase/firestore";
 import { defineStore } from "pinia";
 import { CurdDate } from "../types";
 import { useConfigComponentStore } from "../../configs/configCPNStore";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import FormData from "form-data";
+import { usePlayerStore } from "../actor/playerStore";
 
 export type Product = {
   id: number;
@@ -19,174 +20,175 @@ export type Product = {
   onSale?: number;
 };
 
+export type ProductBuyResponseError = {
+  status: 500 | 403;
+  error: 500 | 403;
+  messages: {
+    error: string;
+  };
+};
+
+export type ProductBuyResponseSuccess = {
+  playerName: string;
+  creditBefore: number;
+  totalCredit: number;
+  warning: string;
+};
+
 export const useProductStore = defineStore("productStore", {
   state: () => ({
     productTypes: <string[]>[],
     products: <Product[]>[
-      {
-        id: 1,
-        name: "Product 1",
-        desc: "Description for Product 1",
-        type: "type1",
-        price: 10,
-        totalSales: 100,
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-        onSale: 5,
-        quantity: 10,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 2,
-        name: "Product 2",
-        desc: "Description for Product 2",
-        type: "type2",
-        price: 20,
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-
-        totalSales: 200,
-        quantity: 10,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 3,
-        name: "Product 3",
-        desc: "Description for Product 3",
-        type: "type3",
-        price: 30,
-        quantity: 10,
-
-        totalSales: 300,
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-
-        onSale: 10,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 4,
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-
-        name: "Product 4",
-        desc: "Description for Product 4",
-        type: "type4",
-        quantity: 10,
-
-        price: 40,
-        totalSales: 400,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 5,
-        name: "Product 5",
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-
-        desc: "Description for Product 5",
-        quantity: 10,
-
-        type: "type5",
-        price: 50,
-        totalSales: 500,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 6,
-        name: "Product 6",
-        desc: "Description for Product 6",
-        quantity: 10,
-
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-
-        type: "type6",
-        price: 60,
-        totalSales: 600,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 7,
-        name: "Product 7",
-        desc: "Description for Product 7",
-        quantity: 10,
-        type: "type7",
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-
-        price: 70,
-        totalSales: 700,
-      },
-      {
-        id: 8,
-        name: "Product 8",
-        desc: "Description for Product 8",
-        type: "type8",
-        quantity: 10,
-
-        price: 80,
-        totalSales: 800,
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-
-        onSale: 15,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 9,
-        name: "Product 9",
-        desc: "Description for Product 9",
-        quantity: 10,
-
-        type: "type9",
-        price: 90,
-        totalSales: 900,
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
-      {
-        id: 10,
-        name: "Product 10",
-        desc: "Description for Product 10",
-        type: "type10",
-        price: 100,
-        quantity: 10,
-
-        totalSales: 1000,
-        imgSrc:
-          "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-        onSale: 20,
-        actionStamp: {
-          created: new Date(1647677385),
-          updated: new Date(1647677385),
-        },
-      },
+      // {
+      //   id: 1,
+      //   name: "Product 1",
+      //   desc: "Description for Product 1",
+      //   type: "type1",
+      //   price: 10,
+      //   totalSales: 100,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   onSale: 5,
+      //   quantity: 10,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 2,
+      //   name: "Product 2",
+      //   desc: "Description for Product 2",
+      //   type: "type2",
+      //   price: 20,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   totalSales: 200,
+      //   quantity: 10,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 3,
+      //   name: "Product 3",
+      //   desc: "Description for Product 3",
+      //   type: "type3",
+      //   price: 30,
+      //   quantity: 10,
+      //   totalSales: 300,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   onSale: 10,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 4,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   name: "Product 4",
+      //   desc: "Description for Product 4",
+      //   type: "type4",
+      //   quantity: 10,
+      //   price: 40,
+      //   totalSales: 400,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 5,
+      //   name: "Product 5",
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   desc: "Description for Product 5",
+      //   quantity: 10,
+      //   type: "type5",
+      //   price: 50,
+      //   totalSales: 500,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 6,
+      //   name: "Product 6",
+      //   desc: "Description for Product 6",
+      //   quantity: 10,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   type: "type6",
+      //   price: 60,
+      //   totalSales: 600,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 7,
+      //   name: "Product 7",
+      //   desc: "Description for Product 7",
+      //   quantity: 10,
+      //   type: "type7",
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   price: 70,
+      //   totalSales: 700,
+      // },
+      // {
+      //   id: 8,
+      //   name: "Product 8",
+      //   desc: "Description for Product 8",
+      //   type: "type8",
+      //   quantity: 10,
+      //   price: 80,
+      //   totalSales: 800,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   onSale: 15,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 9,
+      //   name: "Product 9",
+      //   desc: "Description for Product 9",
+      //   quantity: 10,
+      //   type: "type9",
+      //   price: 90,
+      //   totalSales: 900,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
+      // {
+      //   id: 10,
+      //   name: "Product 10",
+      //   desc: "Description for Product 10",
+      //   type: "type10",
+      //   price: 100,
+      //   quantity: 10,
+      //   totalSales: 1000,
+      //   imgSrc:
+      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
+      //   onSale: 20,
+      //   actionStamp: {
+      //     created: new Date(1647677385),
+      //     updated: new Date(1647677385),
+      //   },
+      // },
     ],
   }),
   getters: {
@@ -242,6 +244,65 @@ export const useProductStore = defineStore("productStore", {
         });
     },
 
+    async buyProduct(
+      playerName: string,
+      productID: string
+    ): Promise<{ status: "success" | "error"; msg: string }> {
+      let { data, config } = this.getDataConfig;
+      config.method = "post";
+      config.url = import.meta.env.VITE_BUY_PRODUCT_API;
+      let formData = { playerName, productID };
+      for (const [key, value] of Object.entries(formData)) {
+        data.append(key, value);
+      }
+
+      return axios(config).then(
+        (
+          res: AxiosResponse<
+            ProductBuyResponseError | ProductBuyResponseSuccess
+          >
+        ) => {
+          if ("status" in res.data) {
+            let errorRes = <ProductBuyResponseError>res.data;
+            switch (errorRes.messages.error) {
+              case "Product not found":
+                return {
+                  status: "error",
+                  msg: "ไม่พบสินค้าที่คุณต้องการซื้อ โปรดลองอีกครั้งในภายหลัง",
+                };
+              case "Player credits is not enough to purchase":
+                return {
+                  status: "error",
+                  msg: "เครดิตของผู้เล่นไม่เพียงพอที่จะซื้อ โปรดเติมเงินแล้วลองใหม่ในภายหลัง",
+                };
+              case "Out of stock":
+                return {
+                  status: "error",
+                  msg: "สินค้าหมด โปรดลองอีกครั้งในภายหลัง",
+                };
+              case "Cannot send RCON command":
+                return {
+                  status: "error",
+                  msg: "เกิดความผิดปกติระหว่างการติดต่อทางเซิฟเวอร์ โปรดลองอีกครั้งหรือแจ้งแอดมินเพื่อให้รับทราบ",
+                };
+              default:
+                return {
+                  status: "error",
+                  msg: "เซฟเวอร์ล่ม โปรดติดต่อผู้ดูแลระบบ",
+                };
+            }
+          } else {
+            let successRes = <ProductBuyResponseSuccess>res.data;
+            usePlayerStore().setPlayerWallet(successRes.totalCredit);
+            return {
+              status: "success",
+              msg: "คุณได้ทำการเติมเงินเป็นที่เรียบร้อยแล้ว",
+            };
+          }
+        }
+      );
+    },
+
     async fetchProducts(): Promise<Product[]> {
       let { config } = this.getDataConfig;
       config.method = "get";
@@ -278,17 +339,16 @@ export const useProductStore = defineStore("productStore", {
               command: obj.product_command,
               quantity: parseInt(obj.product_quantity),
               actionStamp: {
-                created: new Date(+obj.created_at * 1000),
+                created: new Date(+obj.created_at * 10000),
                 updated: obj.updated_at
-                  ? new Date(+obj.updated_at * 1000)
+                  ? new Date(parseInt(obj.updated_at) * 10000)
                   : null,
                 deleted: obj.deleted_at
-                  ? new Date(+obj.deleted_at * 1000)
+                  ? new Date(parseInt(obj.deleted_at) * 10000)
                   : null,
               },
               onSale: 0,
             }));
-            console.log(this.products);
             return this.products;
           }
         )

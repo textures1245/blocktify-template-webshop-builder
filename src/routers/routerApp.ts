@@ -42,11 +42,12 @@ const customRoutes = [
     path: "/client-management-login",
     component: () => import("../views/ClientLoginView.vue"),
   },
-  {
-    name: "ApiStaffKeyGenerator",
-    path: "/api-staff-key-generator",
-    component: () => import("../views/ApiKeyGeneratorView.vue"),
-  },
+  //- store key generator
+  // {
+  //   name: "ApiStaffKeyGenerator",
+  //   path: "/api-staff-key-generator",
+  //   component: () => import("../views/ApiKeyGeneratorView.vue"),
+  // },
   {
     name: "PlayerLogin",
     path: "/login",

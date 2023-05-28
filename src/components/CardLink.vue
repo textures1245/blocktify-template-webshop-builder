@@ -5,28 +5,32 @@ export default {
   props: {
     props: {
       type: Object as PropType<CardLink>,
+      required: true,
     },
   },
 };
 </script>
 <template>
-  <v-card
-    :style="{
-      backgroundImage: `url(${
-        props?.bgUrl
-          ? props.bgUrl
-          : 'https://e0.pxfuel.com/wallpapers/1010/712/desktop-wallpaper-minecraft-grass-block-box-dirt-texture-minecraft-minecraft-thumbnail.jpg'
-      })`,
-    }"
-    class="flex h-28 w-56 bg-cover cursor-pointer"
-  >
-    <v-card-text
-      class="flex backdrop-blur-sm flex-col justify-center items-center"
+  <div class="mx-10 px-auto">
+    <v-card
+      :href="props?.linkUrl"
+      :style="{
+        backgroundImage: `url(${
+          props?.bgUrl
+            ? props.bgUrl
+            : 'https://e0.pxfuel.com/wallpapers/1010/712/desktop-wallpaper-minecraft-grass-block-box-dirt-texture-minecraft-minecraft-thumbnail.jpg'
+        })`,
+      }"
+      class="h-32 w-96 lg:w-48 xl:w-72 flex bg-cover cursor-pointer"
     >
-      <h1 class="animated font-semibold">{{ props?.title }}</h1>
-      <p class="text-white text-base">{{ props?.subtitle }}</p>
-    </v-card-text>
-  </v-card>
+      <v-card-text
+        class="flex backdrop-blur-sm flex-col justify-center items-center"
+      >
+        <h1 class="animated font-semibold">{{ props?.title }}</h1>
+        <p class="text-white text-base">{{ props?.subtitle }}</p>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 <style lang="scss">
 .mc-block-dirt-bg {

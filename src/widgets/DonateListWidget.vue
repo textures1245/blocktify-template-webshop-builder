@@ -38,7 +38,7 @@ export default {
     <div class="h-60">
       <v-toolbar class="!glass" density="comfortable">
         <v-toolbar-title>
-          <h1 class="text-base">
+          <h1 class="text-base font-semibold">
             {{
               sortAction === "TOP_DONATE"
                 ? "อันดับการเติมเงินสูงสุด"

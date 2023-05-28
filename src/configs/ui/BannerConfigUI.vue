@@ -158,11 +158,15 @@ export default {
       title="ข้อความของแบนเนอร์"
     >
       <template #item-preview>
-        <HeroContent
-          :title="config.contents.bannerText.title"
-          :subtitle="config.contents.bannerText.subtitle"
-          :show-logo="config.contents.bannerText.isShowLogo"
-        ></HeroContent>
+        <v-card class="p-5 bg-gray-700">
+          <v-card-text>
+            <HeroContent
+              :title="config.contents.bannerText.title"
+              :subtitle="config.contents.bannerText.subtitle"
+              :show-logo="config.contents.bannerText.isShowLogo"
+            ></HeroContent>
+          </v-card-text>
+        </v-card>
       </template>
       <template #content>
         <FormKit
@@ -187,7 +191,6 @@ export default {
           v-model="config.contents.bannerText.subtitle"
           placeholder="โปรดกรอกข้อมูล"
           validation-visibility="live"
-          validation="required"
         ></FormKit>
       </template>
     </CardExpandPanel>

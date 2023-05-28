@@ -38,27 +38,36 @@ export default {
           return this.store.getProducts;
       }
     },
+    scrollToSection(sectionId: number | string) {
+      const element = document.getElementById(sectionId as string);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    },
   },
 };
 </script>
 <template>
-  <v-card class="">
+  <v-card class="bg-base-200">
     <v-card-text>
       <article
-        class="prose prose-blockquote:text-2xl prose-blockquote:text-primary-focus"
+        class="prose prose-blockquote:text-2xl prose-blockquote:!text-base-content"
       >
-        <blockquote class="w-8/12 font-semibold lg:w-10/12 mx-auto">
+        <blockquote class="w-8/12 font-bold lg:w-10/12 mx-auto">
           {{ storeConfig.highlightProducts.title || "เขียนข้อความตรงนี้" }}
         </blockquote>
       </article>
-      <v-sheet class="mx-auto" max-width="800">
+      <v-sheet class="mx-auto bg-base-200 text-base-content" max-width="800">
         <Suspense>
           <v-slide-group class="pa-4" selected-class="bg-success" show-arrows>
             <v-slide-group-item
               v-for="(prod, i) in products"
               v-slot="{ isSelected, selectedClass }"
             >
-              <div class="flex flex-col justify-center">
+              <a
+                @click.prevent="scrollToSection(prod.id)"
+                class="flex flex-col justify-center"
+              >
                 <v-avatar
                   class="hover:shadow-xl hover:bg-base-300 duration-300 transition cursor-pointer"
                   :image="prod.imgSrc"
@@ -79,7 +88,7 @@ export default {
                   </div>
                 </v-avatar>
                 <p class="text-center">{{ prod.name }}</p>
-              </div>
+              </a>
             </v-slide-group-item>
           </v-slide-group>
         </Suspense>

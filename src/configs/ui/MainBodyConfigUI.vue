@@ -281,6 +281,10 @@ export default {
             title: "ยืนยันการเซตอัปเรียบร้อย",
             html: "โปรดทำการสลับหน้า (ถ้าอยุ่ในหน้าหลัก) เพื่อทำการ rerender contents <p class='text-error font-semibold'>ห้ามรีเฟชเด็ดขาด เพื่อป้องกันการสูญเสียข้อมูลในกรณที่คุณยังไม่ได้เซฟมูลทั้งหมด</p>",
             icon: "success",
+            imageUrl: "https://files.catbox.moe/fqhs37.gif",
+            imageWidth: 400,
+            imageHeight: 300,
+            imageAlt: "Main Content Setup Tutorial",
           });
         }
       });

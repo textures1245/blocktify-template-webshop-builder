@@ -4,6 +4,7 @@ import { Account, PlayerTransaction, Role } from "../types";
 import axios from "axios";
 import FormData from "form-data";
 import { useConfigComponentStore } from "../../configs/configCPNStore";
+import { useTransactionStore } from "../product/transationStore";
 
 export type Player = Account & {
   avatar: string;
@@ -21,19 +22,10 @@ export type TopUpRanK = {
 
 export const usePlayerStore = defineStore("playerStore", {
   state: () => ({
-    player: <Player>{
-      avatar: "https://minotar.net/helm/mhf_steve/600.png",
-      playerName: "codename_t",
-      role: "Player",
-      transaction: {
-        wallet: 3600,
-      },
-      fromStoreId: "test",
-    },
+    player: <Player | null>null,
   }),
   getters: {
     getCurrentPlayer: (state) => state.player,
-    // getPlayers: (state) => state.players,
     getDataConfig: (state) => {
       var data = new FormData();
 
@@ -51,8 +43,32 @@ export const usePlayerStore = defineStore("playerStore", {
     },
   },
   actions: {
-    setPlayer(player: Player) {
-      this.player = player;
+    setPlayerWallet(wallet: number) {
+      if (this.player) {
+        this.player.transaction.wallet = wallet;
+      }
+      console.error("player not found");
+    },
+
+    async setPlayer(player: Player) {
+      const playerTransactions =
+        await useTransactionStore().onFetchTopUpTransactionList(
+          player.playerName
+        );
+      if (playerTransactions) {
+        let recentTransaction: PlayerTransaction = {
+          wallet: player.transaction.wallet,
+          topUpTotal: playerTransactions.reduce(
+            (acc, { amount }) => acc + amount,
+            0
+          ),
+          recentTopUp: Math.max(...playerTransactions.map((t) => t.amount)),
+          recentTopUpDate: new Date(
+            Math.max(...playerTransactions.map((t) => t.created.getTime()))
+          ),
+        };
+        this.player = { ...player, transaction: recentTransaction };
+      }
     },
 
     async fetchTopUpPlayersRanking(

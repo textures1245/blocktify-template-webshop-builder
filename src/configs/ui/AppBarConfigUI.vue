@@ -8,8 +8,6 @@ export default {
     return { config: useConfigComponentStore().getAppBarConfig };
   },
 
- 
-
   data() {
     return {
       configOpts: {
@@ -63,19 +61,6 @@ export default {
         :options="configOpts.avatarOpts"
         v-model="config.avatar"
         placeholder="Select a Logo Avatar."
-        validation="required"
-      ></FormKit>
-    </template>
-  </CardExpand>
-  <CardExpand headline="ตำแหน่งที่ตั้ง (Elements Position)">
-    <template #content>
-      <FormKit
-        type="select"
-        label="Logo Position"
-        name="logoPosition"
-        v-model="config.position"
-        placeholder="Select a Logo Position."
-        :options="configOpts.logoPositionOpts"
         validation="required"
       ></FormKit>
     </template>

@@ -4,6 +4,7 @@ import FormData from "form-data";
 import axios from "axios";
 import { useConfigComponentStore } from "../configCPNStore";
 import { useTransactionStore } from "../../store/product/transationStore";
+import { usePlayerStore } from "../../store/actor/playerStore";
 
 export default {
   setup() {
@@ -36,6 +37,7 @@ export default {
       config,
       client: configStore.getWebsiteConfig,
       data,
+      player: usePlayerStore().getCurrentPlayer,
       transactionStore: useTransactionStore(),
     };
   },
@@ -100,7 +102,9 @@ export default {
       axios(this.config)
         .then(async (response) => {
           this.Toast.fire("คุณได้เติมเงินเป็นที่เรียบร้อยแล้ว", "", "success");
-          await this.transactionStore.onFetchTopUpTransactionList();
+          await this.transactionStore.onFetchTopUpTransactionList(
+            this.player?.playerName!
+          );
         })
         .catch(
           (err) => (

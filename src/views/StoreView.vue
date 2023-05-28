@@ -3,12 +3,23 @@ import ProductCollectionSlide from "../widgets/ProductCollectionSlide.vue";
 import ProductFilter from "../components/ProductFilter.vue";
 import ProductList from "../components/ProductList.vue";
 import { Product } from "../store/product/productStore";
+import { useClientStore } from "../auth/store/authClientStore";
+import { usePlayerStore } from "../store/actor/playerStore";
+import CardProduct from "../components/CardProduct.vue";
 export default {
-  components: { ProductCollectionSlide, ProductFilter, ProductList },
+  components: {
+    ProductCollectionSlide,
+    ProductFilter,
+    ProductList,
+    CardProduct,
+  },
+  props: {},
   data() {
     return {
       products: <Product[]>[],
       dialog: false,
+      player: usePlayerStore().getCurrentPlayer,
+      onClientView: useClientStore().getIsClientAuth,
     };
   },
   methods: {},
@@ -68,7 +79,17 @@ export default {
       :delay="200"
       class="lg:col-span-2 max-h-screen overflow-auto"
     >
-      <ProductList :products="products"></ProductList>
+      <div class="flex flex-col gap-2">
+        <CardProduct
+          :player="
+            Boolean(player)
+              ? { playerName: player?.playerName! }
+              : { playerName: null }
+          "
+          :product="prod"
+          v-for="prod in products"
+        ></CardProduct>
+      </div>
     </div>
   </div>
 </template>

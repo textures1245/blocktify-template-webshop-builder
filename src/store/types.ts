@@ -18,9 +18,9 @@ export type Role = "Player" | "Client";
 
 export type PlayerTransaction = {
   wallet: number;
-  topUpTotal?: number;
-  recentTopUp?: number;
-  recentTopUpDate?: Date;
+  topUpTotal: number | null;
+  recentTopUp: number | null;
+  recentTopUpDate: Date | null;
 };
 
 export type CurdDate = {

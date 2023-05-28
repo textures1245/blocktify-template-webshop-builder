@@ -1,9 +1,11 @@
 //* All the CSS Configuration go here
 
 export type WebsiteConfig = {
+  firebaseUID: string;
   storeID: string;
   hostName: string;
-  phone: string;
+  domainExpiredDate: Date;
+  phone: string | null;
 };
 
 export type GlobalConfigCSS = {
@@ -67,7 +69,8 @@ export type BaseConfigCSS = {
   position?: string;
 };
 
-export type AppBar = BaseConfigCSS & {
+export type AppBar = {
+  avatar: string;
   brandImg: string;
   bgImg: {
     isHave: "true" | "false";
@@ -76,7 +79,12 @@ export type AppBar = BaseConfigCSS & {
   glass: boolean;
 };
 
-export type Banner = BaseConfigCSS & {
+export type Banner = {
+  background: {
+    selected: "img";
+    opacity?: number;
+    value?: string;
+  };
   contents: {
     required: ("widgetOne" | "widgetTwo" | "bannerText")[];
     widgetOne: BadgeWidget;
@@ -85,7 +93,7 @@ export type Banner = BaseConfigCSS & {
   };
 };
 
-export type Sidebar = BaseConfigCSS & {
+export type Sidebar = {
   contents: {
     required: ("playerBadge" | "topDonate" | "recentDonate")[];
     playerBadge: {
@@ -110,7 +118,7 @@ export type AlertSlideMsgProp = {
   };
 };
 
-export type MainBodyContainer = BaseConfigCSS & {
+export type MainBodyContainer = {
   setting: {
     mainContent: {
       requires: ("AlertSlideMsgWidget" | "BoardNews")[];
@@ -137,9 +145,13 @@ export type HeaderBar = BaseConfigCSS & {
   };
 };
 
-export type FooterContainer = BaseConfigCSS & {
+export type FooterContainer = {
   webInfo: WebInfo;
   followProps: FollowProps;
+  bg: {
+    isImage: boolean;
+    src: string | null;
+  };
 };
 
 export type WebInfo = {
@@ -151,6 +163,14 @@ export type FollowProps = {
     action: "youtube" | "facebook" | "twitter" | "discord";
     linkUrl: string;
   }[];
+};
+
+export type PlayerLogin = {
+  sideImageUrl: string;
+  extraClass: {
+    loginPosition: string;
+    colorTheme: string;
+  };
 };
 
 //- CPN & Widget Types

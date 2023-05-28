@@ -10,6 +10,11 @@ export default {
 
     return { config: ref(configStore.getGlobalConfig), configStore };
   },
+  watch: {
+    // customColor() {
+    //   this.config.bgColor = this.customColor;
+    // },
+  },
   data() {
     return {
       configSelectOpt: {
@@ -61,16 +66,15 @@ export default {
         bgColorOpts: {
           "bg-base-300": "ยึดตามพื้นหลังสีทีม",
           "bg-white": "สีขาว",
-          "bg-gray-100": "ทีขาวขวัญบุหรี่",
+          "bg-gray-400": "ทีขาวขวัญบุหรี่",
           "bg-gray-700": "สีดำเทา",
+          none: "ตั้งค่าเอง",
         },
       },
+      customColor: "#FFF",
 
       isConfigHasChanged: false,
     };
-  },
-  mounted(): void {
-    console.log(this.config);
   },
 
   unmounted() {
@@ -83,14 +87,10 @@ export default {
       console.log(this.configStore.getGlobalConfig);
     },
 
-    // onChangedConfig(): boolean {
-    //   console.log(this.tempConfig);
-    //   return (
-    //     this.tempConfig.themeColor == this.config.themeColor ||
-    //     this.tempConfig.fontSize == this.config.fontSize ||
-    //     this.tempConfig.fontFamily == this.config.fontFamily
-    //   );
-    // },
+    changedToCustomColor() {
+      this.config.bgColor = `!bg-[${this.customColor}]`;
+      console.log(this.config.bgColor);
+    },
   },
 };
 </script>
@@ -126,6 +126,22 @@ export default {
             :options="configSelectOpt.bgColorOpts"
             validation="required"
           />
+          <div @click="() => changedToCustomColor()" class="flex">
+            <FormKit
+              v-if="
+                ![
+                  'bg-base-300',
+                  'bg-white',
+                  'bg-gray-400',
+                  'bg-gray-700',
+                ].includes(config.bgColor)
+              "
+              v-model="customColor"
+              type="color"
+              label="เลือกสี"
+              help="*ตัวเลิอกนี้จะถูกใช้เมื่อทำการ Save ข้อมูลแล้วเท่านั้น*"
+            />
+          </div>
         </template>
       </CardExpand>
       <CardExpand headline="ขนาดของตัวอักษร (Font Size)">
@@ -154,7 +170,9 @@ export default {
           />
         </template>
       </CardExpand>
-      <CardExpand :item-preview="true" headline="ลักษณะปุ่มกด (Button Style)">
+
+      <!--- unused -->
+      <!-- <CardExpand :item-preview="true" headline="ลักษณะปุ่มกด (Button Style)">
         <template #item-preview>
           <v-btn
             :variant="config.btnStyle.variant || undefined"
@@ -184,7 +202,7 @@ export default {
             :options="configSelectOpt.btnExtraClasses"
           />
         </template>
-      </CardExpand>
+      </CardExpand> -->
     </div>
   </FormKit>
 </template>

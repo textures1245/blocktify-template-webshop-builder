@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid col-span-full md:col-span-1 place-items-center md:place-items-stretch grid-cols-2 md:grid-cols-1 md:flex flex-col gap-10"
+    class="grid col-span-full md:col-span-1 place-items-center md:place-items-stretch md:grid-cols-1 md:flex flex-col gap-10"
   >
     <PlayerBadge
       v-if="config.contents.required.includes('playerBadge')"
