@@ -6,13 +6,19 @@ import AlertSlideMsgWidget from "../../widgets/AlertSlideMsgWidget.vue";
 import FileControl from "../components/FileControl.vue";
 import TextEditorControl from "../components/TextEditorControl.vue";
 import PaginationControl from "../components/PaginationControl.vue";
-import { BoardNews, CardLink, ProductCollectionGrid } from "../configCSS";
+import {
+  BoardNews,
+  CardLink,
+  ProductCollectionGrid,
+  YoutubeIFrame,
+} from "../configCSS";
 import Swal from "sweetalert2";
 import { config } from "dotenv";
 import { Ref, ref, nextTick, reactive } from "vue";
 import ControlSlot from "../components/ControlSlot.vue";
 import ActionGroupControl from "../components/ActionGroupControl.vue";
 import { storeToRefs } from "pinia";
+import YouTubeIFrame from "../../components/YouTubeIFrame.vue";
 
 export default {
   components: {
@@ -24,6 +30,7 @@ export default {
     PaginationControl,
     ControlSlot,
     ActionGroupControl,
+    YouTubeIFrame,
   },
   setup() {
     const store = useConfigComponentStore();
@@ -68,9 +75,11 @@ export default {
         },
       },
       formControls: {
-        formEditorsTag: <"BOARD" | "COLLECTION" | "CARD" | "NONE">"NONE",
+        formEditorsTag: <"BOARD" | "COLLECTION" | "CARD" | "YT" | "NONE">"NONE",
         boardNews: {
           control: <BoardNews>{
+            id: 0,
+
             image: "",
             context: {
               title: "",
@@ -88,10 +97,20 @@ export default {
         },
         cardLink: {
           control: <CardLink>{
+            id: 0,
+
             bgUrl: "",
             title: "",
             subtitle: "",
             linkUrl: "",
+          },
+          items: reactive(<CardLink[]>[]),
+        },
+        ytVid: {
+          control: <YoutubeIFrame>{
+            id: 0,
+            title: "",
+            youtubeId: "",
           },
           items: reactive(<CardLink[]>[]),
         },
@@ -264,6 +283,60 @@ export default {
       this.formControls.formEditorsTag = "NONE";
     },
 
+    onSubmitYTForm() {
+      const isEdit = this.formControls.formEditorsTag === "YT";
+      const validYoutubeId = this.getYoutubeVideoId(
+        this.formControls.ytVid.control.youtubeId
+      );
+      if (!validYoutubeId) {
+        return this.Toast.fire({
+          icon: "error",
+          text: "URL ที่คุณกรอกมาไม่ถูกต้องตามลักษณะ URL ของ Youtube โปรดลองใหม่",
+        });
+      }
+      let formData = {
+        id: isEdit
+          ? this.formControls.ytVid.control.id
+          : this.generateId(this.config.setting.subContents.ytVideo.props),
+        title: this.formControls.ytVid.control.title,
+        youtubeId: validYoutubeId,
+      };
+      if (!isEdit) {
+        this.config.setting.subContents.ytVideo.props.push(formData);
+      } else {
+        let dataIndex = this.config.setting.subContents.ytVideo.props.findIndex(
+          (item) => item.id === formData.id
+        )!;
+        this.config.setting.subContents.ytVideo.props[dataIndex] = formData;
+      }
+
+      this.Toast.fire({
+        icon: "success",
+        text: !isEdit
+          ? "ข้อมูลที่เพิ่มเรียบร้อยแล้ว"
+          : "ข้อมูลถูกอัปเดตเรียบร้อยแล้ว",
+      });
+
+      this.formControls.ytVid.control = {
+        id: 0,
+        title: "",
+        youtubeId: "",
+      } as YoutubeIFrame;
+      this.formControls.formEditorsTag = "NONE";
+    },
+
+    getYoutubeVideoId(url: string): string | null {
+      const regex =
+        /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=)|youtu\.be\/)([^?&]+)/;
+      const match = url.match(regex);
+
+      if (match && match[1]) {
+        return match[1];
+      }
+
+      return null;
+    },
+
     onInitialConfig() {
       Swal.fire({
         title: "ยืนยันส่วนของ Main content Setup",
@@ -379,13 +452,14 @@ export default {
                 type="text"
                 label="กรอกข้อความชื่อเรื่อง (Title)"
                 name="news-title"
-                :help="helpConfig.lengthLabel(20)"
-                validation="required|length:20,0"
+                :help="helpConfig.lengthLabel(35)"
+                validation="required|length:35,0"
               ></FormKit>
               <TextEditorControl
                 :title="`กรอกเนื้อหา (${helpConfig.lengthLabel(500)})`"
                 @quill-content-emitter="(content: string) => formControls.boardNews.control.context.content = content"
                 :quill-content="formControls.boardNews.control.context.content"
+                :lengthLimits="0"
               ></TextEditorControl>
 
               <div class="flex justify-center my-4 mt-6">
@@ -448,7 +522,7 @@ export default {
                   <ActionGroupControl
                     scrollToId="news-props-form-control"
                     :item-id="newProp.id"
-                    @emit-action="(emitter: any) => [onTakeCURDAction(emitter.action, emitter.itemId, config.setting.mainContent.boardNews.props.news, formControls.boardNews.control), emitter.action === 'EDIT' ? formControls.formEditorsTag = 'CARD' : null]"
+                    @emit-action="(emitter: any) => [onTakeCURDAction(emitter.action, emitter.itemId, config.setting.mainContent.boardNews.props.news, formControls.boardNews.control), emitter.action === 'EDIT' ? formControls.formEditorsTag = 'BOARD' : null]"
                   ></ActionGroupControl>
                 </div>
                 <!--! unused for unexpected behavior between array  -->
@@ -605,16 +679,16 @@ export default {
                 type="text"
                 label="กรอกข้อความหัวเรื่อง"
                 name="title"
-                validation="required|length:10,0"
-                :help="helpConfig.lengthLabel(10)"
+                validation="required|length:20,0"
+                :help="helpConfig.lengthLabel(20)"
               ></FormKit>
               <FormKit
                 v-model="formControls.cardLink.control.subtitle"
                 type="text"
                 label="กรอกข้อความหัวข้อย่อย"
                 name="subtitle"
-                validation="required|length:10,0"
-                :help="helpConfig.lengthLabel(10)"
+                validation="required|length:20,0"
+                :help="helpConfig.lengthLabel(20)"
               ></FormKit>
               <FormKit
                 v-model="formControls.cardLink.control.linkUrl"
@@ -669,17 +743,20 @@ export default {
                       v-model="link.title"
                       type="text"
                       label="หัวข้อ"
+                      disabled
                       name="title"
                     ></FormKit>
                     <FormKit
                       v-model="link.subtitle"
                       type="text"
                       label="หัวข้อย่อย"
+                      disabled
                       name="subtitle"
-                      validation="required|length:10,0"
-                      :help="helpConfig.lengthLabel(10)"
+                      validation="required|length:20,0"
+                      :help="helpConfig.lengthLabel(20)"
                     ></FormKit>
                     <FormKit
+                      disabled
                       v-model="link.linkUrl"
                       type="text"
                       label="Link Url"
@@ -703,6 +780,90 @@ export default {
                     :items="config.setting.subContents.cardLink.props"
                   >
                   </PaginationControl> -->
+                </div>
+              </template>
+            </ControlSlot>
+          </section>
+        </template>
+      </CardExpandPanel>
+      <CardExpandPanel title="Youtube Video">
+        <template #content>
+          <section id="yt-from-controls">
+            <FormKit @submit="onSubmitYTForm()" type="form" :actions="false">
+              <FormKit
+                type="text"
+                v-model="formControls.ytVid.control.youtubeId"
+                label="โปรดใส่ URL Youtube "
+                validation="required|url"
+                help="เราจะทำการเปลี่ยน URL เป็น ID เพื่อใช้ในการเรนเดอร์คลิปเอง"
+              ></FormKit>
+              <FormKit
+                type="text"
+                v-model="formControls.ytVid.control.title"
+                label="หัวเรื่องที่ต้องการโชว์"
+                help="ใส่หรือไม่ใสก็ได้"
+              ></FormKit>
+              <div class="flex w-auto mx-auto justify-center">
+                <FormKit
+                  type="submit"
+                  :label="
+                    formControls.formEditorsTag === 'YT' ? 'อัปเดต' : 'เพิ่ม'
+                  "
+                  :disabled="
+                    config.setting.subContents.cardLink.props.length >= 4 &&
+                    formControls.formEditorsTag !== 'YT'
+                  "
+                  help="สามารถเพิ่มได้มากสุด 6 อันเพื่อคง Performance ของเว็บไซต์ไว้"
+                ></FormKit>
+              </div>
+            </FormKit>
+          </section>
+          <section id="card-link-preview">
+            <ControlSlot
+              :item-length="config.setting.subContents.ytVideo.props.length"
+            >
+              <template #form-controls>
+                <div id="card-link-group">
+                  <div
+                    :key="i"
+                    id="card-link"
+                    v-for="(yt, i) in config.setting.subContents.ytVideo.props"
+                  >
+                    <h2 class="hr">
+                      <span class="hr-text">{{ i + 1 }}</span>
+                    </h2>
+                    <div name="yt-preview-readonly" class="mb-4">
+                      <label
+                        for="text-editor-control"
+                        class="text-sm font-bold font-sans"
+                        >ตัวอย่าง</label
+                      >
+                      <YouTubeIFrame
+                        :props="yt"
+                        custom-height="200"
+                      ></YouTubeIFrame>
+                    </div>
+                    <FormKit
+                      type="text"
+                      placeholder="ไม่ได้ระบุ title ไว้"
+                      v-model="yt.youtubeId"
+                      disabled
+                      label="URL Youtube "
+                      validation="required|url"
+                      help="ID เพื่อใช้ในการเรนเดอร์คลิป"
+                    ></FormKit>
+                    <FormKit
+                      type="text"
+                      v-model="yt.title"
+                      label="หัวเรื่องที่ต้องการโชว์"
+                      disabled
+                    ></FormKit>
+                    <ActionGroupControl
+                      scroll-to-id="yt-from-controls"
+                      @emit-action="(emitter: any) => [onTakeCURDAction(emitter.action, emitter.itemId, config.setting.subContents.ytVideo.props, formControls.ytVid.control ), emitter.action === 'EDIT' ? formControls.formEditorsTag = 'YT' : null]"
+                      :item-id="yt.id"
+                    ></ActionGroupControl>
+                  </div>
                 </div>
               </template>
             </ControlSlot>

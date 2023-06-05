@@ -57,26 +57,32 @@ export default {
 </script>
 <template>
   <section id="player-login">
-    <img
-      src="https://cdn.dribbble.com/users/966188/screenshots/15283925/media/8b8663dc8f6e6a2fd80a201aec1ffbb6.jpg?compress=1&resize=400x300"
+    <v-img
+      cover
+      :src="loginConfig.sideImageUrl"
       class="h-full visible md:invisible blur absolute z-10 w-full"
-    />
+    ></v-img>
     <div
       :class="[
-        'w-full h-screen grid md:grid-cols-2 md:!bg-gradient-to-r md:from-primary',,
+        'w-full h-screen grid md:grid-cols-2 md:!bg-gradient-to-r md:from-primary-focus md:to-base-300',
+        ,
       ]"
     >
       <v-img
-        src="https://cdn.dribbble.com/users/966188/screenshots/15283925/media/8b8663dc8f6e6a2fd80a201aec1ffbb6.jpg?compress=1&resize=400x300"
+        :src="loginConfig.sideImageUrl"
         cover
         :class="[
           loginConfig.extraClass.loginPosition,
           ,
-          'blur-sm hidden md:block z-100',
+          'blur-sm  hidden md:block z-100',
         ]"
       ></v-img>
       <div class="grid place-self-center">
-        <v-card elevation="2" class="w-screen sm:!w-[450px] py-10 z-10">
+        <v-card
+          elevation="2"
+          rounded="12"
+          class="bg-base-300 text-base-content w-screen sm:!w-[450px] py-10 z-10"
+        >
           <v-card-title id="header" class="flex flex-col gap-8 items-center">
             <v-avatar size="84" :image="appBarConfig.brandImg"> </v-avatar>
             <h1 class="text-2xl font-bold">ลงชื่อเพื่อเข้าใช้ระบบ</h1>
@@ -94,6 +100,7 @@ export default {
               <FormKit
                 inner-class="w-full"
                 name="playerName"
+                input-class="!bg-primary !ring-secondary !text-primary-content"
                 type="text"
                 validation="required"
                 :validation-messages="{
@@ -104,6 +111,7 @@ export default {
               <FormKit
                 inner-class="w-full"
                 type="password"
+                input-class="!bg-primary !ring-secondary !text-primary-content"
                 validation="required"
                 name="playerPassword"
                 label="Password"

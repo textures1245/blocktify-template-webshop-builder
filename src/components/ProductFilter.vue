@@ -48,7 +48,7 @@ export default {
 };
 </script>
 <template>
-  <div class="shadow-md max-h-screen overflow-y-auto w-full">
+  <div class="shadow-md drop-shadow-md max-h-screen overflow-y-auto w-full">
     <v-card class="mx-auto bg-base-200 text-base-content" max-width="500">
       <v-card-text class="flex flex-col gap-4">
         <FormKit

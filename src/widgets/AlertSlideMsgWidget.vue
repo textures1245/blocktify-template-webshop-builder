@@ -12,7 +12,7 @@ export default {
 </script>
 <template>
   <v-card height="50" class="bg-base-200 text-base-content">
-    <div class="parent">
+    <div class="">
       <v-icon
         class="absolute h-full w-12 z-10 bg-primary-focus text-primary-content"
         icon="mdi-bullhorn-variant"

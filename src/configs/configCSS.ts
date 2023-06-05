@@ -1,7 +1,17 @@
 //* All the CSS Configuration go here
+export type Configuration = {
+  globalConfig: GlobalConfigCSS;
+  storeConfig: StoreConfig;
+  playerLoginConfig: PlayerLogin;
+  AppBarConfig: AppBar;
+  BannerConfig: Banner;
+  SideBarConfig: Sidebar;
+  HeaderBarConfig: HeaderBar;
+  MainBodyConfig: MainBodyContainer;
+  FooterConfig: FooterContainer;
+};
 
 export type WebsiteConfig = {
-  firebaseUID: string;
   storeID: string;
   hostName: string;
   domainExpiredDate: Date;
@@ -43,6 +53,7 @@ export type GlobalConfigCSS = {
   bgColor: string;
   fontSize: "sm" | "md" | "lg" | "xl";
   fontFamily: string;
+  iconLogoSrc: string;
   btnStyle: {
     variant:
       | "text"
@@ -97,6 +108,7 @@ export type Sidebar = {
   contents: {
     required: ("playerBadge" | "topDonate" | "recentDonate")[];
     playerBadge: {
+      avatarSrc: string;
       bg: {
         custom: boolean;
         src?: string;
@@ -127,9 +139,9 @@ export type MainBodyContainer = {
     };
 
     subContents: {
-      requires: ("ProductCollectionGrid" | "CardLink")[];
+      requires: ("ProductCollectionGrid" | "CardLink" | "Youtube")[];
       prodCollection: ProductCollectionGridProp;
-
+      ytVideo: YoutubeIFrameProps;
       cardLink: CardLinkProp;
     };
   };
@@ -238,6 +250,17 @@ export type StoreConfig = {
   };
 };
 
+export type YoutubeIFrame = {
+  id: number;
+  title: string;
+  youtubeId: string;
+};
+
+export type YoutubeIFrameProps = {
+  type: "Youtube";
+  props: YoutubeIFrame[];
+};
+
 export type ProductCollectionGrid = {
   id: number;
   sortAction:
@@ -261,9 +284,3 @@ export type MainComponent = {
   props: object;
   area: string;
 };
-
-// export type Image = {
-//   id: number;
-//   src: string;
-//   name: string;
-// };

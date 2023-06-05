@@ -15,6 +15,7 @@ export type Player = Account & {
 };
 
 export type TopUpRanK = {
+  avatar: string;
   player_name: string;
   amount: string;
   created_at?: string;
@@ -35,7 +36,7 @@ export const usePlayerStore = defineStore("playerStore", {
         url: "",
         headers: {
           ...data.getHeaders,
-          "x-store-id": useConfigComponentStore().getWebsiteConfig.storeID,
+          "x-store-id": useConfigComponentStore().getWebsiteConfig?.storeID,
         },
         data: data,
       };
@@ -46,8 +47,9 @@ export const usePlayerStore = defineStore("playerStore", {
     setPlayerWallet(wallet: number) {
       if (this.player) {
         this.player.transaction.wallet = wallet;
+      } else {
+        console.error("player not found");
       }
-      console.error("player not found");
     },
 
     async setPlayer(player: Player) {
@@ -90,11 +92,17 @@ export const usePlayerStore = defineStore("playerStore", {
           if (action === "TOP_DONATE")
             return res.data.map((player) => {
               return {
+                avatar: `https://mc-heads.net/head/${player.player_name}`,
                 player_name: player.player_name,
                 amount: player.amount,
               };
             });
-          return [...res.data];
+          return res.data.map((player) => {
+            return {
+              ...player,
+              avatar: `https://mc-heads.net/head/${player.player_name}`,
+            };
+          });
         })
         .catch(function (error) {
           console.error(error);

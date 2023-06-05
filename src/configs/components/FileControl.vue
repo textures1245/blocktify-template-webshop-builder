@@ -49,7 +49,7 @@ export default {
       url: "",
       headers: {
         ...data.getHeaders,
-        "x-store-id": websiteConfig.storeID,
+        "x-store-id": websiteConfig!.storeID,
       },
       data,
     };

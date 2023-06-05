@@ -1,8 +1,9 @@
 <template>
   <div
-    class="grid col-span-full md:col-span-1 place-items-center md:place-items-stretch md:grid-cols-1 md:flex flex-col gap-10"
+    class="px-5 gird col-span-full md:col-span-1 place-items-center md:place-items-stretch md:grid-cols-1 md:flex flex-col"
   >
     <PlayerBadge
+      :avatar-image="config.contents.playerBadge.avatarSrc"
       v-if="config.contents.required.includes('playerBadge')"
       :bgImg="{
         isCustom: config.contents.playerBadge.bg.custom,
@@ -13,16 +14,16 @@
     ></PlayerBadge>
     <Suspense>
       <DonateListWidget
-        v-if="config.contents.required.includes('topDonate')"
+        v-if="config.contents.required.includes('recentDonate')"
         sort-action="RECENT"
-        :players="topUpRanks"
+        :players="recentTopUpRanks"
       ></DonateListWidget>
     </Suspense>
     <Suspense>
       <DonateListWidget
-        v-if="config.contents.required.includes('recentDonate')"
+        v-if="config.contents.required.includes('topDonate')"
         sort-action="TOP_DONATE"
-        :players="recentTopUpRanks"
+        :players="topUpRanks"
       ></DonateListWidget>
     </Suspense>
   </div>

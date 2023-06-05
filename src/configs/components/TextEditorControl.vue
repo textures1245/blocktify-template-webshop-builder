@@ -19,7 +19,7 @@ export default {
     },
     lengthLimits: {
       type: Number,
-      default: 255,
+      default: 0,
     },
   },
   data() {
@@ -33,7 +33,7 @@ export default {
     onEmitter() {
       if (
         this.quillContentControl === "<p><br></p>" ||
-        this.quillContentControl.length > this.lengthLimits
+        this.quillContentControl.length <= this.lengthLimits
       ) {
         return alert(
           `ตัวกรอกข้อมูลห้ามว้างหรือมีมากกว่า ${this.lengthLimits} ตัว`
@@ -41,6 +41,7 @@ export default {
       }
 
       this.$emit("quillContentEmitter", this.quillContentControl);
+      this.dialog = false;
     },
 
     onInitialContent() {
@@ -83,11 +84,7 @@ export default {
           />
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            color="blue-darken-1"
-            variant="text"
-            @click="[onEmitter(), (dialog = false)]"
-          >
+          <v-btn color="blue-darken-1" variant="text" @click="[onEmitter()]">
             บันทึก
           </v-btn>
           <v-btn

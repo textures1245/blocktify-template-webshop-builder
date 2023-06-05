@@ -1,10 +1,13 @@
 <script lang="ts">
-import { PropType } from "vue";
+import { ComputedRef, PropType, computed } from "vue";
 import { Player, TopUpRanK, usePlayerStore } from "../store/actor/playerStore";
+import IconAnimation from "../components/IconAnimation.vue";
 import BadgeWidget from "./BadgeWidget.vue";
+import { loadScript } from "vue-plugin-load-script";
 export default {
-  components: { BadgeWidget },
+  components: { BadgeWidget, IconAnimation },
   props: {
+    avatar: String,
     players: {
       type: Array as PropType<TopUpRanK[]>,
       required: true,
@@ -14,31 +17,26 @@ export default {
       required: true,
     },
   },
-  computed: {
-    // getSortPlayers() {
-    //   return this.sortAction === "TOP_DONATE"
-    //     ? this.players
-    //         .sort(
-    //           (p1, p2) => p2.transaction.topUpTotal - p1.transaction.topUpTotal
-    //         )
-    //         .slice(0, this.limit)
-    //     : this.players
-    //         .sort(
-    //           (p1, p2) =>
-    //             p2.transaction.recentTopUpDate.seconds -
-    //             p1.transaction.recentTopUpDate.seconds
-    //         )
-    //         .slice(0, this.limit);
-    // },
+
+  mounted() {
+    loadScript(import.meta.env.VITE_LOTTIE_API).then(
+      () => (this.loadedIconScript = true)
+    );
+  },
+
+  data() {
+    return {
+      loadedIconScript: false,
+    };
   },
 };
 </script>
 <template>
-  <section id="top-donate">
+  <section id="top-donate" class="my-16">
     <div class="h-60">
-      <v-toolbar class="!glass" density="comfortable">
+      <v-toolbar class="!glass px-6" density="comfortable">
         <v-toolbar-title>
-          <h1 class="text-base font-semibold">
+          <h1 class="text-base text-base-content font-semibold">
             {{
               sortAction === "TOP_DONATE"
                 ? "อันดับการเติมเงินสูงสุด"
@@ -47,31 +45,59 @@ export default {
           </h1>
         </v-toolbar-title>
       </v-toolbar>
-      <v-table class="!text-sm" density="comfortable">
+      <v-table
+        v-if="players.length > 0"
+        class="!text-sm mb-4"
+        density="comfortable"
+      >
         <thead class="bg-primary-focus">
           <tr>
             <th></th>
             <th class="text-left !text-primary-content">ผู้เล่น</th>
             <th class="text-left !text-primary-content">ยอดเติม</th>
+            <th
+              v-if="sortAction === 'RECENT'"
+              class="text-left !text-primary-content"
+            >
+              ล่าสุดเมื่อ
+            </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="bg-base-300 text-base-content">
           <tr v-for="(p, i) in players" :key="i">
             <td>
               <v-avatar
-                size="26"
-                :image="'https://minotar.net/helm/mhf_steve/600.png'"
+                size="32"
+                :image="
+                  p.avatar || 'https://minotar.net/helm/mhf_steve/600.png'
+                "
                 density="compact"
               ></v-avatar>
             </td>
             <td>{{ p.player_name }}</td>
             <td>{{ p.amount }}</td>
-            <p v-if="p.created_at" class="text-xs text-indent">
-              ล่าสุดเมื่อ: {{ new Date(+p.created_at * 1000).getDate() }}
-            </p>
+            <td v-if="p.created_at" class="text-xs">
+              {{ new Date(+p.created_at * 1000).toLocaleDateString("th-TH") }}
+            </td>
           </tr>
         </tbody>
       </v-table>
+      <div
+        class="flex flex-col items-center gap-4 text-base-content bg-base-100 w-full h-40 py-4 justify-center"
+        v-else
+      >
+        <lottie-player
+          v-if="loadedIconScript"
+          src="https://assets3.lottiefiles.com/packages/lf20_bpsjo66d.json"
+          background="transparent"
+          speed="1"
+          class="w-8/12 h-4/6 fill-primary"
+          loop
+          autoplay
+        ></lottie-player>
+      
+        <v-chip>ยังไม่ข้อมูลการเติมเงินในขณะนี้</v-chip>
+      </div>
     </div>
   </section>
 </template>

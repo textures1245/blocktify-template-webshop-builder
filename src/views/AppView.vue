@@ -30,44 +30,46 @@ export default {
 };
 </script>
 <template>
-  <ClientDrawerLayout v-if="!onClientView"></ClientDrawerLayout>
-  <v-layout>
+  <section :data-theme="globalCSSConfig.themeColor" :style="`font-family: '${globalCSSConfig.fontFamily}', sans-serif;`">
+    <ClientDrawerLayout v-if="onClientView"></ClientDrawerLayout>
     <AppBarLayout></AppBarLayout>
-    <v-main>
-      <div>
-        <BannerLayout></BannerLayout>
+    <v-layout>
+      <v-main>
+        <div>
+          <BannerLayout></BannerLayout>
 
-        <v-card
-          :class="[
-            '!h-auto w-full thai-font eng-font pt-5 pb-[15rem]',
-            globalCSSConfig.bgColor,
-          ]"
-        >
-          <CurveCanvas position="top"></CurveCanvas>
-          <v-container>
-            <div class="grid-parent gap-6">
-              <div class="col-span-full">
-                <HeaderBarLayout></HeaderBarLayout>
+          <v-card
+            :class="[
+              '!h-auto w-full thai-font eng-font pt-5 pb-[15rem]',
+              globalCSSConfig.bgColor,
+            ]"
+          >
+            <CurveCanvas position="top"></CurveCanvas>
+            <v-container>
+              <div class="grid-parent gap-6">
+                <div class="col-span-full">
+                  <HeaderBarLayout></HeaderBarLayout>
+                </div>
+                <v-card
+                  elevation="6"
+                  class="col-span-full w-full md:col-span-5 row-span-4 text-base-content card bg-base-100"
+                >
+                  <v-container>
+                    <router-view></router-view>
+                  </v-container>
+                </v-card>
+                <SidebarLayout></SidebarLayout>
               </div>
-              <v-card
-              elevation="6"
-                class="col-span-full w-full md:col-span-5 row-span-4 text-base-content card bg-base-100 "
-              >
-                <v-container>
-                  <router-view></router-view>
-                </v-container>
-              </v-card>
-              <SidebarLayout></SidebarLayout>
-            </div>
-          </v-container>
-        </v-card>
-      </div>
-    </v-main>
-    <CurveCanvas
-      v-if="!footerConfig.bg.isImage"
-      position="bottom"
-    ></CurveCanvas>
-  </v-layout>
-  <FooterLayout></FooterLayout>
+            </v-container>
+          </v-card>
+        </div>
+      </v-main>
+      <CurveCanvas
+        v-if="!footerConfig.bg.isImage"
+        position="bottom"
+      ></CurveCanvas>
+    </v-layout>
+    <FooterLayout></FooterLayout>
+  </section>
 </template>
 <style lang="scss"></style>

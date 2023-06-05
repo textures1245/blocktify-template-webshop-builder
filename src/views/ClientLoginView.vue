@@ -30,16 +30,16 @@ export default {
     onSubmit() {
       if (this.accData.storeID !== "") {
         this.store.onClientSignIn(this.accData.storeID).then((isAuth) => {
-          if (isAuth) {
+          if (isAuth.status) {
             this.Toast.fire({
               icon: "success",
-              title: "เข้าสูระบบในสถานะ Client เรียบร้อย",
+              title: isAuth.message,
             });
             this.$router.push("/overview");
           } else {
             this.Toast.fire({
-              icon: "success",
-              title: "ไม่พบข้อมูล โปรดลองอีกครั้ง",
+              icon: "error",
+              title: isAuth.message,
             });
           }
         });

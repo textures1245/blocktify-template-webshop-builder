@@ -13,20 +13,28 @@ export default {
 };
 </script>
 <template>
-  <v-card>
-    <v-tabs v-model="currentTab" class="!bg-primary text-primary-content">
-      <v-tab v-for="tab in tabs" :value="tab.value">{{ tab.label }}</v-tab>
-    </v-tabs>
-    <v-card-text>
-      <v-window v-model="currentTab">
-        <v-window-item value="topup">
-          <TopupControl></TopupControl>
-        </v-window-item>
-        <v-window-item value="topupHistory">
-          <TopupHistoryControl></TopupHistoryControl>
-        </v-window-item>
-      </v-window>
-    </v-card-text>
-  </v-card>
+  <div
+    v-motion
+    :initial="{ opacity: 0, y: 100 }"
+    :enter="{ opacity: 1, y: 0, scale: 1 }"
+    :variants="{ custom: { scale: 1.1 } }"
+    :delay="200"
+  >
+    <v-card>
+      <v-tabs v-model="currentTab" class="!bg-primary text-primary-content">
+        <v-tab v-for="tab in tabs" :value="tab.value">{{ tab.label }}</v-tab>
+      </v-tabs>
+      <v-card-text class="bg-base-300 text-base-content">
+        <v-window v-model="currentTab">
+          <v-window-item value="topup">
+            <TopupControl></TopupControl>
+          </v-window-item>
+          <v-window-item value="topupHistory">
+            <TopupHistoryControl></TopupHistoryControl>
+          </v-window-item>
+        </v-window>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 <style lang="scss"></style>

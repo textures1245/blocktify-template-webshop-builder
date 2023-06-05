@@ -6,28 +6,56 @@ import { Product } from "../store/product/productStore";
 import { useClientStore } from "../auth/store/authClientStore";
 import { usePlayerStore } from "../store/actor/playerStore";
 import CardProduct from "../components/CardProduct.vue";
+import IconAnimation from "../components/IconAnimation.vue";
+import { loadScript } from "vue-plugin-load-script";
 export default {
   components: {
     ProductCollectionSlide,
     ProductFilter,
     ProductList,
+    IconAnimation,
     CardProduct,
   },
   props: {},
   data() {
     return {
       products: <Product[]>[],
+      isProductEmpty: true,
       dialog: false,
       player: usePlayerStore().getCurrentPlayer,
       onClientView: useClientStore().getIsClientAuth,
     };
   },
+  async mounted() {
+    return loadScript(import.meta.env.VITE_LOTTIE_API).then(() => true);
+  },
   methods: {},
 };
 </script>
 <template>
+  <div
+    v-if="products.length <= 0"
+    class="flex my-10 h-full w-full justify-center items-center"
+  >
+    <IconAnimation
+      title="ไม่พบไอเทม"
+      subtitle="ลองกลับมาดูใหม่อีกรอบ เพื่อจะมีสินค้าใหม่เพิ่มเข้ามารอคุณอยู่"
+    >
+      <template #icon>
+        <lottie-player
+          src="https://assets1.lottiefiles.com/private_files/lf30_nfa4vjrl.json"
+          background="transparent"
+          speed="1"
+          style="width: 300px; height: 300px"
+          loop
+          autoplay
+        ></lottie-player>
+      </template>
+    </IconAnimation>
+  </div>
   <div class="grid gap-4 grid-cols-1 lg:grid-cols-3">
     <div
+      v-if="products.length > 0"
       v-motion
       :initial="{ opacity: 0, y: 100 }"
       :enter="{ opacity: 1, y: 0, scale: 1 }"
@@ -47,10 +75,11 @@ export default {
       class="col-span-1 hidden lg:block"
     >
       <ProductFilter
-        @set-products="(prods: Product[]) => (products = prods)"
+        @set-products="(prods: Product[]) => [(products = prods), (products.length > 0 ? isProductEmpty = false : isProductEmpty = true)]"
       ></ProductFilter>
     </div>
     <div
+      v-if="products.length > 0"
       v-motion
       :initial="{ opacity: 0, y: 100 }"
       :enter="{ opacity: 1, y: 0, scale: 1 }"
@@ -72,6 +101,7 @@ export default {
       </v-dialog>
     </div>
     <div
+      v-if="products.length > 0"
       v-motion
       :initial="{ opacity: 0, y: 100 }"
       :enter="{ opacity: 1, y: 0, scale: 1 }"

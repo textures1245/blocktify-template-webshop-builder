@@ -11,9 +11,10 @@ export default {
 };
 </script>
 <template>
-  <div class="mx-10 px-auto">
+  <div class="w-full px-auto">
     <v-card
       :href="props?.linkUrl"
+      target="_blank"
       :style="{
         backgroundImage: `url(${
           props?.bgUrl
@@ -21,7 +22,7 @@ export default {
             : 'https://e0.pxfuel.com/wallpapers/1010/712/desktop-wallpaper-minecraft-grass-block-box-dirt-texture-minecraft-minecraft-thumbnail.jpg'
         })`,
       }"
-      class="h-32 w-96 lg:w-48 xl:w-72 flex bg-cover cursor-pointer"
+      class="h-32 w-96 sm:w-[30rem] lg:w-48 xl:w-60 flex bg-cover cursor-pointer"
     >
       <v-card-text
         class="flex backdrop-blur-sm flex-col justify-center items-center"

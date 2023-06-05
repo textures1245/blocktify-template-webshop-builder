@@ -11,6 +11,7 @@ import { loadScript } from "vue-plugin-load-script";
 import { storeToRefs } from "pinia";
 import IconAnimation from "../components/IconAnimation.vue";
 import { useClientStore } from "../auth/store/authClientStore";
+import YouTubeIFrame from "../components/YouTubeIFrame.vue";
 
 export default {
   components: {
@@ -22,6 +23,7 @@ export default {
     ProductCollectionWidget,
     CardLink,
     IconAnimation,
+    YouTubeIFrame,
   },
 
   setup() {
@@ -45,7 +47,6 @@ export default {
 
   watch: {
     storageContents() {
-      console.log("Watching");
       this.storageContents = this.storageContents;
     },
   },
@@ -76,7 +77,7 @@ export default {
     ></IconAnimation>
   </div>
   <draggable
-    :disabled="onClientView"
+    :disabled="!onClientView"
     v-else
     :list="storageContents"
     :group="{ group: { name: 'people' } }"

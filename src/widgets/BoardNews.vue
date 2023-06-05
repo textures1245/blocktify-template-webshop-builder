@@ -24,16 +24,45 @@
                   <div v-html="info.context.content" class="indent-10"></div>
                 </article>
 
-                <v-tooltip location="top" text="อ่าน">
+                <v-dialog v-model="dialog[i]" width="auto">
                   <template v-slot:activator="{ props }">
                     <v-btn
                       v-bind="props"
                       class="absolute bottom-5 right-5 !text-base-content"
                       variant="tonal"
                       icon="mdi-eye-arrow-right-outline"
-                    ></v-btn>
+                    >
+                    </v-btn>
                   </template>
-                </v-tooltip>
+                  <v-card class="shadow-xl">
+                    <v-img
+                      :src="info.image!"
+                      cover
+                      class="h-full w-full"
+                    ></v-img>
+                    <v-card-text
+                      class="bg-gradient-to-t to-base-100 from-base-300"
+                    >
+                      <article
+                        class="py-4 overflow-auto !text-base-content prose prose-sm prose-slate"
+                      >
+                        <h2>
+                          {{ info.context.title }}
+                        </h2>
+                        <div
+                          v-html="info.context.content"
+                          class="indent-10"
+                        ></div>
+                      </article>
+                    </v-card-text>
+                  </v-card>
+                  <v-btn
+                    @click="dialog[i] = false"
+                    size="small"
+                    class="!btn-accent absolute -right-4 -top-4"
+                    icon="mdi-close"
+                  ></v-btn>
+                </v-dialog>
               </v-container>
             </div>
           </div>
@@ -48,6 +77,15 @@ import { BoardNews } from "../configs/configCSS";
 export default {
   props: {
     props: Array as PropType<BoardNews[]>,
+  },
+  data() {
+    return {
+      dialog: [] as boolean[],
+    };
+  },
+  mounted() {
+    // Initialize dialog properties based on the number of items in props array
+    this.dialog = new Array(this.props?.length).fill(false);
   },
 };
 </script>

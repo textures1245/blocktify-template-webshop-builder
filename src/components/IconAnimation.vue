@@ -1,11 +1,20 @@
 <script lang="ts">
+import { loadScript } from "vue-plugin-load-script";
+
 export default {
+  emits: ["loadedScript"],
   props: {
     title: {
       type: String,
       required: true,
     },
     subtitle: String,
+  },
+
+  async mounted() {
+    return loadScript(import.meta.env.VITE_LOTTIE_API).then(() =>
+      this.$emit("loadedScript", true)
+    );
   },
 };
 </script>

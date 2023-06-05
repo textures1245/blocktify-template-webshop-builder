@@ -42,6 +42,7 @@ export default {
       </template>
       <template #content>
         <FileControl
+          @file-emitter="(imgSrc) => (config.sideImageUrl = imgSrc)"
           :storage="config.sideImageUrl"
           action="image"
         ></FileControl>

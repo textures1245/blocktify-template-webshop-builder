@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Product } from "../store/product/productStore";
-import { PropType } from "vue";
+import { PropType, ref } from "vue";
 import { useProductStore } from "../store/product/productStore";
 
 import Swal from "sweetalert2";
@@ -21,9 +21,17 @@ export default {
     };
   },
 
+  data() {
+    return {
+      disableBtnWhilePerformAction: ref(false),
+    };
+  },
+
   methods: {
     async onBuyProduct(productID: string) {
+      this.disableBtnWhilePerformAction = true;
       this.store.buyProduct(this.player?.playerName!, productID).then((res) => {
+        this.disableBtnWhilePerformAction = false;
         Swal.fire({
           icon: res.status,
           titleText: res.msg,
@@ -34,7 +42,7 @@ export default {
 };
 </script>
 <template>
-  <v-card class="bg-base-200  text-base-content" :id="product.id" elevation="2">
+  <v-card class="bg-base-200 text-base-content" :id="product.id" elevation="2">
     <v-card-text class="grid sm:grid-cols-3">
       <div
         id="product-image"
@@ -65,12 +73,18 @@ export default {
                   <div class="stat-desc">21% more than last month</div>
                 </div>
                 <v-btn
+                  :disabled="disableBtnWhilePerformAction"
                   @click="onBuyProduct(product.id.toString())"
                   v-if="player?.playerName !== null"
                   id="buy-action"
                   size="large"
                   class="!btn-success"
-                  >ซื้อ</v-btn
+                >
+                  <span
+                    v-if="disableBtnWhilePerformAction"
+                    class="loading loading-spinner"
+                  ></span>
+                  ซื้อ</v-btn
                 >
               </div>
             </div>

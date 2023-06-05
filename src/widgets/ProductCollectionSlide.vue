@@ -48,7 +48,7 @@ export default {
 };
 </script>
 <template>
-  <v-card class="bg-base-200">
+  <v-card v-if="products.length > 0" elevation="4" class="bg-base-200">
     <v-card-text>
       <article
         class="prose prose-blockquote:text-2xl prose-blockquote:!text-base-content"
@@ -59,7 +59,7 @@ export default {
       </article>
       <v-sheet class="mx-auto bg-base-200 text-base-content" max-width="800">
         <Suspense>
-          <v-slide-group class="pa-4" selected-class="bg-success" show-arrows>
+          <v-slide-group  class="pa-4" selected-class="bg-success" show-arrows>
             <v-slide-group-item
               v-for="(prod, i) in products"
               v-slot="{ isSelected, selectedClass }"

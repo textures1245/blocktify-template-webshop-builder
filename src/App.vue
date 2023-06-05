@@ -1,14 +1,23 @@
 <script lang="ts">
+//@ts-nocheck
 import { useConfigComponentStore } from "./configs/configCPNStore";
 import { useProductStore } from "./store/product/productStore";
 import onLoading from "./components/onLoading.vue";
-import { useTransactionStore } from "./store/product/transationStore";
-import { usePlayerStore } from "./store/actor/playerStore";
+import Swal from "sweetalert2";
+
 export default {
   components: { onLoading },
+  name: "app",
+  created() {
+    document.title = this.globalCSSConfig.websiteName;
+    const favicon = document.getElementById("favicon");
+    if (favicon) favicon!.href = this.globalCSSConfig.iconLogoSrc;
+  },
   setup() {
+    const configStore = useConfigComponentStore();
     return {
-      globalCSSConfig: useConfigComponentStore().getGlobalConfig,
+      configStore,
+      globalCSSConfig: configStore.getGlobalConfig,
       productStore: useProductStore(),
     };
   },
@@ -20,24 +29,26 @@ export default {
   },
 
   async mounted() {
-    useProductStore().onInitializeUniqueProductType();
-    // await usePlayerStore().setPlayer({
-    //   avatar: "https://minotar.net/helm/mhf_steve/600.png",
-    //   playerName: "codename_t",
-    //   role: "Player",
-    //   transaction: {
-    //     wallet: 3600,
-    //     topUpTotal: null,
-    //     recentTopUp: null,
-    //     recentTopUpDate: null,
-    //   },
-    //   fromStoreId: "test",
-    //   username: "",
-    //   password: "",
-    // });
-    await this.productStore.fetchProducts().then(() => {
-      this.isLoading = false;
+    this.configStore.onInitalConfiguration().then(async (res) => {
+      if (res.status === "success") {
+        await this.onInitializedData();
+      } else {
+        this.isLoading = false;
+      }
+      Swal.fire({
+        icon: res.status,
+        text: res.msg,
+      });
     });
+  },
+
+  methods: {
+    async onInitializedData() {
+      await this.productStore.fetchProducts().then(() => {
+        useProductStore().onInitializeUniqueProductType();
+        this.isLoading = false;
+      });
+    },
   },
 };
 </script>
@@ -53,6 +64,4 @@ export default {
     </div>
   </v-app>
 </template>
-<style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Anuphan&family=Chakra+Petch&family=Itim&family=Kanit:wght@200&family=Mitr&family=Noto+Sans+Thai&family=Pattaya&family=Prompt&family=Taviraj&display=swap");
-</style>
+<style lang="scss"></style>

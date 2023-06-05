@@ -2,7 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import { defineStore } from "pinia";
 import { CurdDate } from "../types";
 import { useConfigComponentStore } from "../../configs/configCPNStore";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import FormData from "form-data";
 import { usePlayerStore } from "../actor/playerStore";
 
@@ -38,158 +38,7 @@ export type ProductBuyResponseSuccess = {
 export const useProductStore = defineStore("productStore", {
   state: () => ({
     productTypes: <string[]>[],
-    products: <Product[]>[
-      // {
-      //   id: 1,
-      //   name: "Product 1",
-      //   desc: "Description for Product 1",
-      //   type: "type1",
-      //   price: 10,
-      //   totalSales: 100,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   onSale: 5,
-      //   quantity: 10,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 2,
-      //   name: "Product 2",
-      //   desc: "Description for Product 2",
-      //   type: "type2",
-      //   price: 20,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   totalSales: 200,
-      //   quantity: 10,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 3,
-      //   name: "Product 3",
-      //   desc: "Description for Product 3",
-      //   type: "type3",
-      //   price: 30,
-      //   quantity: 10,
-      //   totalSales: 300,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   onSale: 10,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 4,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   name: "Product 4",
-      //   desc: "Description for Product 4",
-      //   type: "type4",
-      //   quantity: 10,
-      //   price: 40,
-      //   totalSales: 400,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 5,
-      //   name: "Product 5",
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   desc: "Description for Product 5",
-      //   quantity: 10,
-      //   type: "type5",
-      //   price: 50,
-      //   totalSales: 500,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 6,
-      //   name: "Product 6",
-      //   desc: "Description for Product 6",
-      //   quantity: 10,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   type: "type6",
-      //   price: 60,
-      //   totalSales: 600,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 7,
-      //   name: "Product 7",
-      //   desc: "Description for Product 7",
-      //   quantity: 10,
-      //   type: "type7",
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   price: 70,
-      //   totalSales: 700,
-      // },
-      // {
-      //   id: 8,
-      //   name: "Product 8",
-      //   desc: "Description for Product 8",
-      //   type: "type8",
-      //   quantity: 10,
-      //   price: 80,
-      //   totalSales: 800,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   onSale: 15,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 9,
-      //   name: "Product 9",
-      //   desc: "Description for Product 9",
-      //   quantity: 10,
-      //   type: "type9",
-      //   price: 90,
-      //   totalSales: 900,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-      // {
-      //   id: 10,
-      //   name: "Product 10",
-      //   desc: "Description for Product 10",
-      //   type: "type10",
-      //   price: 100,
-      //   quantity: 10,
-      //   totalSales: 1000,
-      //   imgSrc:
-      //     "https://img.game8.co/3526948/3d43677a8c7dd9b636e438e12b2f4287.png/show",
-      //   onSale: 20,
-      //   actionStamp: {
-      //     created: new Date(1647677385),
-      //     updated: new Date(1647677385),
-      //   },
-      // },
-    ],
+    products: <Product[]>[],
   }),
   getters: {
     getProductTypes: (state) => state.productTypes,
@@ -203,7 +52,7 @@ export const useProductStore = defineStore("productStore", {
         url: "",
         headers: {
           ...data.getHeaders,
-          "x-store-id": useConfigComponentStore().getWebsiteConfig.storeID,
+          "x-store-id": useConfigComponentStore().getWebsiteConfig?.storeID,
         },
         data: data,
       };
@@ -220,6 +69,7 @@ export const useProductStore = defineStore("productStore", {
 
       this.$state.productTypes = Array.from(uniqueProdTypeSets);
     },
+
     async deleteProductById(prodId: number | string) {
       let { data, config } = this.getDataConfig;
       config.method = "post";
@@ -256,51 +106,51 @@ export const useProductStore = defineStore("productStore", {
         data.append(key, value);
       }
 
-      return axios(config).then(
-        (
-          res: AxiosResponse<
-            ProductBuyResponseError | ProductBuyResponseSuccess
-          >
-        ) => {
-          if ("status" in res.data) {
-            let errorRes = <ProductBuyResponseError>res.data;
-            switch (errorRes.messages.error) {
-              case "Product not found":
-                return {
-                  status: "error",
-                  msg: "ไม่พบสินค้าที่คุณต้องการซื้อ โปรดลองอีกครั้งในภายหลัง",
-                };
-              case "Player credits is not enough to purchase":
-                return {
-                  status: "error",
-                  msg: "เครดิตของผู้เล่นไม่เพียงพอที่จะซื้อ โปรดเติมเงินแล้วลองใหม่ในภายหลัง",
-                };
-              case "Out of stock":
-                return {
-                  status: "error",
-                  msg: "สินค้าหมด โปรดลองอีกครั้งในภายหลัง",
-                };
-              case "Cannot send RCON command":
-                return {
-                  status: "error",
-                  msg: "เกิดความผิดปกติระหว่างการติดต่อทางเซิฟเวอร์ โปรดลองอีกครั้งหรือแจ้งแอดมินเพื่อให้รับทราบ",
-                };
-              default:
-                return {
-                  status: "error",
-                  msg: "เซฟเวอร์ล่ม โปรดติดต่อผู้ดูแลระบบ",
-                };
-            }
-          } else {
+      return axios(config)
+        .then(
+          (
+            res: AxiosResponse<
+              ProductBuyResponseError | ProductBuyResponseSuccess
+            >
+          ) => {
             let successRes = <ProductBuyResponseSuccess>res.data;
             usePlayerStore().setPlayerWallet(successRes.totalCredit);
             return {
-              status: "success",
-              msg: "คุณได้ทำการเติมเงินเป็นที่เรียบร้อยแล้ว",
+              status: "success" as "success" | "error",
+              msg: "คำขอซื้อของคุณถูกดำเนินการเรียบร้อยแล้ว",
             };
           }
-        }
-      );
+        )
+        .catch((err: AxiosError<ProductBuyResponseError>) => {
+          console.error(err);
+          switch (err.response?.data.messages.error) {
+            case "Product not found":
+              return {
+                status: "error" as "success" | "error",
+                msg: "ไม่พบสินค้าที่คุณต้องการซื้อ สินค้าอาจถูกลยหรือพิ่งหมด โปรดลองอีกครั้งในภายหลัง",
+              };
+            case "Player credits is not enough to purchase":
+              return {
+                status: "error" as "success" | "error",
+                msg: "เครดิตของผู้เล่นไม่เพียงพอที่จะซื้อ โปรดเติมเงินแล้วลองใหม่ในภายหลัง",
+              };
+            case "Out of stock":
+              return {
+                status: "error" as "success" | "error",
+                msg: "สินค้าหมด โปรดลองอีกครั้งในภายหลัง",
+              };
+            case "Cannot send RCON command":
+              return {
+                status: "error" as "success" | "error",
+                msg: "เกิดความผิดปกติระหว่างการติดต่อทางเซิฟเวอร์ โปรดลองอีกครั้งหรือแจ้งแอดมินเพื่อให้รับทราบ",
+              };
+            default:
+              return {
+                status: "error" as "success" | "error",
+                msg: "เซฟเวอร์ล่ม โปรดติดต่อผู้ดูแลระบบ",
+              };
+          }
+        });
     },
 
     async fetchProducts(): Promise<Product[]> {

@@ -3,8 +3,9 @@ import CardExpand from "../../components/CardExpand.vue";
 import { GlobalConfigCSS } from "../configCSS";
 import { useConfigComponentStore } from "../configCPNStore";
 import { onDeactivated, ref, Ref } from "vue";
+import FileControl from "../components/FileControl.vue";
 export default {
-  components: { CardExpand },
+  components: { CardExpand, FileControl },
   setup() {
     const configStore = useConfigComponentStore();
 
@@ -157,15 +158,41 @@ export default {
           />
         </template>
       </CardExpand>
-      <CardExpand headline="ลักษณะของตัวอักษร (Font Style)">
+      <CardExpand headline="ลักษณะตัวอักษร (Font)">
         <template #content>
           <FormKit
-            v-model="config.fontFamily"
             type="select"
-            label="ได้โปรดเลือกทีม สำหรับเว็บไซต์ของคุณ"
+            v-model="config.fontFamily"
+            label="ได้โปรดลักษณะตัวอักษร สำหรับเว็บไซต์ของคุณ"
             placeholder="Select a Font style."
-            name="fontFamily"
+            name="fontStyle"
             :options="configSelectOpt.fontFamily"
+            validation="required"
+          />
+        </template>
+      </CardExpand>
+      <CardExpand :item-preview="true" headline="แถบเว็บไซต์ (Font Style)">
+        <template #item-preview>
+          <div class="btn-group">
+            <button class="btn">
+              <v-avatar :image="config.iconLogoSrc" size="20"></v-avatar>
+            </button>
+            <button class="btn btn-active">{{ config.websiteName }}</button>
+          </div>
+        </template>
+        <template #content>
+          <p class="text-sm">ไอคอน</p>
+          <FileControl
+            @file-emitter="(imgSrc) => (config.iconLogoSrc = imgSrc)"
+            action="image"
+            :storage="config.iconLogoSrc"
+          ></FileControl>
+          <FormKit
+            v-model="config.websiteName"
+            type="text"
+            label="ชื่อของแถบเว็บไซต์"
+            placeholder="ชื่อของแถบเว็บไซต์"
+            name="websiteTabName"
             validation="required"
           />
         </template>

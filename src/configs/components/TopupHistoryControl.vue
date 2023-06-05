@@ -5,8 +5,10 @@ import {
   TopUpTransaction,
 } from "../../store/product/transationStore";
 
+import IconAnimation from "../../components/IconAnimation.vue";
+
 export default {
-  components: { VDataTable },
+  components: { VDataTable, IconAnimation },
   setup() {
     return {
       transactionStore: useTransactionStore(),
@@ -26,6 +28,7 @@ export default {
 
   data() {
     return {
+      loadedIcon: false,
       topUpMethodQuery: "",
       headers: [
         {
@@ -43,7 +46,7 @@ export default {
 };
 </script>
 <template>
-  <v-card>
+  <v-card v-if="history.length > 0" class="bg-base-300 text-base-content">
     <v-card-title>
       ประเภทการเติมเงิน
       <v-spacer></v-spacer>
@@ -58,10 +61,28 @@ export default {
       ></v-select>
     </v-card-title>
     <v-data-table
+      class="bg-base-300 text-base-content"
       :headers="headers"
       :items="history"
       :search="topUpMethodQuery"
     ></v-data-table>
   </v-card>
+  <IconAnimation
+    v-else
+    v-show="loadedIcon"
+    @loaded-script="(loaded: boolean) => loadedIcon = loaded"
+    title="คุณยังไม่มีประวัติเติมเงินในขณะนี้"
+  >
+    <template #icon>
+      <lottie-player
+        src="https://assets3.lottiefiles.com/packages/lf20_GXS1DssMnR.json"
+        background="transparent"
+        speed="1"
+        style="width: 300px; height: 300px"
+        loop
+        autoplay
+      ></lottie-player>
+    </template>
+  </IconAnimation>
 </template>
 <style lang="scss"></style>

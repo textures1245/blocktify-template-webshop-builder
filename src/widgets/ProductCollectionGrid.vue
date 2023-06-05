@@ -7,20 +7,20 @@
     </v-toolbar>
     <v-card class="bg-base-200 text-base-content !max-h-[450px] overflow-auto">
       <v-card-text
-        :class="[`grid gap-4 `, `grid-cols-2 md:grid-cols-3 lg:grid-cols-4`]"
+        :class="[`grid gap-4 `, ` grid-cols-2 md:grid-cols-3 lg:grid-cols-4`]"
       >
         <v-card
         elevation="6"
           @click.prevent="scrollToSection(prod.id)"
           id="product-container"
           v-for="prod in products.slice(0, props?.limits)"
-          class="card  bg-base-content max-h-52 col-span-1 hover:cursor-pointer duration-300 hover:shadow-md transition-shadow"
+          class="card  bg-base-content max-h-52 col-span-1 hover:cursor-pointer duration-300 hover:shadow-md "
         >
-          <div class="px-3">
+          <div class="px-3 py-5">
             <v-img :src="prod.imgSrc" cover :alt="prod.name"></v-img>
           </div>
           <div
-            class="basis-28 glass bg-accent text-accent-content text-sm lg:text-lg font-bold h-[20%] flex w-full justify-around absolute bottom-0 items-center"
+            class="!rounded-none basis-28 glass bg-accent text-accent-content text-sm lg:text-md font-bold h-[20%] flex w-full justify-around absolute bottom-0 items-center"
           >
             <h1 id="prodName">{{ prod.name }}</h1>
             <p class="">x{{ prod.quantity }}</p>

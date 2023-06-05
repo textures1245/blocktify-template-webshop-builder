@@ -23,7 +23,7 @@ export const useAuthPlayerStore = defineStore("authPlayerStore", {
         url: "",
         headers: {
           ...data.getHeaders,
-          "x-store-id": useConfigComponentStore().getWebsiteConfig.storeID,
+          "x-store-id": useConfigComponentStore().getWebsiteConfig!.storeID,
         },
         data: data,
       };
@@ -39,13 +39,16 @@ export const useAuthPlayerStore = defineStore("authPlayerStore", {
       config.method = "post";
       config.url = import.meta.env.VITE_PLAYER_AUTHENTICATION_API;
 
+      let encodePw = btoa(playerPassword);
+
+      console.log(playerPassword);
       data.append("playerName", playerName);
-      data.append("playerPassword", playerPassword);
+      data.append("playerPassword", encodePw);
 
       return axios(config)
         .then(async (res: AxiosResponse<AuthPlayerResponse>) => {
           const auth = res.data;
-          console.log(auth);
+          console.log(res.data);
           switch (auth.status) {
             case 400:
             case "400":
@@ -61,13 +64,14 @@ export const useAuthPlayerStore = defineStore("authPlayerStore", {
               };
             default:
               const dataPlayer = <Player>{
-                avatar: "https://minotar.net/helm/mhf_steve/600.png",
+                avatar: `https://mc-heads.net/head/${playerName}`,
                 playerName,
                 role: "Player",
                 transaction: {
                   wallet: auth.data.playerCredit,
                 },
-                fromStoreId: useConfigComponentStore().getWebsiteConfig.storeID,
+                fromStoreId:
+                  useConfigComponentStore().getWebsiteConfig!.storeID,
               };
               await usePlayerStore().setPlayer(dataPlayer);
               return {

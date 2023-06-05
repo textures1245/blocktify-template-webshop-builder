@@ -11,9 +11,24 @@ import {
   WebsiteConfig,
   StoreConfig,
   PlayerLogin,
+  Configuration,
 } from "./configCSS";
 
 import { reactive } from "vue";
+import { useDocument } from "vuefire";
+import {
+  DocumentData,
+  collection,
+  doc,
+  getFirestore,
+  updateDoc,
+} from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../firebase/firebase.config";
+import router from "../routers/routerApp";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export const useHelpConfigStore = defineStore("useHelpConfigStore", {
   state: () => ({}),
@@ -28,13 +43,7 @@ export const useHelpConfigStore = defineStore("useHelpConfigStore", {
 
 export const useConfigComponentStore = defineStore("useConfigComponentStore", {
   state: () => ({
-    websiteConfig: <WebsiteConfig>{
-      firebaseUID: "asds",
-      storeID: "webshopTest6",
-      hostName: "localhost",
-      domainExpiredDate: new Date(1685204222000),
-      phone: "0654209589",
-    },
+    websiteConfig: <WebsiteConfig | null>null,
     storeConfig: <StoreConfig>{
       highlightProducts: {
         title: "สินค้ายอดฮิต",
@@ -46,7 +55,9 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       },
     },
     globalConfig: <GlobalConfigCSS>{
-      themeColor: "pastel",
+      iconLogoSrc:
+        "https://freepngimg.com/save/22407-halloween-pumpkin-hd/512x512",
+      themeColor: "halloween",
       websiteName: "Blocktify",
       fontFamily: "Kanit",
       bgColor: "bg-base-300",
@@ -65,9 +76,9 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       },
     },
     AppBarConfig: <AppBar>{
-      avatar: "rounded",
+      avatar: "rounded-full",
       brandImg:
-        "https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg",
+        "https://freepngimg.com/save/22407-halloween-pumpkin-hd/512x512",
       bgImg: {
         isHave: "false",
         src: "https://img.freepik.com/free-photo/grunge-paint-background_1409-1337.jpg?w=2000",
@@ -80,7 +91,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
         selected: "img",
         value:
           "https://images.unsplash.com/photo-1629459322097-a190793bd00b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
-        opacity: 100,
+        opacity: 70,
       },
       contents: {
         required: ["widgetOne", "widgetTwo", "bannerText"],
@@ -96,12 +107,12 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
             "https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6ac3c481f273141736_icon_clyde_black_RGB.png",
           title: "Discord Server",
           subtitle: "Some Subtitle",
-          axis: "horizontal",
+          axis: "vertical",
         },
         bannerText: {
           isShowLogo: true,
-          title: "Website Name",
-          subtitle: "Laravel lego sadw  asdw!",
+          title: "Blocktify",
+          subtitle: "WELCOME TO OUT LITTLE TOWN",
         },
       },
     },
@@ -115,6 +126,8 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
           limit: 5,
         },
         playerBadge: {
+          avatarSrc:
+            "https://www.gamesbap.com/wp-content/uploads/2021/04/Carve-Pumpkin-in-Minecraft.jpg",
           bg: {
             custom: true,
             src: "https://t4.ftcdn.net/jpg/05/29/23/21/360_F_529232184_xllVJCuUPpBqYfMpeCtwZtw27hf9cXOM.jpg",
@@ -126,9 +139,8 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
       contents: {
         carousel: {
           images: [
-            "https://images.unsplash.com/photo-1681238337874-c65010a35603?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1399&q=80",
-
-            "https://images.unsplash.com/photo-1681649022240-851ee1fac747?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
+            "https://cdn.kicksdigital.com/hifiindy.com/2022/10/HI-FI-HALLOWEEN-HAPPENINGS.png",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyAqi1PE4tqk0-fgsMO6H-Rp6UGf3O5th_0g&usqp=CAU",
           ],
         },
       },
@@ -150,7 +162,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
                 {
                   id: 0,
                   image:
-                    "https://images.unsplash.com/photo-1681649022240-851ee1fac747?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1932&q=80",
+                    "https://www.usmagazine.com/wp-content/uploads/2022/10/Kelly-and-Ryan-Talk-Show-Halloween-Costumes.jpg?quality=55&strip=all",
                   context: {
                     title: "Title 1",
                     content: "Lorem ipsum dolor sit amet.",
@@ -159,7 +171,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
                 {
                   id: 1,
                   image:
-                    "https://images.unsplash.com/photo-1681238337874-c65010a35603?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1399&q=80",
+                    "https://media.mauinow.com/file/mauinow/2022/10/Screen-Shot-2022-10-15-at-3.22.31-PM-793x1024.png",
                   context: {
                     title: "Title 2",
                     content: "Lorem ipsum dolor sit amet.",
@@ -176,26 +188,26 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
             props: [
               {
                 id: 0,
-                title: "Title 1",
-                subtitle: "Subtitle",
+                title: "Link 1",
+                subtitle: "Spooky!",
                 bgUrl:
-                  "https://e0.pxfuel.com/wallpapers/1010/712/desktop-wallpaper-minecraft-grass-block-box-dirt-texture-minecraft-minecraft-thumbnail.jpg",
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaTfa0Rz-nmILJ9ta9rWUOWpT-XExQon131pN6GcqLRvcn1w9oLUhALP40DVKG8iemQfk&usqp=CAU",
                 linkUrl: "http://localhost/image",
               },
               {
                 id: 1,
-                title: "Title 2",
-                subtitle: "Subtitle",
+                title: "Link 2",
+                subtitle: "Spooky!",
                 bgUrl:
-                  "https://t4.ftcdn.net/jpg/05/29/23/21/360_F_529232184_xllVJCuUPpBqYfMpeCtwZtw27hf9cXOM.jpg",
+                  "https://i2-prod.stokesentinel.co.uk/news/stoke-on-trent-news/article595251.ece/ALTERNATES/s1200d/0_831396936.jpg",
                 linkUrl: "http://localhost/image",
               },
               {
                 id: 2,
-                title: "Title 3",
-                subtitle: "Subtitle",
+                title: "Link 3",
+                subtitle: "Spooky!",
                 bgUrl:
-                  "https://t4.ftcdn.net/jpg/05/29/23/21/360_F_529232184_xllVJCuUPpBqYfMpeCtwZtw27hf9cXOM.jpg",
+                  "https://static.thehoneycombers.com/wp-content/uploads/sites/4/2018/10/backlit-black-candle-619420.jpg",
                 linkUrl: "http://localhost/image",
               },
             ],
@@ -207,6 +219,16 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
                 id: 0,
                 sortAction: "HIGHEST_SOLD_OFF",
                 limits: 8,
+              },
+            ],
+          },
+          ytVideo: {
+            type: "Youtube",
+            props: [
+              {
+                id: 0,
+                title: "คลิปนำเสนอ",
+                youtubeId: "Cy1Nf0USVak",
               },
             ],
           },
@@ -254,6 +276,123 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
     getPlayerLoginConfig: (state) => state.playerLoginConfig,
   },
   actions: {
+    async saveClientsPhone(phone: string) {
+      const docRef = doc(db, "ClientWebshops", this.websiteConfig!.hostName);
+
+      return updateDoc(docRef, {
+        phone,
+      })
+        .then(() => {
+          return {
+            status: "success" as "success" | "error",
+            msg: "Phone ถูกอัปเดตเรียบร้อยแล้ว",
+          };
+        })
+        .catch((err) => {
+          console.error(err);
+          return {
+            status: "error" as "success" | "error",
+            msg: "ไม่สามารถอัปเดต Phone ได้โปรดลองใหม่อีกครั้ง",
+          };
+        });
+    },
+
+    async onSetNewConfiguration(): Promise<{
+      status: "success" | "error";
+      msg: string;
+    }> {
+      const configuration: Configuration = {
+        globalConfig: this.getGlobalConfig,
+        storeConfig: this.getStoreConfig,
+        playerLoginConfig: this.getPlayerLoginConfig,
+        AppBarConfig: this.getAppBarConfig,
+        BannerConfig: this.getBannerConfig,
+        SideBarConfig: this.getSidebarConfig,
+        HeaderBarConfig: this.getHeaderBarConfig,
+        MainBodyConfig: this.getMainBodyConfig,
+        FooterConfig: this.FooterConfig,
+      };
+
+      const converter = {
+        toFirestore(data: WebsiteConfig & { configuration: Configuration }) {
+          return { ...data };
+        },
+        fromFirestore(snapshot: DocumentData) {
+          return snapshot as WebsiteConfig & { configuration: Configuration };
+        },
+      };
+
+      const collectionRef = collection(db, "ClientWebshops").withConverter(
+        converter
+      );
+
+      const document: Partial<
+        WebsiteConfig & { configuration: Configuration }
+      > = {
+        configuration,
+      };
+
+      const docRef = doc(collectionRef, this.websiteConfig!.hostName);
+
+      return updateDoc(docRef, document)
+        .then(() => {
+          return {
+            status: "success" as "success" | "error",
+            msg: "Configuration ถูกบันทึกเรียบร้อยแล้ว",
+          };
+        })
+        .catch((err) => {
+          console.error(err);
+          return {
+            status: "error" as "success" | "error",
+            msg: "ไม่สามารถบันทึกข้อมูลได้โปรดลองใหม่อีกครั้ง",
+          };
+        });
+    },
+
+    async onInitalConfiguration(): Promise<{
+      status: "success" | "error" | "info";
+      msg: string;
+    }> {
+      const hostName = window.location.hostname;
+
+      const configDocRef = doc(db, "ClientWebshops", hostName);
+      return useDocument<WebsiteConfig & { configuration: Configuration }>(
+        configDocRef
+      ).promise.value.then((config) => {
+        if (config === null) {
+          router.push("/client-management-login");
+          return {
+            status: "info" as "success" | "error" | "info",
+            msg: "ยินดีต้อนรับสู่เว็บช็อปของคุณ โปรดล็อกอินตาม StoreID ที่คุณได้มา แล้วเริ่มทำการปรับแต่งเว็บไซต์ของคุณ",
+          };
+        } else {
+          if (config && config.configuration) {
+            const state = useConfigComponentStore().$state;
+            const { configuration, ...websiteConfig } = config;
+            Object.assign(state, {
+              websiteConfig,
+              ...configuration,
+            });
+            return {
+              status: "success" as "success" | "error" | "info",
+              msg: "โหลด Setup เรียบร้อย",
+            };
+          } else if (config && config.configuration === null) {
+            return {
+              status: "success" as "success" | "error" | "info",
+              msg: "โหลดข้อมูล Domain เรียบร้อยแต่ยังไม่มีการ Configuration",
+            };
+          } else {
+            return {
+              status: "error" as "success" | "error" | "info",
+              msg: "ตรวจไม่พบหรือยังไม่มีการ Setup ในส่วนของ Configuration กรุณาทำการ Setup ใหม่",
+            };
+          }
+        }
+      });
+    },
+
     setNewModifyConfig(
       newConfig: any,
       setOnAction:
@@ -311,10 +450,16 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
           area: "col-span-full",
         })
       );
+      const ytVideoComponents = subContents.ytVideo.props.map((props) => ({
+        type: "YouTubeIFrame",
+        props,
+        area: "col-span-full",
+      }));
       return [
         ...mainComponents,
         ...cardLinkComponents,
         ...prodCollectionComponents,
+        ...ytVideoComponents,
       ];
     },
 

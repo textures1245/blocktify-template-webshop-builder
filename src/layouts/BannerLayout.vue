@@ -12,13 +12,10 @@ export default {
 </script>
 <template>
   <v-parallax
-    class="w-full !h-[70vh] lg:!h-[60vh] !absolute"
+    :class="['w-full !h-[75vh]  !absolute', `opacity-${config.background.opacity!}`]"
     :src="config.background.value"
   ></v-parallax>
-  <section
-    id="main-content"
-    class="relative !h-[70vh] lg:!h-[60vh] w-full shadow-2xl"
-  >
+  <section id="main-content" class="relative !h-[75vh] w-full shadow-2xl">
     <div
       class="flex justify-center flex-col lg:flex-row items-center w-full h-full gap-10"
     >

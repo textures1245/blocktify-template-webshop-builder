@@ -48,7 +48,7 @@ export default {
       url: "",
       headers: {
         ...data.getHeaders,
-        "x-store-id": websiteConfig.storeID,
+        "x-store-id": websiteConfig!.storeID,
       },
       data,
     };
@@ -94,11 +94,18 @@ export default {
 
   methods: {
     onSubmit() {
-      if (!this.validateFormControl(this.productData)) {
-        return alert(
-          "ได้โปรดตรวจสอบข้อมูลว่า ได้ทำการกรอกข้อมูลครบ หรือข้อมูลถูกตามเงื่อนไขที่กล่าวมาหรือไม่"
-        );
-      }
+      // if (!this.validateFormControl(this.productData)) {
+      //   return alert(
+      //     "ได้โปรดตรวจสอบข้อมูลว่า ได้ทำการกรอกข้อมูลครบ หรือข้อมูลถูกตามเงื่อนไขที่กล่าวมาหรือไม่"
+      //   );
+      // }
+
+      this.productData = {
+        ...this.productData,
+        productQuantity: +this.productData.productQuantity,
+        productPrice: +this.productData.productPrice,
+      };
+      console.log(this.productData);
 
       this.config.url =
         this.mode === "ADD"
@@ -176,9 +183,9 @@ export default {
           productName: this.prodEditor!.name,
           productDescription: this.prodEditor!.desc,
           productType: this.prodEditor!.type,
-          productPrice: this.prodEditor!.price,
+          productPrice: +this.prodEditor!.price,
           productImageUrl: this.prodEditor!.imgSrc,
-          productQuantity: this.prodEditor!.quantity,
+          productQuantity: +this.prodEditor!.quantity,
           productCommand: this.prodEditor!.command,
         };
       }

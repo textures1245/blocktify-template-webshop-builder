@@ -55,8 +55,7 @@ export default {
           <figure class="rounded w-full p-1">
             <v-img
               cover
-              sizes="32"
-              class="!w-9"
+              class="!w-9  h-7"
               alt="avatar-image"
               :src="avatarSrc"
             />

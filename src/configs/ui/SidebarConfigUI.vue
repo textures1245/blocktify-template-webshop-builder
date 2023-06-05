@@ -49,6 +49,8 @@ export default {
     >
       <template #item-preview>
         <PlayerBadge
+          :on-preview="true"
+          :avatar-image="config.contents.playerBadge.avatarSrc"
           v-if="config.contents.required.includes('playerBadge')"
           :bgImg="{
             isCustom: config.contents.playerBadge.bg.custom,
@@ -57,6 +59,19 @@ export default {
         ></PlayerBadge>
       </template>
       <template #content>
+        <section id="player-avatar-src">
+          <label class="font-semibold"
+            >เลือกรูปภาพที่ต้องการใส่บนรูปอวตาร</label
+          >
+          <FileControl
+            @file-emitter="
+              (imgSrc) => (config.contents.playerBadge.avatarSrc = imgSrc)
+            "
+            :storage="config.contents.playerBadge.avatarSrc"
+            action="image"
+          ></FileControl>
+        </section>
+        >
         <section id="bg-custom-img">
           <FormKit
             v-model="config.contents.playerBadge.bg.custom"
@@ -66,6 +81,9 @@ export default {
             validation="required"
           ></FormKit>
           <FileControl
+            @file-emitter="
+              (imgSrc) => (config.contents.playerBadge.bg.src = imgSrc)
+            "
             :storage="config.contents.playerBadge.bg.src!"
             v-if="config.contents.playerBadge.bg.custom"
             action="image"

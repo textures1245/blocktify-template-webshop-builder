@@ -1,6 +1,8 @@
 <script lang="ts">
+//@ts-nocheck
 import axios from "axios";
 import FormData from "form-data";
+import { HmacSHA256 } from "crypto-js";
 
 export default {
   setup() {
@@ -9,7 +11,7 @@ export default {
     var config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "https://lab.codename-t.com/staff/genkey",
+      url: import.meta.env.VITE_CLIENT_GEN_KEY_API,
       headers: {
         ...data.getHeaders,
       },
@@ -21,7 +23,15 @@ export default {
     };
   },
   methods: {
-    onGenStoreId(data: object) {
+    onGenStoreId(data: {
+      storeID: string;
+      expireDate: string;
+      hostName: string;
+    }) {
+      const secretKey = import.meta.env.VITE_HASH_STORE_ID_SECRET_KEY;
+      // Create a HMAC instance with the secret key
+      const hashedStoreId = HmacSHA256(data?.storeID, secretKey).toString();
+      data.storeID = hashedStoreId;
       for (const [key, value] of Object.entries(data)) {
         this.data.append(key, value);
       }

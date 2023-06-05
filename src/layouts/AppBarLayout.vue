@@ -200,7 +200,7 @@ export default {
               aria-hidden="true"
             ></span>
           </button>
-          <nav class="nav before:bg-secondary z-50">
+          <nav class="nav before:bg-secondary-focus z-50">
             <!-- I don't care about the menu elements here so I will hide them-->
             <div
               v-show="menuToggler"

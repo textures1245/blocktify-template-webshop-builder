@@ -13,6 +13,8 @@ import FilterConfigUI from "../configs/ui-store/FilterConfigUI.vue";
 import HighlightConfigUI from "../configs/ui-store/HighlightConfigUI.vue";
 import PlayerLoginConfigUI from "../configs/ui/PlayerLoginConfigUI.vue";
 import ClientConfigUI from "../configs/ui/ClientConfigUI.vue";
+import { useConfigComponentStore } from "../configs/configCPNStore";
+import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -32,6 +34,7 @@ export default {
   setup() {
     return {
       actions: useClientFeatureStore().getClientFeatures,
+      configStore: useConfigComponentStore(),
     };
   },
 
@@ -74,7 +77,14 @@ export default {
     };
   },
   methods: {
-    onApply() {},
+    onApplyConfiguration() {
+      this.configStore.onSetNewConfiguration().then((res) => {
+        Swal.fire({
+          icon: res.status,
+          text: res.msg,
+        });
+      });
+    },
   },
 };
 </script>
@@ -126,7 +136,7 @@ export default {
           <v-list-item
             class="!text-success"
             :prepend-icon="applySetting.icon"
-            @click="() => onApply"
+            @click="() => onApplyConfiguration()"
             :title="applySetting.title"
             :value="applySetting.value"
           >

@@ -39,6 +39,14 @@ export default {
         action="image"
         :storage="config.background.value!"
       ></FileControl>
+      <FormKit
+        type="range"
+        step="10"
+        max="100"
+        min="0"
+        :label="`ปรับระดับความเข้มของรูป ${config.background.opacity}%`"
+        v-model="config.background.opacity"
+      ></FormKit>
     </template>
   </CardExpand>
 

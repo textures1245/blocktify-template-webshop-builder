@@ -28,13 +28,13 @@ export default {
 </script>
 
 <template>
-  <div class="w-full fixed">
+  <div class="w-full bg-base-300 fixed">
     <div class="grid h-screen">
       <v-img
         class="place-self-center animate-ping"
         width="100"
         :src="
-          !appBarConfig.brandImg.length
+          appBarConfig.brandImg.length
             ? appBarConfig.brandImg
             : 'src/assets/images/loading-image-example.png'
         "
