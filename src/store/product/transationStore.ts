@@ -28,36 +28,6 @@ type TopUpTransactionRespond = {
 export const useTransactionStore = defineStore("useTransactionStore", {
   state: () => ({
     topUpTransactionList: <TopUpTransaction[]>[
-      // {
-      //   topup_id: "1",
-      //   method: "TrueMoneyWallet",
-      //   amount: 900,
-      //   created: new Date(1684436006000),
-      // },
-      // {
-      //   topup_id: "1",
-      //   method: "Tsd",
-      //   amount: 900,
-      //   created: new Date(1684436006000),
-      // },
-      // {
-      //   topup_id: "1",
-      //   method: "TrueMoneyWallet",
-      //   amount: 900,
-      //   created: new Date(1684436006000),
-      // },
-      // {
-      //   topup_id: "1",
-      //   method: "TrueMoneyWallet",
-      //   amount: 900,
-      //   created: new Date(1684436006000),
-      // },
-      // {
-      //   topup_id: "1",
-      //   method: "TrueMoneyWallet",
-      //   amount: 900,
-      //   created: new Date(1684436006000),
-      // },
     ],
   }),
   getters: {
@@ -68,7 +38,7 @@ export const useTransactionStore = defineStore("useTransactionStore", {
         maxBodyLength: Infinity,
         url: "",
         headers: {
-          "x-store-id": useConfigComponentStore().getWebsiteConfig.storeID,
+          "x-store-id": useConfigComponentStore().getWebsiteConfig!.storeID,
         },
         data: {},
       };
@@ -77,7 +47,7 @@ export const useTransactionStore = defineStore("useTransactionStore", {
   },
   actions: {
     async onFetchTopUpTransactionList(
-      playerName: string
+      playerName?: string
     ): Promise<TopUpTransaction[]> {
       const config = this.getDataConfig;
       config.url =

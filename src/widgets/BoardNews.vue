@@ -56,7 +56,7 @@
                       </article>
                     </v-card-text>
                   </v-card>
-                  <v-btn
+                  <v-btn  
                     @click="dialog[i] = false"
                     size="small"
                     class="!btn-accent absolute -right-4 -top-4"
@@ -89,4 +89,4 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
+<style scoped lang="scss"></style>

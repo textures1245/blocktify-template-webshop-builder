@@ -82,7 +82,7 @@ export default {
     :list="storageContents"
     :group="{ group: { name: 'people' } }"
     itemKey="id"
-    class="grid sm:grid-cols-1 lg:grid-cols-3 gap-5"
+    class="grid lg:grid-cols-3 gap-5"
   >
     <template #item="{ element, index }">
       <div
@@ -92,7 +92,7 @@ export default {
         :variants="{ custom: { scale: 1.1 } }"
         :hovered="{ scale: 1.05 }"
         :delay="200"
-        :class="[element.area]"
+        :class="[element.area, 'max-w-full']"
       >
         <component
           :is="element.type"
@@ -102,7 +102,7 @@ export default {
     </template>
   </draggable>
 </template>
-<style lang="scss">
+<style scoped lang="scss">
 .parent {
   display: grid;
   grid-template-columns: auto repeat(3, 1fr);

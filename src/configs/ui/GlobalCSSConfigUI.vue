@@ -11,11 +11,6 @@ export default {
 
     return { config: ref(configStore.getGlobalConfig), configStore };
   },
-  watch: {
-    // customColor() {
-    //   this.config.bgColor = this.customColor;
-    // },
-  },
   data() {
     return {
       configSelectOpt: {
@@ -199,7 +194,7 @@ export default {
       </CardExpand>
 
       <!--- unused -->
-      <!-- <CardExpand :item-preview="true" headline="ลักษณะปุ่มกด (Button Style)">
+      <CardExpand :item-preview="true" headline="ลักษณะปุ่มกด (Button Style)">
         <template #item-preview>
           <v-btn
             :variant="config.btnStyle.variant || undefined"
@@ -229,7 +224,7 @@ export default {
             :options="configSelectOpt.btnExtraClasses"
           />
         </template>
-      </CardExpand> -->
+      </CardExpand>
     </div>
   </FormKit>
 </template>

@@ -30,7 +30,10 @@ export default {
 };
 </script>
 <template>
-  <section :data-theme="globalCSSConfig.themeColor" :style="`font-family: '${globalCSSConfig.fontFamily}', sans-serif;`">
+  <section
+    :data-theme="globalCSSConfig.themeColor"
+    :style="`font-family: '${globalCSSConfig.fontFamily}', sans-serif;`"
+  >
     <ClientDrawerLayout v-if="onClientView"></ClientDrawerLayout>
     <AppBarLayout></AppBarLayout>
     <v-layout>
