@@ -29,7 +29,7 @@ export default {
   <v-footer
     v-if="!config.bg.isImage"
     color="transparent"
-    :class="[`drop-shadow-lg h-auto w-screen bg-cover p-0`]"
+    :class="[`drop-shadow-lg z-[1000] h-auto w-screen bg-cover p-0`]"
   >
     <div
       id="footer-grid"

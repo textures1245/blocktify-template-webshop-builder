@@ -1,3 +1,5 @@
+import { ParticlePreset } from "../components/ParticleSet.vue";
+
 //* All the CSS Configuration go here
 export type Configuration = {
   globalConfig: GlobalConfigCSS;
@@ -95,6 +97,10 @@ export type Banner = {
     selected: "img";
     opacity?: number;
     value?: string;
+  };
+  particle: {
+    preset: ParticlePreset;
+    fullscreen: boolean;
   };
   contents: {
     required: ("widgetOne" | "widgetTwo" | "bannerText")[];

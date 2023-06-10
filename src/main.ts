@@ -28,6 +28,9 @@ import router from "./routers/routerApp";
 import { VueFire, VueFireAuth, VueFireFirestoreOptionsAPI } from "vuefire";
 import { firebaseApp } from "./firebase/firebase.config";
 
+import Particles from "vue3-particles";
+
+
 const app = createApp(App);
 app.use(VueFire, {
   // imported above but could also just be created here
@@ -58,6 +61,7 @@ app.use(
 );
 app.use(vuetify);
 app.use(LoadScript);
+app.use(Particles);
 app.use(MotionPlugin);
 
 //- Base initialized

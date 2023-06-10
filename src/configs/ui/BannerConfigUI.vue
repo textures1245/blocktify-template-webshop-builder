@@ -5,6 +5,7 @@ import CardExpandPanel from "../../components/CardExpandPanel.vue";
 import BadgeWidget from "../../widgets/BadgeWidget.vue";
 import FileControl from "../components/FileControl.vue";
 import HeroContent from "../../widgets/HeroContent.vue";
+
 export default {
   components: {
     CardExpand,
@@ -26,6 +27,17 @@ export default {
         bannerBgOpts: ["color", "img", "video", "none"],
         componentOpts: ["widgetOne", "widgetTwo", "bannerText"],
         axisOpts: ["vertical", "horizontal"],
+        presetOpts: [
+          "snow",
+          "firefly",
+          "stars",
+          "fire",
+          "fireworks",
+          "space",
+          "bubbles",
+          "space_stars",
+          "null",
+        ],
       },
     };
   },
@@ -47,6 +59,34 @@ export default {
         :label="`ปรับระดับความเข้มของรูป ${config.background.opacity}%`"
         v-model="config.background.opacity"
       ></FormKit>
+    </template>
+  </CardExpand>
+
+  <CardExpand headline="ส่วนอนิเมชั้นของอนุภาค (Particle Animation)">
+    <template #content>
+      <p class="text-center font-semibold text-xs">
+        การตั้งค่าในส่วนนี้ อาจมีผลทำให้เว็บไซต์ของคุณเกิดความไม่เสถียร (Lag)
+        ดังนั้นควรพิจารณาเลือกใช้ให้เหมาะสมกับตัวเว็บไซต์
+      </p>
+      <FormKit
+        type="select"
+        label="โปรดเลือกประเภทของอนุภาค"
+        name="presets-particle"
+        :options="configOpts.presetOpts"
+        v-model="config.particle.preset"
+        help="ถ้าคุณเลือก null จะเป็นการปิดการใช้ส่วนของอนุภาค"
+      ></FormKit>
+      <FormKit
+        type="checkbox"
+        label="เลือกการครอบคลุมของอนุภาค"
+        name="fullscreen-particle"
+        help="ถ้าคุณเลือก อนุภาคจะครอบคลุมพื้นที่ทั้งหมดของหน้าเว็บ ถ้าไม่จะกระจายอยู่แค่ส่วนของ Banner"
+        v-model="config.particle.fullscreen"
+      ></FormKit>
+
+      <p class="text-center font-semibold text-xs">
+        การปรับแต่งส่วนนี้จะมีผลลหลังจากคุณทำจากยืนยันการตั้งค่าแล้วรีหน้าเว็บเท่านั้น
+      </p>
     </template>
   </CardExpand>
 
