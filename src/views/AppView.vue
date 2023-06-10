@@ -40,13 +40,13 @@ export default {
       <v-main>
         <div>
           <BannerLayout></BannerLayout>
-
+          
           <v-card
-            :class="[
-              '!h-auto w-full thai-font eng-font pt-5 pb-[15rem]',
-              globalCSSConfig.bgColor,
+          :class="[
+            '!h-auto w-full thai-font eng-font pt-5 pb-[15rem]',
+            globalCSSConfig.bgColor,
             ]"
-          >
+            >
             <CurveCanvas position="top"></CurveCanvas>
             <v-container>
               <div class="grid-parent gap-6">
@@ -75,4 +75,4 @@ export default {
     <FooterLayout></FooterLayout>
   </section>
 </template>
-<style lang="scss"></style>
+<style scoped lang="scss"></style>

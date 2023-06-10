@@ -94,10 +94,13 @@ export type AppBar = {
 
 export type Banner = {
   background: {
-    selected: "img";
+    selected: "img" | "video";
     opacity?: number;
     value?: string;
   };
+
+  curve: "triangle" | "bubble" | "halfCircle" | "none";
+
   particle: {
     preset: ParticlePreset;
     fullscreen: boolean;

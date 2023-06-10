@@ -97,6 +97,7 @@ export const useConfigComponentStore = defineStore("useConfigComponentStore", {
         preset: "fire",
         fullscreen: false,
       },
+      curve: "halfCircle",
       contents: {
         required: ["widgetOne", "widgetTwo", "bannerText"],
         widgetOne: {

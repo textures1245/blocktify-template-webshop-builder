@@ -38,6 +38,7 @@ export default {
           "space_stars",
           "null",
         ],
+        curveOpts: ["halfCircle", "triangle", "bubble", "none"],
       },
     };
   },
@@ -46,11 +47,33 @@ export default {
 <template>
   <CardExpand headline="พื้นหลังแบนเนอร์ (Banner Background)">
     <template #content>
-      <FileControl
-        @file-emitter="(imageUrl: string) => (config.background.value = imageUrl)"
-        action="image"
-        :storage="config.background.value!"
-      ></FileControl>
+      <FormKit
+        type="select"
+        label="โปรดเลือกชนิดพื้นหลังของคุณ"
+        v-model="config.background.selected"
+        :options="['img', 'video']"
+      ></FormKit>
+      <div v-if="config.background.selected === 'img'" id="image-selected">
+        <FileControl
+          @file-emitter="(imageUrl: string) => (config.background.value = imageUrl)"
+          action="image"
+          :storage="config.background.value!"
+        ></FileControl>
+      </div>
+      <div id="video-selected" v-else>
+        <FormKit
+          v-model="config.background.value"
+          type="text"
+          label="โปรดกรอก URL Video ที่จะใส่"
+          help="Video ที่ถูกอัปโหลดจะถูก Muted เสียงโดยอัตโนมัติ"
+          validation="required|url"
+        >
+        </FormKit>
+        <p class="text-center font-semibold text-xs my-2">
+          ในขณะนี้ทางเรายังไม่ระบบในการอัปโหลด Video เนื่องจากปัญหาหลาย ๆ อย่าง,
+          ทางเราจะพยายามเร่งแก้ปัญหาในส่วนนี้ ขอบคุณครับ
+        </p>
+      </div>
       <FormKit
         type="range"
         step="10"
@@ -58,6 +81,20 @@ export default {
         min="0"
         :label="`ปรับระดับความเข้มของรูป ${config.background.opacity}%`"
         v-model="config.background.opacity"
+      ></FormKit>
+    </template>
+  </CardExpand>
+
+  <CardExpand
+    headline="ส่วนตกแตกเพิ่มเติมด้างล่าง Banner (Banner Curve Extended)"
+  >
+    <template #content>
+      <FormKit
+        v-model="config.curve"
+        type="select"
+        label="โปรดเลือกส่วนตกแตกเพิ่มเติมด้างล่าง Banner"
+        :options="configOpts.curveOpts"
+        help="ถ้าคุณเลือก null จะเป็นการปิดการใช้ส่วนตกแตกเพิ่มเติม"
       ></FormKit>
     </template>
   </CardExpand>
@@ -90,7 +127,7 @@ export default {
     </template>
   </CardExpand>
 
-  <CardExpand headline="คอนเทนต์ตรงกลาง (Banner Content)">
+  <CardExpand headline="คอนเทนต์ตรงกลาง (Banner Context)">
     <template #content>
       <FormKit
         type="checkbox"
