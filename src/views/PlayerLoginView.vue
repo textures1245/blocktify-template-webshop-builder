@@ -19,6 +19,7 @@ export default {
 
     return {
       appBarConfig: store.AppBarConfig,
+      globalCSSConfig: store.globalConfig,
       loginConfig: store.getPlayerLoginConfig,
       auth: useAuthPlayerStore(),
       Toast,
@@ -56,7 +57,7 @@ export default {
 };
 </script>
 <template>
-  <section id="player-login">
+  <section :data-theme="globalCSSConfig.themeColor" id="player-login">
     <v-img
       cover
       :src="loginConfig.sideImageUrl"

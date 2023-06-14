@@ -34,34 +34,36 @@
                     >
                     </v-btn>
                   </template>
-                  <v-card class="shadow-xl">
-                    <v-img
-                      :src="info.image!"
-                      cover
-                      class="h-full w-full"
-                    ></v-img>
-                    <v-card-text
-                      class="bg-gradient-to-t to-base-100 from-base-300"
-                    >
-                      <article
-                        class="py-4 overflow-auto !text-base-content prose prose-sm prose-slate"
+                  <section  :data-theme="globalCSSConfig.themeColor">
+                    <v-card class="shadow-xl">
+                      <v-img
+                        :src="info.image!"
+                        cover
+                        class="h-full w-full"
+                      ></v-img>
+                      <v-card-text
+                        class="bg-gradient-to-t to-base-100 from-base-300"
                       >
-                        <h2>
-                          {{ info.context.title }}
-                        </h2>
-                        <div
-                          v-html="info.context.content"
-                          class="indent-10"
-                        ></div>
-                      </article>
-                    </v-card-text>
-                  </v-card>
-                  <v-btn  
-                    @click="dialog[i] = false"
-                    size="small"
-                    class="!btn-accent absolute -right-4 -top-4"
-                    icon="mdi-close"
-                  ></v-btn>
+                        <article
+                          class="py-4 overflow-auto !text-base-content prose prose-sm prose-slate"
+                        >
+                          <h2>
+                            {{ info.context.title }}
+                          </h2>
+                          <div
+                            v-html="info.context.content"
+                            class="indent-10"
+                          ></div>
+                        </article>
+                      </v-card-text>
+                    </v-card>
+                    <v-btn
+                      @click="dialog[i] = false"
+                      size="small"
+                      class="!btn-accent absolute -right-4 -top-4"
+                      icon="mdi-close"
+                    ></v-btn>
+                  </section>
                 </v-dialog>
               </v-container>
             </div>
@@ -74,6 +76,7 @@
 <script lang="ts">
 import { PropType } from "vue";
 import { BoardNews } from "../configs/configCSS";
+import { useConfigComponentStore } from "../configs/configCPNStore";
 export default {
   props: {
     props: Array as PropType<BoardNews[]>,
@@ -81,6 +84,7 @@ export default {
   data() {
     return {
       dialog: [] as boolean[],
+      globalCSSConfig: useConfigComponentStore().globalConfig,
     };
   },
   mounted() {

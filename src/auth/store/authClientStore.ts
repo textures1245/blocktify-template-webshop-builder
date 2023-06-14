@@ -114,7 +114,6 @@ export const useClientStore = defineStore("clientStore", {
         const secretKey = import.meta.env.VITE_HASH_STORE_ID_SECRET_KEY;
         // Create a HMAC instance with the secret key
         const hashedStoreId = HmacSHA256(storeID, secretKey).toString();
-        console.log(hashedStoreId);
         const documentSnapshot = await getDoc(documentRef);
         const store = documentSnapshot.exists()
           ? (documentSnapshot.data() as WebsiteConfig)

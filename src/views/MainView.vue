@@ -57,6 +57,7 @@ export default {
 };
 </script>
 <template>
+  
   <div
     class="grid w-full h-full place-content-center"
     v-if="storageContents.length < 1 && loadedScript"
